@@ -1,10 +1,13 @@
 from jigsaw import JigsawPlugin
 
+from discord.ext.commands import Cog
 
-class AutomataPlugin(JigsawPlugin):
+
+class AutomataPlugin(JigsawPlugin, Cog):
 
     def __init__(self, manifest, bot):
-        super().__init__(manifest)
+        JigsawPlugin.__init__(self, manifest)
+        Cog.__init__(self)
         self.bot = bot
 
     def enable(self):
