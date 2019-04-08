@@ -40,7 +40,7 @@ class MUNIdentity(AutomataPlugin):
         if resp.status_code == requests.codes.ok:
             username = resp.text
             await self.identities.insert_one({"discord_id": ctx.author.id, "mun_username": username})
-            await ctx.author.add_roles(self.bot.get_role(564672793380388873), reason=f"Identity verified. MUN username: {username}")
+            await ctx.author.add_roles(self.bot.get_guild(514110851016556567).get_role(564672793380388873), reason=f"Identity verified. MUN username: {username}")
             await ctx.send("Identity verified!")
         else:
             await ctx.send("It appears that code is invalid. Please double-check that you copied all characters from the site, and try again.")
