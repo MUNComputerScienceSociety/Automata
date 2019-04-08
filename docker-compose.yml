@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  automata:
+    build: ./
+    restart: always
+    volumes:
+      - ./plugins:/app/plugins
+    depends_on:
+      - mongo
+    env_file:
+      - .env
+  mongo:
+    image: mvertes/alpine-mongo
+    restart: always
+    volumes:
+      - ./data/mongo:/data/db
