@@ -39,8 +39,29 @@ class MUNIdentity(AutomataPlugin):
         resp = requests.get(f"https://auth.muncompsci.ca/identity/{code}")
         if resp.status_code == requests.codes.ok:
             username = resp.text
-            await self.identities.insert_one({"discord_id": ctx.author.id, "mun_username": username})
+            await self.identities.insert_one({
+                "discord_id": ctx.author.id,
+                "mun_username": username
+            })
             await ctx.author.add_roles(self.bot.get_guild(514110851016556567).get_role(564672793380388873), reason=f"Identity verified. MUN username: {username}")
             await ctx.send("Identity verified!")
         else:
             await ctx.send("It appears that code is invalid. Please double-check that you copied all characters from the site, and try again.")
+
+    @identity.command(name="check")
+    @commands.has_permissions(view_audit_log=True)
+    async def identity_check(self, ctx: commands.Context, user: discord.Member):
+        """Check the identity verification status of a user."""
+        identity = await self.identities.find_one({"discord_id": user.id})
+        if identity is not None:
+            embed = discord.Embed()
+            embed.colour = discord.Colour.green()
+            embed.set_footer(text="Identity verified.")
+            embed.add_field(name="MUN Username", value=identity["mun_username"])
+            await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed()
+            embed.colour = discord.Colour.red()
+            embed.set_footer(text="Identity not verified.")
+            embed.add_field(name="MUN Username", value="No username verified.")
+            await ctx.send(embed=embed)
