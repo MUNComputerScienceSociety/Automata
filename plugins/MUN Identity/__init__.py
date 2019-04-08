@@ -27,12 +27,12 @@ class MUNIdentity(AutomataPlugin):
             if identity is not None:
                 embed = discord.Embed()
                 embed.colour = discord.Colour.green()
-                embed.set_footer("Identity verified.")
-                embed.add_field("MUN Username", identity["mun_username"])
+                embed.set_footer(text="Identity verified.")
+                embed.add_field(name="MUN Username", value=identity["mun_username"])
                 await ctx.send(embed=embed)
             else:
                 await ctx.send("You have not yet verified your identity. Please go to https://auth.muncompsci.ca to verify.")
-    
+
     @identity.command(name="verify")
     async def identity_verify(self, ctx: commands.Context, code: str):
         """Verify your identity."""
