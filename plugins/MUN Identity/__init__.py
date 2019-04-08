@@ -6,7 +6,7 @@ from discord.ext import commands
 import requests
 
 from Plugin import AutomataPlugin
-from DB import client
+from Globals import mongo_client
 
 
 class MUNIdentity(AutomataPlugin):
@@ -14,7 +14,7 @@ class MUNIdentity(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-        self.identities = client.automata.munidentity_identities
+        self.identities = mongo_client.automata.munidentity_identities
 
     async def on_member_join(member: discord.Member):
         await member.send(f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://auth.muncompsci.ca to verify yourself.\nOtherwise, contact an executive to gain further access.")

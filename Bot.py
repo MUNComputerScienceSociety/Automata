@@ -11,7 +11,7 @@ from discord.ext import commands
 
 from Plugin import AutomataPlugin
 
-import DB
+import Globals
 
 IGNORED_LOGGERS = [
     "discord.client",

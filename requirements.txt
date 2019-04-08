@@ -2,3 +2,4 @@ git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py
 motor
 jigsaw
 requests
+sentry-sdk==0.7.10
