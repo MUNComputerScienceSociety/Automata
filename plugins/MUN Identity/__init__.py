@@ -27,7 +27,6 @@ class MUNIdentity(AutomataPlugin):
             if identity is not None:
                 embed = discord.Embed()
                 embed.colour = discord.Colour.green()
-                embed.set_footer(text="Identity verified.")
                 embed.add_field(name="MUN Username", value=identity["mun_username"])
                 await ctx.send(embed=embed)
             else:
@@ -56,12 +55,10 @@ class MUNIdentity(AutomataPlugin):
         if identity is not None:
             embed = discord.Embed()
             embed.colour = discord.Colour.green()
-            embed.set_footer(text="Identity verified.")
             embed.add_field(name="MUN Username", value=identity["mun_username"])
             await ctx.send(embed=embed)
         else:
             embed = discord.Embed()
             embed.colour = discord.Colour.red()
-            embed.set_footer(text="Identity not verified.")
             embed.add_field(name="MUN Username", value="No username verified.")
             await ctx.send(embed=embed)
