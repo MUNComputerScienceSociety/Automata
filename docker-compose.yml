@@ -2,10 +2,10 @@ version: '3'
 
 services:
   automata:
-    build: ./
+    image: muncs/automata
     restart: always
     volumes:
-      - ./plugins:/app/plugins
+      - ./mounted_plugins:/app/mounted_plugins
     depends_on:
       - mongo
     env_file:

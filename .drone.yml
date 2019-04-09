@@ -1,0 +1,19 @@
+kind: pipeline
+name: default
+
+steps:
+- name: publish-to-docker
+  image: plugins/docker
+  settings:
+    repo: muncs/automata
+    auto_tag: true
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    branch:
+      - master
+    event:
+      - push
+      - tag

@@ -129,7 +129,10 @@ async def plugins(ctx: commands.Context):
     await ctx.send(embed=embed)
 
 
-loader = PluginLoader(plugin_class=AutomataPlugin)
+loader = PluginLoader(
+    plugin_paths=("/app/plugins", "/app/mounted_plugins"),
+    plugin_class=AutomataPlugin
+)
 loader.load_manifests()
 loader.load_plugins(bot)
 loader.enable_all_plugins()
