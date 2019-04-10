@@ -37,7 +37,7 @@ class MUNIdentity(AutomataPlugin):
         return identity
 
     @commands.Cog.listener()
-    async def on_member_join(member: discord.Member):
+    async def on_member_join(self, member: discord.Member):
         await member.send(f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://auth.muncompsci.ca to verify yourself.\nOtherwise, contact an executive to gain further access.")
 
     @commands.group()
