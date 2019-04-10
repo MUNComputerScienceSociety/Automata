@@ -46,14 +46,15 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-@bot.event
-async def on_error(event, *args, **kwargs):
-    raise
+if os.environ.get("SENTRY_DSN", "") != "":
+    @bot.event
+    async def on_error(event, *args, **kwargs):
+        raise
 
 
-@bot.event
-async def on_command_error(ctx, exception):
-    raise exception
+    @bot.event
+    async def on_command_error(ctx, exception):
+        raise exception
 
 
 @contextlib.contextmanager

@@ -7,4 +7,5 @@ mongo_client = motor.motor_asyncio.AsyncIOMotorClient(
     f"mongodb://mongo/automata"
 )
 
-sentry_sdk.init(os.environ["SENTRY_DSN"])
+if os.environ.get("SENTRY_DSN", "") != "":
+    sentry_sdk.init(os.environ["SENTRY_DSN"])
