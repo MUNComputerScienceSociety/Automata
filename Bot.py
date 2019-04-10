@@ -51,7 +51,6 @@ if os.environ.get("SENTRY_DSN", "") != "":
     async def on_error(event, *args, **kwargs):
         raise
 
-
     @bot.event
     async def on_command_error(ctx, exception):
         raise exception
