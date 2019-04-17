@@ -15,3 +15,34 @@ services:
     restart: always
     volumes:
       - ./data/mongo:/data/db
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./data/prometheus:/prometheus
+      - ./config/prometheus:/etc/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    restart: always
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - prometheus
+    expose:
+      - 3000
+    networks:
+      - web
+    restart: always
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    labels:
+      traefik.enable: true
+      traefik.frontend.rule: "Host: stats.muncompsci.ca"
+      traefik.port: 3000
+      traefik.frontend.entryPoints: "https"
+
+networks:
+  web:
+    external: true
