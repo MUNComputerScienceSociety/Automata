@@ -1,5 +1,9 @@
 version: '3'
 
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
 services:
   automata:
     image: muncs/automata
@@ -28,7 +32,6 @@ services:
     restart: always
   grafana:
     image: grafana/grafana
-    user: $UID
     depends_on:
       - prometheus
     expose:
@@ -37,7 +40,7 @@ services:
       - web
     restart: always
     volumes:
-      - ./data/grafana:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
     labels:
       traefik.enable: true
       traefik.frontend.rule: "Host: stats.muncompsci.ca"
