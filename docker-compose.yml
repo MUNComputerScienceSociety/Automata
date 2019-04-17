@@ -28,6 +28,7 @@ services:
     restart: always
   grafana:
     image: grafana/grafana
+    user: $UID
     depends_on:
       - prometheus
     expose:
