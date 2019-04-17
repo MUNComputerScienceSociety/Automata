@@ -41,6 +41,8 @@ services:
       - web
       - default
     restart: always
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
     volumes:
       - grafana_data:/var/lib/grafana
     labels:
