@@ -8,6 +8,7 @@ from io import StringIO
 from jigsaw.PluginLoader import PluginLoader
 import discord
 from discord.ext import commands
+from prometheus_async.aio.web import start_http_server
 
 from Plugin import AutomataPlugin
 
@@ -44,6 +45,12 @@ async def on_message(message):
         name = message.channel.name
     logger.info(f"[{name}] {message.author.name}: {message.content}")
     await bot.process_commands(message)
+
+
+@bot.event
+async def on_ready():
+    # When the bot is ready, start the prometheus client
+    await start_http_server(port=9000)
 
 
 if os.environ.get("SENTRY_DSN", "") != "":
