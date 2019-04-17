@@ -3,6 +3,7 @@ version: '3'
 volumes:
     prometheus_data: {}
     grafana_data: {}
+    mongo_data: {}
 
 services:
   automata:
@@ -18,11 +19,11 @@ services:
     image: mvertes/alpine-mongo
     restart: always
     volumes:
-      - ./data/mongo:/data/db
+      - mongo_data:/data/db
   prometheus:
     image: prom/prometheus
     volumes:
-      - ./data/prometheus:/prometheus
+      - prometheus_data:/prometheus
       - ./config/prometheus:/etc/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
