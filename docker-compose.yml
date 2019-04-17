@@ -39,6 +39,7 @@ services:
       - 3000
     networks:
       - web
+      - default
     restart: always
     volumes:
       - grafana_data:/var/lib/grafana
@@ -47,6 +48,7 @@ services:
       traefik.frontend.rule: "Host: stats.muncompsci.ca"
       traefik.port: 3000
       traefik.frontend.entryPoints: "https"
+      traefik.docker.network: "web"
 
 networks:
   web:
