@@ -14,7 +14,8 @@ class Analytics(AutomataPlugin):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         """Process incoming messages, updating the relevant counters on Prometheus."""
-        MESSAGES.labels(message.channel.name).inc(1)
+        if not isinstance(message.channel, discord.abc.PrivateChannel):
+            MESSAGES.labels(message.channel.name).inc(1)
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
