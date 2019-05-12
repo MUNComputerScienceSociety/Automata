@@ -38,7 +38,7 @@ class MUNIdentity(AutomataPlugin):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        await member.send(f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://auth.muncompsci.ca to verify yourself.\nOtherwise, contact an executive to gain further access.")
+        await member.send(f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://discord.muncompsci.ca/auth to verify yourself.\nOtherwise, contact an executive to gain further access.")
 
     @commands.group()
     async def identity(self, ctx: commands.Context):
@@ -51,7 +51,7 @@ class MUNIdentity(AutomataPlugin):
                 embed.add_field(name="MUN Username", value=identity["mun_username"])
                 await ctx.send(embed=embed)
             else:
-                await ctx.send("You have not yet verified your identity. Please go to https://auth.muncompsci.ca to verify.")
+                await ctx.send("You have not yet verified your identity. Please go to https://discord.muncompsci.ca/auth to verify.")
 
     @identity.command(name="verify")
     async def identity_verify(self, ctx: commands.Context, code: str):
@@ -61,7 +61,7 @@ class MUNIdentity(AutomataPlugin):
             await ctx.author.add_roles(self.bot.get_guild(514110851016556567).get_role(564672793380388873), reason=f"Identity verified. MUN username: {current_identity['mun_username']}")
             await ctx.send("Your identity is already verified. If for some reason you need to change your verified username, contact an executive.")
             return
-        resp = requests.get(f"https://auth.muncompsci.ca/identity/{code}")
+        resp = requests.get(f"https://discord.muncompsci.ca/identity/{code}")
         if resp.status_code == requests.codes.ok:
             username = resp.text
             current_identity = await self.get_identity(mun_username=username)
