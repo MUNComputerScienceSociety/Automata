@@ -88,6 +88,7 @@ class PrivateChannels(AutomataPlugin):
             return
         await ctx.guild.get_channel(channel["channel_id"]).set_permissions(
             user,
+            overwrite=None,
             reason=f"Kicked by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))"
         )
         await ctx.send("User kicked.")
