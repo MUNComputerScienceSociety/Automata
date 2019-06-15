@@ -58,3 +58,36 @@ class PrivateChannels(AutomataPlugin):
         await ctx.guild.get_channel(channel["channel_id"]).delete(reason=f"Deleted by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))")
         await self.channels.delete_many({"channel_name": name})
         await ctx.send("Channel deleted.")
+
+    @privatechannel.command(name="invite")
+    async def privatechannel_invite(self, ctx: commands.Context, name: str, user: discord.Member):
+        """Invite a user to a given private channel."""
+        channel = await self.channels.find_one({"channel_name": name})
+        if channel is None:
+            await ctx.send("That private channel does not exist.")
+            return
+        if channel["creator"] != ctx.author.id:
+            await ctx.send("You are not the creator of that channel.")
+            return
+        await ctx.guild.get_channel(channel["channel_id"]).set_permissions(
+            user,
+            read_messages=True,
+            reason=f"Invited by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))"
+        )
+        await ctx.send("User invited.")
+    
+    @privatechannel.command(name="kick")
+    async def privatechannel_kick(self, ctx: commands.Context, name: str, user: discord.Member):
+        """Kick a user from a given private channel."""
+        channel = await self.channels.find_one({"channel_name": name})
+        if channel is None:
+            await ctx.send("That private channel does not exist.")
+            return
+        if channel["creator"] != ctx.author.id:
+            await ctx.send("You are not the creator of that channel.")
+            return
+        await ctx.guild.get_channel(channel["channel_id"]).set_permissions(
+            user,
+            reason=f"Kicked by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))"
+        )
+        await ctx.send("User kicked.")
