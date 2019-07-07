@@ -15,7 +15,7 @@ class MUNIdentity(AutomataPlugin):
         super().__init__(manifest, bot)
         self.identities = mongo_client.automata.munidentity_identities
 
-    async def get_identity(self, *, member: Union[discord.Member, int] = None,
+    async def get_identity(self, *, member: Union[discord.User, int] = None,
                            mun_username: str = None) -> Optional[Dict[str, Union[str, int]]]:
         """Retrieve identity details for a given user.
 
@@ -26,11 +26,11 @@ class MUNIdentity(AutomataPlugin):
         :return: The data stored about the user's identity
         :rtype: Optional[Dict[str, Union[str, int]]]
         """
-        if isinstance(member, discord.Member):
+        if isinstance(member, discord.User):
             member = member.id
         query = {}
         if member is not None:
-            query["discord_id"] = member.id
+            query["discord_id"] = member
         if mun_username is not None:
             query["mun_username"] = mun_username
         identity = await self.identities.find_one(query)
