@@ -26,11 +26,13 @@ class MUNIdentity(AutomataPlugin):
         :return: The data stored about the user's identity
         :rtype: Optional[Dict[str, Union[str, int]]]
         """
-        if isinstance(member, discord.User):
-            member = member.id
+        if isinstance(member, int):
+            member_id = member
+        else:
+            member_id = member.id
         query = {}
         if member is not None:
-            query["discord_id"] = member
+            query["discord_id"] = member_id
         if mun_username is not None:
             query["mun_username"] = mun_username
         identity = await self.identities.find_one(query)
