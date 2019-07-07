@@ -30,7 +30,7 @@ class MUNIdentity(AutomataPlugin):
             member = member.id
         query = {}
         if member is not None:
-            query["discord_id"] = member
+            query["discord_id"] = member.id
         if mun_username is not None:
             query["mun_username"] = mun_username
         identity = await self.identities.find_one(query)
