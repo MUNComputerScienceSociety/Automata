@@ -28,7 +28,7 @@ class MUNIdentity(AutomataPlugin):
         """
         if isinstance(member, int):
             member_id = member
-        else:
+        elif member is not None:
             member_id = member.id
         query = {}
         if member is not None:
