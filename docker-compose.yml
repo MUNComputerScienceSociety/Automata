@@ -55,8 +55,8 @@ services:
   mongodbexporter:
     image: eses/mongodb_exporter
     restart: always
-    command:
-      - "-mongodb.uri mongodb://mongo:27017"
+    environment:
+      - MONGODB_URI=mongodb://mongo/
   cadvisor:
     image: google/cadvisor
     volumes:
