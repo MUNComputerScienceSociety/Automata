@@ -52,6 +52,20 @@ services:
       traefik.port: 3000
       traefik.frontend.entryPoints: "https"
       traefik.docker.network: "web"
+  mongodbexporter:
+    image: eses/mongodb_exporter
+    restart: always
+    command:
+      - "-mongodb.uri mongodb://mongo:27017"
+  cadvisor:
+    image: google/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - "--docker_only=true"
 
 networks:
   web:
