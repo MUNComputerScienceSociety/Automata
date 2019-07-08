@@ -4,7 +4,6 @@ from discord.ext.commands import Cog
 
 
 class AutomataPlugin(JigsawPlugin, Cog):
-
     def __init__(self, manifest, bot):
         JigsawPlugin.__init__(self, manifest)
         Cog.__init__(self)

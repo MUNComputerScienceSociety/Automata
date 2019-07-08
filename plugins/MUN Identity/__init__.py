@@ -15,8 +15,9 @@ class MUNIdentity(AutomataPlugin):
         super().__init__(manifest, bot)
         self.identities = mongo_client.automata.munidentity_identities
 
-    async def get_identity(self, *, member: Union[discord.User, int] = None,
-                           mun_username: str = None) -> Optional[Dict[str, Union[str, int]]]:
+    async def get_identity(
+        self, *, member: Union[discord.User, int] = None, mun_username: str = None
+    ) -> Optional[Dict[str, Union[str, int]]]:
         """Retrieve identity details for a given user.
 
         :param member: The Discord server member to retrieve details for, defaults to None
@@ -40,7 +41,9 @@ class MUNIdentity(AutomataPlugin):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        await member.send(f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://discord.muncompsci.ca/auth to verify yourself.\nOtherwise, contact an executive to gain further access.")
+        await member.send(
+            f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://discord.muncompsci.ca/auth to verify yourself.\nOtherwise, contact an executive to gain further access."
+        )
 
     @commands.group()
     async def identity(self, ctx: commands.Context):
@@ -53,31 +56,44 @@ class MUNIdentity(AutomataPlugin):
                 embed.add_field(name="MUN Username", value=identity["mun_username"])
                 await ctx.send(embed=embed)
             else:
-                await ctx.send("You have not yet verified your identity. Please go to https://discord.muncompsci.ca/auth to verify.")
+                await ctx.send(
+                    "You have not yet verified your identity. Please go to https://discord.muncompsci.ca/auth to verify."
+                )
 
     @identity.command(name="verify")
     async def identity_verify(self, ctx: commands.Context, code: str):
         """Verify your identity."""
         current_identity = await self.get_identity(member=ctx.author)
         if current_identity is not None:
-            await ctx.author.add_roles(self.bot.get_guild(514110851016556567).get_role(564672793380388873), reason=f"Identity verified. MUN username: {current_identity['mun_username']}")
-            await ctx.send("Your identity is already verified. If for some reason you need to change your verified username, contact an executive.")
+            await ctx.author.add_roles(
+                self.bot.get_guild(514110851016556567).get_role(564672793380388873),
+                reason=f"Identity verified. MUN username: {current_identity['mun_username']}",
+            )
+            await ctx.send(
+                "Your identity is already verified. If for some reason you need to change your verified username, contact an executive."
+            )
             return
         resp = requests.get(f"https://discord.muncompsci.ca/identity/{code}")
         if resp.status_code == requests.codes.ok:
             username = resp.text
             current_identity = await self.get_identity(mun_username=username)
             if current_identity is not None:
-                await ctx.send("An existing user is already verified with that username. If you have lost access to a previous account, contact an executive.")
+                await ctx.send(
+                    "An existing user is already verified with that username. If you have lost access to a previous account, contact an executive."
+                )
                 return
-            await self.identities.insert_one({
-                "discord_id": ctx.author.id,
-                "mun_username": username
-            })
-            await ctx.author.add_roles(self.bot.get_guild(514110851016556567).get_role(564672793380388873), reason=f"Identity verified. MUN username: {username}")
+            await self.identities.insert_one(
+                {"discord_id": ctx.author.id, "mun_username": username}
+            )
+            await ctx.author.add_roles(
+                self.bot.get_guild(514110851016556567).get_role(564672793380388873),
+                reason=f"Identity verified. MUN username: {username}",
+            )
             await ctx.send("Identity verified!")
         else:
-            await ctx.send("It appears that code is invalid. Please double-check that you copied all characters from the site, and try again.")
+            await ctx.send(
+                "It appears that code is invalid. Please double-check that you copied all characters from the site, and try again."
+            )
 
     @identity.command(name="check")
     @commands.has_permissions(view_audit_log=True)

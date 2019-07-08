@@ -20,20 +20,25 @@ IGNORED_LOGGERS = [
     "discord.state",
     "discord.gateway",
     "discord.http",
-    "websockets.protocol"
+    "websockets.protocol",
 ]
 
 # Configure logger and silence ignored loggers
-logging.basicConfig(format="{%(asctime)s} (%(name)s) [%(levelname)s]: %(message)s",
-                    datefmt="%x, %X",
-                    level=logging.DEBUG)
+logging.basicConfig(
+    format="{%(asctime)s} (%(name)s) [%(levelname)s]: %(message)s",
+    datefmt="%x, %X",
+    level=logging.DEBUG,
+)
 
 for logger in IGNORED_LOGGERS:
     logging.getLogger(logger).setLevel(logging.WARNING)
 
 logger = logging.getLogger("Automata")
 
-bot = commands.Bot("!", description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.")
+bot = commands.Bot(
+    "!",
+    description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.",
+)
 
 
 @bot.event
@@ -54,6 +59,7 @@ async def on_ready():
 
 
 if os.environ.get("SENTRY_DSN", "") != "":
+
     @bot.event
     async def on_error(event, *args, **kwargs):
         raise
@@ -127,18 +133,17 @@ async def plugins(ctx: commands.Context):
         embed.add_field(
             name=plugin["manifest"]["name"],
             value="{}\nVersion: {}\nAuthor: {}".format(
-                plugin['plugin'].__doc__.rstrip(),
-                plugin['manifest']['version'],
-                plugin['manifest']['author']
-            )
+                plugin["plugin"].__doc__.rstrip(),
+                plugin["manifest"]["version"],
+                plugin["manifest"]["author"],
+            ),
         )
 
     await ctx.send(embed=embed)
 
 
 loader = PluginLoader(
-    plugin_paths=("/app/plugins", "/app/mounted_plugins"),
-    plugin_class=AutomataPlugin
+    plugin_paths=("/app/plugins", "/app/mounted_plugins"), plugin_class=AutomataPlugin
 )
 loader.load_manifests()
 loader.load_plugins(bot)

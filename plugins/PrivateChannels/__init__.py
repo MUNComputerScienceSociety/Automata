@@ -17,7 +17,9 @@ class PrivateChannels(AutomataPlugin):
     async def privatechannel(self, ctx: commands.Context):
         """Manage private channels."""
         if not ctx.invoked_subcommand:
-            await ctx.send("Invalid subcommand provided. Please use `!help privatechannel` for more help.")
+            await ctx.send(
+                "Invalid subcommand provided. Please use `!help privatechannel` for more help."
+            )
 
     @privatechannel.command(name="create")
     async def privatechannel_create(self, ctx: commands.Context, name: str):
@@ -32,18 +34,26 @@ class PrivateChannels(AutomataPlugin):
         channel = await ctx.guild.create_text_channel(
             name,
             overwrites={
-                ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
-                ctx.author: discord.PermissionOverwrite(read_messages=True, manage_roles=True)
+                ctx.guild.default_role: discord.PermissionOverwrite(
+                    read_messages=False
+                ),
+                ctx.author: discord.PermissionOverwrite(
+                    read_messages=True, manage_roles=True
+                ),
             },
             category=[c for c in ctx.guild.channels if c.id == 565681623199252480][0],
-            reason=f"Created private channel for {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})"
+            reason=f"Created private channel for {ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})",
         )
-        await self.channels.insert_one({
-            "creator": ctx.author.id,
-            "channel_id": channel.id,
-            "channel_name": channel.name
-        })
-        await ctx.send("Channel created. You have been granted \"Manage Permissions\" permissions for the channel to enable the inviting of new users. ***DO NOT*** remove or modify the default permissions that were already set. Doing so will result in the deletion of your channel.")
+        await self.channels.insert_one(
+            {
+                "creator": ctx.author.id,
+                "channel_id": channel.id,
+                "channel_name": channel.name,
+            }
+        )
+        await ctx.send(
+            'Channel created. You have been granted "Manage Permissions" permissions for the channel to enable the inviting of new users. ***DO NOT*** remove or modify the default permissions that were already set. Doing so will result in the deletion of your channel.'
+        )
 
     @privatechannel.command(name="delete")
     async def privatechannel_delete(self, ctx: commands.Context, name: str):
@@ -55,12 +65,16 @@ class PrivateChannels(AutomataPlugin):
         if channel["creator"] != ctx.author.id:
             await ctx.send("You are not the creator of that channel.")
             return
-        await ctx.guild.get_channel(channel["channel_id"]).delete(reason=f"Deleted by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))")
+        await ctx.guild.get_channel(channel["channel_id"]).delete(
+            reason=f"Deleted by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))"
+        )
         await self.channels.delete_many({"channel_name": name})
         await ctx.send("Channel deleted.")
 
     @privatechannel.command(name="invite")
-    async def privatechannel_invite(self, ctx: commands.Context, name: str, user: discord.Member):
+    async def privatechannel_invite(
+        self, ctx: commands.Context, name: str, user: discord.Member
+    ):
         """Invite a user to a given private channel."""
         channel = await self.channels.find_one({"channel_name": name})
         if channel is None:
@@ -72,12 +86,14 @@ class PrivateChannels(AutomataPlugin):
         await ctx.guild.get_channel(channel["channel_id"]).set_permissions(
             user,
             read_messages=True,
-            reason=f"Invited by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))"
+            reason=f"Invited by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))",
         )
         await ctx.send("User invited.")
-    
+
     @privatechannel.command(name="kick")
-    async def privatechannel_kick(self, ctx: commands.Context, name: str, user: discord.Member):
+    async def privatechannel_kick(
+        self, ctx: commands.Context, name: str, user: discord.Member
+    ):
         """Kick a user from a given private channel."""
         channel = await self.channels.find_one({"channel_name": name})
         if channel is None:
@@ -89,6 +105,6 @@ class PrivateChannels(AutomataPlugin):
         await ctx.guild.get_channel(channel["channel_id"]).set_permissions(
             user,
             overwrite=None,
-            reason=f"Kicked by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))"
+            reason=f"Kicked by owner ({ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id}))",
         )
         await ctx.send("User kicked.")
