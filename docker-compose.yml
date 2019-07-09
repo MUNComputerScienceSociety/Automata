@@ -19,7 +19,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://loki/api/prom/push"
+        loki-url: "http://loki:3100/api/prom/push"
   mongo:
     image: mvertes/alpine-mongo
     restart: always
@@ -30,7 +30,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://loki/api/prom/push"
+        loki-url: "http://loki:3100/api/prom/push"
   prometheus:
     image: prom/prometheus
     volumes:
@@ -48,7 +48,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://loki/api/prom/push"
+        loki-url: "http://loki:3100/api/prom/push"
   grafana:
     image: grafana/grafana
     depends_on:
@@ -73,7 +73,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://loki/api/prom/push"
+        loki-url: "http://loki:3100/api/prom/push"
   mongodbexporter:
     image: eses/mongodb_exporter
     restart: always
@@ -85,7 +85,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://loki/api/prom/push"
+        loki-url: "http://loki:3100/api/prom/push"
   cadvisor:
     image: google/cadvisor
     depends_on:
@@ -100,7 +100,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://loki/api/prom/push"
+        loki-url: "http://loki:3100/api/prom/push"
   loki:
     image: grafana/loki
 
