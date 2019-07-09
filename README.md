@@ -10,7 +10,9 @@ Discord bot handling the management of the MUN Computer Science Society Discord 
 1. Copy `.env.dist` to `.env`
 2. Fill out the required information in the `.env`
    - At the moment, the only required environment variable required is `AUTOMATA_TOKEN`, which is a Discord token, which you can see how to get [here](https://discordpy.readthedocs.io/en/latest/discord.html)
-3. Start the containers by running `docker-compose up -d`
+3. Install the Loki logging driver
+   - `docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions`
+4. Start the containers by running `docker-compose up -d`
 
 ## Developing your own plugins
 

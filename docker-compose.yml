@@ -13,13 +13,24 @@ services:
       - ./mounted_plugins:/app/mounted_plugins
     depends_on:
       - mongo
+      - loki
     env_file:
       - .env
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki/api/prom/push"
   mongo:
     image: mvertes/alpine-mongo
     restart: always
     volumes:
       - mongo_data:/data/db
+    depends_on:
+      - loki
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki/api/prom/push"
   prometheus:
     image: prom/prometheus
     volumes:
@@ -32,10 +43,17 @@ services:
       - "--web.console.templates=/usr/share/prometheus/consoles"
       - "--storage.tsdb.retention.time=1y"
     restart: always
+    depends_on:
+      - loki
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki/api/prom/push"
   grafana:
     image: grafana/grafana
     depends_on:
       - prometheus
+      - loki
     expose:
       - 3000
     networks:
@@ -52,13 +70,26 @@ services:
       traefik.port: 3000
       traefik.frontend.entryPoints: "https"
       traefik.docker.network: "web"
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki/api/prom/push"
   mongodbexporter:
     image: eses/mongodb_exporter
     restart: always
+    depends_on:
+      - mongo
+      - loki
     environment:
       - MONGODB_URI=mongodb://mongo/
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki/api/prom/push"
   cadvisor:
     image: google/cadvisor
+    depends_on:
+      - loki
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -66,6 +97,12 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     command:
       - "--docker_only=true"
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki/api/prom/push"
+  loki:
+    image: grafana/loki
 
 networks:
   web:
