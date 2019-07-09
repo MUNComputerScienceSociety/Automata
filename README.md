@@ -41,3 +41,5 @@ Automata is comprised of a number of containers, each with distinct responsibili
 | mongo | A MongoDB server used to provide persistent data storage to the `automata` container. |
 | prometheus | A Prometheus server used to collect statistics from the `automata` container. |
 | grafana | A Grafana instance that collects data from `prometheus` and uses them to produce graphs. |
+| cadvisor | Exports stats on running docker containers to `prometheus` |
+| mongodbexporter | Exports stats from `mongo` to `prometheus` |
