@@ -103,6 +103,7 @@ services:
         loki-url: "http://loki:3100/api/prom/push"
   loki:
     image: grafana/loki
+    command: -config.file=/etc/loki/local-config.yaml
 
 networks:
   web:
