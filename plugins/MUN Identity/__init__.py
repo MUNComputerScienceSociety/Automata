@@ -65,7 +65,9 @@ class MUNIdentity(AutomataPlugin):
         """Verify your identity."""
         current_identity = await self.get_identity(member=ctx.author)
         if current_identity is not None:
-            await ctx.author.add_roles(
+            await self.bot.get_guild(514110851016556567).get_member(
+                ctx.author.id
+            ).add_roles(
                 self.bot.get_guild(514110851016556567).get_role(564672793380388873),
                 reason=f"Identity verified. MUN username: {current_identity['mun_username']}",
             )
@@ -85,7 +87,9 @@ class MUNIdentity(AutomataPlugin):
             await self.identities.insert_one(
                 {"discord_id": ctx.author.id, "mun_username": username}
             )
-            await ctx.author.add_roles(
+            await self.bot.get_guild(514110851016556567).get_member(
+                ctx.author.id
+            ).add_roles(
                 self.bot.get_guild(514110851016556567).get_role(564672793380388873),
                 reason=f"Identity verified. MUN username: {username}",
             )
