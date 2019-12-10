@@ -1,4 +1,4 @@
-discord.py==1.0.1
+discord.py==1.2.5
 motor==2.0.0
 jigsaw==3.2.0
 requests==2.21.0
