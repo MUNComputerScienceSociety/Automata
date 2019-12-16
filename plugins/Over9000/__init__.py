@@ -1,8 +1,7 @@
-﻿from random import choice, randint
-import discord
-from discord.ext import commands
+﻿import json
+from random import choice
 
-from .quotes import DBZQuotes
+from discord.ext import commands
 
 from Plugin import AutomataPlugin
 
@@ -10,8 +9,12 @@ from Plugin import AutomataPlugin
 class Over9000(AutomataPlugin):
     """Kakarot"""
 
+    with open("plugins/Over9000/quotes.json", "r") as f:
+        #  Load json file for use in class method calls
+        dbz_quotes = json.load(f)
+
     @commands.command()
-    async def over9000(self, ctx: commands.Context, dbz_char: str = 'goku'):
+    async def over9000(self, ctx: commands.Context, dbz_char: str = "goku"):
         """Replies with a super saiyan emoji and random
         Goku quote!
 
@@ -19,24 +22,17 @@ class Over9000(AutomataPlugin):
 
         """
 
+        dbz_quotes = Over9000.dbz_quotes
 
-        dbz_quotes = DBZQuotes()
+        if dbz_char.upper() in ("GOKU", "KAKAROT"):
+            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Goku:** {choice(dbz_quotes['goku'])}")
 
-        if dbz_char.upper() in ('GOKU', 'KAKAROT'):
-            quotes = dbz_quotes.goku()
-            quote = choice(quotes)
-            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Goku:** {quote}")
+        elif dbz_char.upper() == "VEGETA":
+            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Vegeta:** {choice(dbz_quotes['vegeta'])}")
 
-        elif dbz_char.upper() == 'FRIEZA':
-            quotes = dbz_quotes.frieza()
-            quote = choice(quotes)
-            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Frieza:** {quote}")
-        
-        elif dbz_char.upper() == 'VEGETA':
-            quotes = dbz_quotes.vegeta()
-            quote = choice(quotes)
-            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Vegeta:** {quote}")
+        elif dbz_char.upper() == "FRIEZA":
+            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Frieza:** {choice(dbz_quotes['frieza'])}")
 
         else:
-            """An invalid DBZ character was specified."""
+            #  An invalid DBZ character was specified.
             await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n...")
