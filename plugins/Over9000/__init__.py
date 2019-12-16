@@ -19,7 +19,6 @@ class Over9000(AutomataPlugin):
         Goku quote!
 
         Takes character name as an argument.
-
         """
 
         dbz_quotes = Over9000.dbz_quotes
