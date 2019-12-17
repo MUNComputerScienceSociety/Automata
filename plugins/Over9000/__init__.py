@@ -3,16 +3,16 @@ from random import choice
 
 from discord.ext import commands
 
-from Plugin import AutomataPlugin, Cog, JigsawPlugin
+from Plugin import AutomataPlugin
 
 
 class Over9000(AutomataPlugin):
     """Kakarot"""
 
     def __init__(self, manifest, bot):
+        super().__init__(manifest, bot)
         with open("plugins/Over9000/quotes.json", "r") as f:
             self.dbz_quotes = json.load(f)
-        super().__init__(manifest, bot)
 
     @commands.command()
     async def over9000(self, ctx: commands.Context, dbz_char: str = "goku"):
