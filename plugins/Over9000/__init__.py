@@ -3,15 +3,16 @@ from random import choice
 
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
+from Plugin import AutomataPlugin, Cog, JigsawPlugin
 
 
 class Over9000(AutomataPlugin):
     """Kakarot"""
 
-    with open("plugins/Over9000/quotes.json", "r") as f:
-        #  Load json file for use in class method calls
-        dbz_quotes = json.load(f)
+    def __init__(self, manifest, bot):
+        with open("plugins/Over9000/quotes.json", "r") as f:
+            self.dbz_quotes = json.load(f)
+        super().__init__(manifest, bot)
 
     @commands.command()
     async def over9000(self, ctx: commands.Context, dbz_char: str = "goku"):
@@ -21,16 +22,14 @@ class Over9000(AutomataPlugin):
         Takes character name as an argument.
         """
 
-        dbz_quotes = Over9000.dbz_quotes
-
         if dbz_char.upper() in ("GOKU", "KAKAROT"):
-            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Goku:** {choice(dbz_quotes['goku'])}")
+            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Goku:** {choice(self.dbz_quotes['goku'])}")
 
         elif dbz_char.upper() == "VEGETA":
-            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Vegeta:** {choice(dbz_quotes['vegeta'])}")
+            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Vegeta:** {choice(self.dbz_quotes['vegeta'])}")
 
         elif dbz_char.upper() == "FRIEZA":
-            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Frieza:** {choice(dbz_quotes['frieza'])}")
+            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n**Frieza:** {choice(self.dbz_quotes['frieza'])}")
 
         else:
             #  An invalid DBZ character was specified.
