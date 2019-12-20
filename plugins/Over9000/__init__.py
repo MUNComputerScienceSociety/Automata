@@ -1,4 +1,5 @@
-﻿import json
+﻿from json import load
+from os import path
 from random import choice
 
 from discord.ext import commands
@@ -11,13 +12,13 @@ class Over9000(AutomataPlugin):
 
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
-        with open("plugins/Over9000/quotes.json", "r") as f:
-            self.dbz_quotes = json.load(f)
+        with open(path.join(self.manifest["path"], "quotes.json"), "r") as f:
+            self.dbz_quotes = load(f)
 
     @commands.command()
     async def over9000(self, ctx: commands.Context, dbz_char: str = "goku"):
         """Replies with a super saiyan emoji and random
-        Goku quote!
+        Goku/Vegeta/Frieza quote.
 
         Takes character name as an argument.
         """
