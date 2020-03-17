@@ -12,6 +12,7 @@ class Logger(AutomataPlugin):
 
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
+
         self.events = mongo_client.automata.logger_events
 
     @commands.Cog.listener()

@@ -1,8 +1,13 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import os
 import logging
 import traceback
 import contextlib
 import sys
+from pathlib import Path
 from io import StringIO
 
 from jigsaw.PluginLoader import PluginLoader
@@ -12,7 +17,7 @@ from prometheus_async.aio.web import start_http_server
 
 from Plugin import AutomataPlugin
 
-import Globals
+from Globals import DISABLED_PLUGINS
 
 IGNORED_LOGGERS = [
     "discord.client",
@@ -34,6 +39,14 @@ for logger in IGNORED_LOGGERS:
     logging.getLogger(logger).setLevel(logging.WARNING)
 
 logger = logging.getLogger("Automata")
+
+AUTOMATA_TOKEN = os.getenv("AUTOMATA_TOKEN", None)
+
+if not AUTOMATA_TOKEN:
+    logger.error(
+        "AUTOMATA_TOKEN environment variable not set, have you created a .env file and populated it yet?"
+    )
+    exit(1)
 
 bot = commands.Bot(
     "!",
@@ -58,7 +71,7 @@ async def on_ready():
     await start_http_server(port=9000)
 
 
-if os.environ.get("SENTRY_DSN", "") != "":
+if os.getenv("SENTRY_DSN", None):
 
     @bot.event
     async def on_error(event, *args, **kwargs):
@@ -130,23 +143,34 @@ async def plugins(ctx: commands.Context):
     embed.colour = discord.Colour.blurple()
 
     for plugin in loader.get_all_plugins():
-        embed.add_field(
-            name=plugin["manifest"]["name"],
-            value="{}\nVersion: {}\nAuthor: {}".format(
-                plugin["plugin"].__doc__.rstrip(),
-                plugin["manifest"]["version"],
-                plugin["manifest"]["author"],
-            ),
-        )
+        if plugin["plugin"]:
+            embed.add_field(
+                name=plugin["manifest"]["name"],
+                value="{}\nVersion: {}\nAuthor: {}".format(
+                    plugin["plugin"].__doc__.rstrip(),
+                    plugin["manifest"]["version"],
+                    plugin["manifest"]["author"],
+                ),
+            )
 
     await ctx.send(embed=embed)
 
 
+plugins_dir = Path("./plugins")
+mounted_plugins_dir = Path("./mounted_plugins")
+mounted_plugins_dir.mkdir(exist_ok=True)
+
 loader = PluginLoader(
-    plugin_paths=("/app/plugins", "/app/mounted_plugins"), plugin_class=AutomataPlugin
+    plugin_paths=(str(plugins_dir), str(mounted_plugins_dir)),
+    plugin_class=AutomataPlugin,
 )
 loader.load_manifests()
-loader.load_plugins(bot)
-loader.enable_all_plugins()
 
-bot.run(os.environ["AUTOMATA_TOKEN"])
+for plugin in loader.get_all_plugins():
+    manifest = plugin["manifest"]
+    if not manifest["main_class"] in DISABLED_PLUGINS:
+        loader.load_plugin(manifest, bot)
+    else:
+        logger.info(f"{manifest['name']} disabled.")
+
+bot.run(AUTOMATA_TOKEN)

@@ -12,6 +12,7 @@ class Over9000(AutomataPlugin):
 
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
+
         with open(path.join(self.manifest["path"], "quotes.json"), "r") as f:
             self.dbz_quotes = load(f)
 
