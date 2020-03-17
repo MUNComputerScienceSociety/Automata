@@ -1,10 +1,5 @@
 version: '3'
 
-volumes:
-    prometheus_data: {}
-    grafana_data: {}
-    mongo_data: {}
-
 services:
   automata:
     image: muncs/automata
@@ -68,6 +63,11 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     command:
       - "--docker_only=true"
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+  mongo_data: {}
 
 networks:
   web:
