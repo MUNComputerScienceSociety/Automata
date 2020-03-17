@@ -14,7 +14,7 @@ class MUNIdentity(AutomataPlugin):
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
 
-        mongo_client.automata.munidentity_identities
+        self.identities = mongo_client.automata.munidentity_identities
 
     async def get_identity(
         self, *, member: Union[discord.User, int] = None, mun_username: str = None
