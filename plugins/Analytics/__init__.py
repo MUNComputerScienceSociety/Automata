@@ -3,7 +3,7 @@ from discord.ext import commands
 from prometheus_client import Counter, Gauge
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client
+from Globals import mongo_client, PRIMARY_GUILD
 
 MESSAGES = Counter(
     "automata_message_count", "Total number of messages sent.", ["channel"]
@@ -20,7 +20,7 @@ class Analytics(AutomataPlugin):
 
     def _set_member_count(self) -> None:
         totals = {"total": 0, "online": 0, "offline": 0, "idle": 0, "dnd": 0}
-        for member in self.bot.get_guild(514110851016556567).members:
+        for member in self.bot.get_guild(PRIMARY_GUILD).members:
             totals[member.status.value] += 1
             totals["total"] += 1
         for label, value in totals.items():
@@ -30,7 +30,7 @@ class Analytics(AutomataPlugin):
     async def on_ready(self):
         cursor = self.message_counts.find()
         for channel in await cursor.to_list(length=None):
-            guild_channel = self.bot.get_guild(514110851016556567).get_channel(
+            guild_channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(
                 channel["channel_id"]
             )
             MESSAGES.labels(guild_channel.name).inc(channel["count"])

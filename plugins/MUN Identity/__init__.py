@@ -5,7 +5,7 @@ from discord.ext import commands
 import requests
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client
+from Globals import mongo_client, PRIMARY_GUILD, VERIFIED_ROLE
 
 
 class MUNIdentity(AutomataPlugin):
@@ -65,10 +65,10 @@ class MUNIdentity(AutomataPlugin):
         """Verify your identity."""
         current_identity = await self.get_identity(member=ctx.author)
         if current_identity is not None:
-            await self.bot.get_guild(514110851016556567).get_member(
+            await self.bot.get_guild(PRIMARY_GUILD).get_member(
                 ctx.author.id
             ).add_roles(
-                self.bot.get_guild(514110851016556567).get_role(564672793380388873),
+                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
                 reason=f"Identity verified. MUN username: {current_identity['mun_username']}",
             )
             await ctx.send(
@@ -87,10 +87,10 @@ class MUNIdentity(AutomataPlugin):
             await self.identities.insert_one(
                 {"discord_id": ctx.author.id, "mun_username": username}
             )
-            await self.bot.get_guild(514110851016556567).get_member(
+            await self.bot.get_guild(PRIMARY_GUILD).get_member(
                 ctx.author.id
             ).add_roles(
-                self.bot.get_guild(514110851016556567).get_role(564672793380388873),
+                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
                 reason=f"Identity verified. MUN username: {username}",
             )
             await ctx.send("Identity verified!")
