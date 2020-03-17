@@ -3,6 +3,7 @@ import logging
 import traceback
 import contextlib
 import sys
+from pathlib import Path
 from io import StringIO
 
 from jigsaw.PluginLoader import PluginLoader
@@ -13,6 +14,8 @@ from prometheus_async.aio.web import start_http_server
 from Plugin import AutomataPlugin
 
 import Globals
+
+AUTOMATA_TOKEN = os.getenv("AUTOMATA_TOKEN", None)
 
 IGNORED_LOGGERS = [
     "discord.client",
@@ -34,6 +37,12 @@ for logger in IGNORED_LOGGERS:
     logging.getLogger(logger).setLevel(logging.WARNING)
 
 logger = logging.getLogger("Automata")
+
+if not AUTOMATA_TOKEN:
+    logger.error(
+        "AUTOMATA_TOKEN environment variable not set, have you created a .env file and populated it yet?"
+    )
+    exit(1)
 
 bot = commands.Bot(
     "!",
@@ -142,11 +151,16 @@ async def plugins(ctx: commands.Context):
     await ctx.send(embed=embed)
 
 
+plugins_dir = Path("./plugins")
+mounted_plugins_dir = Path("./mounted_plugins")
+mounted_plugins_dir.mkdir(exist_ok=True)
+
 loader = PluginLoader(
-    plugin_paths=("/app/plugins", "/app/mounted_plugins"), plugin_class=AutomataPlugin
+    plugin_paths=(str(plugins_dir), str(mounted_plugins_dir)),
+    plugin_class=AutomataPlugin,
 )
 loader.load_manifests()
 loader.load_plugins(bot)
 loader.enable_all_plugins()
 
-bot.run(os.environ["AUTOMATA_TOKEN"])
+bot.run(AUTOMATA_TOKEN)
