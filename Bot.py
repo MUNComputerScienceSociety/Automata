@@ -168,7 +168,7 @@ loader.load_manifests()
 
 for plugin in loader.get_all_plugins():
     manifest = plugin["manifest"]
-    if not manifest["main_class"] in DISABLED_PLUGINS:
+    if manifest["main_class"] not in DISABLED_PLUGINS:
         loader.load_plugin(manifest, bot)
     else:
         logger.info(f"{manifest['name']} disabled.")
