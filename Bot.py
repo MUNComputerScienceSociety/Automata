@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+
 load_dotenv()
 
 import os
@@ -17,8 +18,6 @@ from prometheus_async.aio.web import start_http_server
 from Plugin import AutomataPlugin
 
 import Globals
-
-AUTOMATA_TOKEN = os.getenv("AUTOMATA_TOKEN", None)
 
 IGNORED_LOGGERS = [
     "discord.client",
@@ -40,6 +39,8 @@ for logger in IGNORED_LOGGERS:
     logging.getLogger(logger).setLevel(logging.WARNING)
 
 logger = logging.getLogger("Automata")
+
+AUTOMATA_TOKEN = os.getenv("AUTOMATA_TOKEN", None)
 
 if not AUTOMATA_TOKEN:
     logger.error(
@@ -142,14 +143,15 @@ async def plugins(ctx: commands.Context):
     embed.colour = discord.Colour.blurple()
 
     for plugin in loader.get_all_plugins():
-        embed.add_field(
-            name=plugin["manifest"]["name"],
-            value="{}\nVersion: {}\nAuthor: {}".format(
-                plugin["plugin"].__doc__.rstrip(),
-                plugin["manifest"]["version"],
-                plugin["manifest"]["author"],
-            ),
-        )
+        if plugin["plugin"].enabled:
+            embed.add_field(
+                name=plugin["manifest"]["name"],
+                value="{}\nVersion: {}\nAuthor: {}".format(
+                    plugin["plugin"].__doc__.rstrip(),
+                    plugin["manifest"]["version"],
+                    plugin["manifest"]["author"],
+                ),
+            )
 
     await ctx.send(embed=embed)
 

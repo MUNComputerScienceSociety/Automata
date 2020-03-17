@@ -5,15 +5,17 @@ from random import choice
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
+from Globals import DISABLED_PLUGINS
 
 
 class Over9000(AutomataPlugin):
     """Kakarot"""
 
     def __init__(self, manifest, bot):
-        super().__init__(manifest, bot)
-        with open(path.join(self.manifest["path"], "quotes.json"), "r") as f:
-            self.dbz_quotes = load(f)
+        if not self.__class__.__name__ in DISABLED_PLUGINS:
+            super().__init__(manifest, bot)
+            with open(path.join(self.manifest["path"], "quotes.json"), "r") as f:
+                self.dbz_quotes = load(f)
 
     @commands.command()
     async def over9000(self, ctx: commands.Context, dbz_char: str = "goku"):

@@ -4,15 +4,16 @@ import discord
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client
+from Globals import mongo_client, DISABLED_PLUGINS
 
 
 class Logger(AutomataPlugin):
     """Provides logging services."""
 
     def __init__(self, manifest, bot):
-        super().__init__(manifest, bot)
-        self.events = mongo_client.automata.logger_events
+        if not self.__class__.__name__ in DISABLED_PLUGINS:
+            super().__init__(manifest, bot)
+            self.events = mongo_client.automata.logger_events
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
