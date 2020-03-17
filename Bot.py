@@ -70,7 +70,7 @@ async def on_ready():
     await start_http_server(port=9000)
 
 
-if os.environ.get("SENTRY_DSN", "") != "":
+if os.getenv("SENTRY_DSN", None):
 
     @bot.event
     async def on_error(event, *args, **kwargs):
