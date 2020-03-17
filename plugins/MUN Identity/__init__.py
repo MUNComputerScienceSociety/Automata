@@ -5,16 +5,16 @@ from discord.ext import commands
 import requests
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client, PRIMARY_GUILD, VERIFIED_ROLE, DISABLED_PLUGINS
+from Globals import mongo_client, PRIMARY_GUILD, VERIFIED_ROLE
 
 
 class MUNIdentity(AutomataPlugin):
     """Provides identity validation and management services."""
 
     def __init__(self, manifest, bot: commands.Bot):
-        if not self.__class__.__name__ in DISABLED_PLUGINS:
-            super().__init__(manifest, bot)
-            self.identities = mongo_client.automata.munidentity_identities
+        super().__init__(manifest, bot)
+
+        mongo_client.automata.munidentity_identities
 
     async def get_identity(
         self, *, member: Union[discord.User, int] = None, mun_username: str = None

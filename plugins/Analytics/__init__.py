@@ -3,7 +3,7 @@ from discord.ext import commands
 from prometheus_client import Counter, Gauge
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client, PRIMARY_GUILD, DISABLED_PLUGINS
+from Globals import mongo_client, PRIMARY_GUILD
 
 MESSAGES = Counter(
     "automata_message_count", "Total number of messages sent.", ["channel"]
@@ -15,9 +15,9 @@ class Analytics(AutomataPlugin):
     """Provides statistics and analystics tracking services."""
 
     def __init__(self, manifest, bot: commands.Bot):
-        if not self.__class__.__name__ in DISABLED_PLUGINS:
-            super().__init__(manifest, bot)
-            self.message_counts = mongo_client.automata.analytics_message_counts
+        super().__init__(manifest, bot)
+
+        self.message_counts = mongo_client.automata.analytics_message_counts
 
     def _set_member_count(self) -> None:
         totals = {"total": 0, "online": 0, "offline": 0, "idle": 0, "dnd": 0}
