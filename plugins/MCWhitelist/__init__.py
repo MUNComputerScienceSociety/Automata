@@ -1,75 +1,17 @@
-import asyncio
-import json
-from base64 import b64decode
-from datetime import datetime
-
-import requests
 import discord
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client, VERIFIED_ROLE, PRIMARY_GUILD
+from Globals import mongo_client, VERIFIED_ROLE, PRIMARY_GUILD, EXECUTIVE_ROLE
+from .mojang_api import MojangAPI
+from .whitelist_http_api import WhitelistHttpApi
 
-MOJANG_API_BASE = "https://api.mojang.com"
-MOJANG_SESSIONSERVER_BASE = "https://sessionserver.mojang.com"
 
+def is_executive():
+    async def predicate(ctx):
+        return len([role for role in ctx.author.roles if role.id == EXECUTIVE_ROLE]) > 0
 
-class MojangAPI:
-    """https://wiki.vg/Mojang_API"""
-
-    username_base = f"{MOJANG_API_BASE}/users/profiles/minecraft"
-    profile_base = f"{MOJANG_SESSIONSERVER_BASE}/session/minecraft/profile"
-
-    def __init__(self):
-        self.profile_cache = mongo_client.automata.mojangapi_profile_cache
-
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.ensure_collection_expiry())
-
-    async def ensure_collection_expiry(self):
-        await self.profile_cache.create_index(
-            "datetime", expireAfterSeconds=900  # 15 minutes
-        )
-
-    def info_from_username(self, username):
-        try:
-            return requests.get(f"{MojangAPI.username_base}/{username}").json()
-        except:
-            return None
-
-    async def profile_from_uuid(self, uuid):
-        cached = await self.profile_cache.find_one({"uuid": uuid})
-
-        if cached:
-            return cached["data"]
-
-        try:
-            resp = requests.get(f"{MojangAPI.profile_base}/{uuid}").json()
-        except:
-            return None
-
-        await self.profile_cache.insert_one(
-            {"datetime": datetime.utcnow(), "uuid": uuid, "data": resp}
-        )
-        return resp
-
-    def skin_url_from_profile(self, profile):
-        if (not profile) and (not profile["properties"]):
-            return None
-
-        textures_encoded = next(
-            x for x in profile["properties"] if x["name"] == "textures"
-        )
-
-        if not textures_encoded:
-            return None
-
-        textures = json.loads(b64decode(textures_encoded["value"]))
-
-        if (not textures["textures"]) and (not textures["SKIN"]):
-            return None
-
-        return textures["textures"]["SKIN"]["url"]
+    return commands.check(predicate)
 
 
 class MCWhitelist(AutomataPlugin):
@@ -81,11 +23,26 @@ class MCWhitelist(AutomataPlugin):
         self.whitelisted_accounts = (
             mongo_client.automata.mcwhitelist_whitelisted_accounts
         )
+        self.disallowed_members = mongo_client.automata.mcwhitelist_disallowed_members
         self.mojang_api = MojangAPI()
+        self.whitelist_http_api = WhitelistHttpApi()
 
     async def get_whitelisted_account(self, member):
         query = {"discord_id": member.id}
         return await self.whitelisted_accounts.find_one(query)
+
+    async def is_minecraft_account_already_associated(self, username):
+        whitelist = self.whitelist_http_api.whitelist()
+
+        for entry in whitelist:
+            if entry["name"] == username:
+                return True
+
+        return False
+
+    async def is_disallowed(self, member):
+        query = {"discord_id": member.id}
+        return await self.disallowed_members.find_one(query) != None
 
     async def account_embed(self, whitelisted_account):
         embed = discord.Embed()
@@ -120,6 +77,12 @@ class MCWhitelist(AutomataPlugin):
     @whitelist.command(name="add")
     async def whitelist_add(self, ctx: commands.Context, username: str):
         """Add users to the MUNCS Craft servers whitelist."""
+        if await self.is_disallowed(ctx.author):
+            await ctx.send(
+                f"You are disallowed from being added to the MUNCS Craft whitelist."
+            )
+            return
+
         whitelisted_account = await self.get_whitelisted_account(ctx.author)
         if whitelisted_account:
             username = whitelisted_account["minecraft_username"]
@@ -129,7 +92,6 @@ class MCWhitelist(AutomataPlugin):
             return
 
         verified_role = self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE)
-
         if verified_role not in ctx.author.roles:
             await ctx.send(
                 "You must first verify your MUN account using !identity before adding yourself to the whitelist."
@@ -137,14 +99,19 @@ class MCWhitelist(AutomataPlugin):
             return
 
         mojang_resp = self.mojang_api.info_from_username(username)
-
         if not mojang_resp:
             await ctx.send(
                 f"Error verifying username '{username}' from Mojang, are you sure you typed your username correctly?"
             )
             return
 
-        # TODO actually whitelist
+        if await self.is_minecraft_account_already_associated(username):
+            await ctx.send(
+                f"Username '{username}' is already on the whitelist, reach out to an executive to resolve this issue."
+            )
+            return
+
+        self.whitelist_http_api.add(username)
 
         new_whitelisted_account = {
             "discord_id": ctx.author.id,
@@ -162,14 +129,52 @@ class MCWhitelist(AutomataPlugin):
         whitelisted_account = await self.get_whitelisted_account(ctx.author)
         if not whitelisted_account:
             await ctx.send(
-                f"You don't have the Minecraft account to remove, run !whitelist add <usernmae> first."
+                f"You don't have the Minecraft account to remove, run !whitelist add <username> first."
             )
             return
 
         username = whitelisted_account["minecraft_username"]
 
-        # TODO actually remove from whitelist
+        self.whitelist_http_api.remove(username)
 
         await self.whitelisted_accounts.delete_many({"discord_id": ctx.author.id})
 
         await ctx.send(f"Minecraft account '{username}' removed from the whitelist.")
+
+    @whitelist.command(name="disallow")
+    @is_executive()
+    async def whitelist_disallow(self, ctx: commands.Context):
+        """Disallow users from adding themselves to the MUNCS Craft whitelist."""
+        mentions = ctx.message.mentions
+
+        if len(mentions) != 1:
+            await ctx.send("Too many/little mentions in your message!")
+            return
+
+        mentioned = mentions[0]
+
+        if await self.is_disallowed(mentioned):
+            await ctx.send("User already disallowed.")
+            return
+
+        await self.disallowed_members.insert_one({"discord_id": mentions[0].id})
+        await ctx.send("User now disallowed.")
+
+    @whitelist.command(name="allow")
+    @is_executive()
+    async def whitelist_allow(self, ctx: commands.Context):
+        """Allows users to add themselves to the MUNCS Craft whitelist, if previously disallowed."""
+        mentions = ctx.message.mentions
+
+        if len(mentions) != 1:
+            await ctx.send("Too many/little mentions in your message!")
+            return
+
+        mentioned = mentions[0]
+
+        if not await self.is_disallowed(mentioned):
+            await ctx.send("User already allowed.")
+            return
+
+        await self.disallowed_members.delete_many({"discord_id": mentions[0].id})
+        await ctx.send("User now allowed.")
