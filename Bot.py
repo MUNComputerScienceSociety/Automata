@@ -174,6 +174,7 @@ for plugin in loader.get_all_plugins():
         logger.info(f"{manifest['name']} disabled.")
 
 for plugin in loader.get_all_plugins():
-    plugin["plugin"].enable()
+    if plugin["plugin"]:
+        plugin["plugin"].enable()
 
 bot.run(AUTOMATA_TOKEN)
