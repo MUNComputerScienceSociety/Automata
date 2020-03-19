@@ -2,7 +2,12 @@ import discord
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client, VERIFIED_ROLE, PRIMARY_GUILD, EXECUTIVE_ROLE
+from Globals import (
+    mongo_client,
+    PRIMARY_GUILD,
+    VERIFIED_ROLE,
+    EXECUTIVE_ROLE,
+)
 from .mojang_api import MojangAPI
 from .whitelist_http_api import WhitelistHttpApi
 
@@ -43,6 +48,11 @@ class MCWhitelist(AutomataPlugin):
     async def is_disallowed(self, member):
         query = {"discord_id": member.id}
         return await self.disallowed_members.find_one(query) != None
+
+    async def remove_whitelisted_account(self, ctx, whitelisted_account):
+        username = whitelisted_account["minecraft_username"]
+        self.whitelist_http_api.remove(username)
+        await self.whitelisted_accounts.delete_many({"discord_id": ctx.author.id})
 
     async def account_embed(self, whitelisted_account):
         embed = discord.Embed()
@@ -101,7 +111,7 @@ class MCWhitelist(AutomataPlugin):
         mojang_resp = self.mojang_api.info_from_username(username)
         if not mojang_resp:
             await ctx.send(
-                f"Error verifying username '{username}' from Mojang, are you sure you typed your username correctly?"
+                f"Error verifying username '{username}' from Mojang, are you sure you typed it correctly?"
             )
             return
 
@@ -133,12 +143,8 @@ class MCWhitelist(AutomataPlugin):
             )
             return
 
+        await self.remove_whitelisted_account(ctx, whitelisted_account)
         username = whitelisted_account["minecraft_username"]
-
-        self.whitelist_http_api.remove(username)
-
-        await self.whitelisted_accounts.delete_many({"discord_id": ctx.author.id})
-
         await ctx.send(f"Minecraft account '{username}' removed from the whitelist.")
 
     @whitelist.command(name="disallow")
@@ -157,8 +163,14 @@ class MCWhitelist(AutomataPlugin):
             await ctx.send("User already disallowed.")
             return
 
+        whitelisted_account = await self.get_whitelisted_account(mentioned)
+        if whitelisted_account:
+            await self.remove_whitelisted_account(ctx, whitelisted_account)
+            await ctx.send("User now disallowed, and removed from the whitelist.")
+        else:
+            await ctx.send("User now disallowed.")
+
         await self.disallowed_members.insert_one({"discord_id": mentions[0].id})
-        await ctx.send("User now disallowed.")
 
     @whitelist.command(name="allow")
     @is_executive()
