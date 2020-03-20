@@ -43,7 +43,7 @@ class MojangAPI:
         try:
             resp = requests.get(f"{MojangAPI.profile_base}/{uuid}").json()
         except:
-            return None
+            resp = None
 
         await self.profile_cache.insert_one(
             {"datetime": datetime.utcnow(), "uuid": uuid, "data": resp}
