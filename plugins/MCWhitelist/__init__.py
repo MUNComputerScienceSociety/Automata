@@ -6,17 +6,9 @@ from Globals import (
     mongo_client,
     PRIMARY_GUILD,
     VERIFIED_ROLE,
-    EXECUTIVE_ROLE,
 )
 from .mojang_api import MojangAPI
 from .whitelist_http_api import WhitelistHttpApi
-
-
-def is_executive():
-    async def predicate(ctx):
-        return len([role for role in ctx.author.roles if role.id == EXECUTIVE_ROLE]) > 0
-
-    return commands.check(predicate)
 
 
 class MCWhitelist(AutomataPlugin):
@@ -38,16 +30,11 @@ class MCWhitelist(AutomataPlugin):
 
     async def is_minecraft_account_already_associated(self, username):
         whitelist = self.whitelist_http_api.whitelist()
-
-        for entry in whitelist:
-            if entry["name"] == username:
-                return True
-
-        return False
+        return any(entry["name"] == username for entry in whitelist)
 
     async def is_disallowed(self, member):
         query = {"discord_id": member.id}
-        return await self.disallowed_members.find_one(query) != None
+        return await self.disallowed_members.find_one(query) is not None
 
     async def remove_whitelisted_account(self, ctx, whitelisted_account):
         username = whitelisted_account["minecraft_username"]
@@ -61,9 +48,9 @@ class MCWhitelist(AutomataPlugin):
             whitelisted_account["minecraft_uuid"]
         )
 
-        if profile:
+        if profile is not None:
             skin_url = self.mojang_api.skin_url_from_profile(profile)
-            if skin_url:
+            if skin_url is not None:
                 embed.set_image(url=skin_url)
 
         username = whitelisted_account["minecraft_username"]
@@ -76,7 +63,7 @@ class MCWhitelist(AutomataPlugin):
         """Manage the MUNCS Craft server whitelist."""
         if not ctx.invoked_subcommand:
             whitelisted_account = await self.get_whitelisted_account(ctx.author)
-            if whitelisted_account:
+            if whitelisted_account is not None:
                 embed = await self.account_embed(whitelisted_account)
                 await ctx.send(embed=embed)
             else:
@@ -94,7 +81,7 @@ class MCWhitelist(AutomataPlugin):
             return
 
         whitelisted_account = await self.get_whitelisted_account(ctx.author)
-        if whitelisted_account:
+        if whitelisted_account is not None:
             username = whitelisted_account["minecraft_username"]
             await ctx.send(
                 f"You already have the Minecraft account '{username}' associated with your Discord account, run !whitelist remove first to change/add a different one."
@@ -109,7 +96,7 @@ class MCWhitelist(AutomataPlugin):
             return
 
         mojang_resp = self.mojang_api.info_from_username(username)
-        if not mojang_resp:
+        if mojang_resp is None:
             await ctx.send(
                 f"Error verifying username '{username}' from Mojang, are you sure you typed it correctly?"
             )
@@ -137,7 +124,7 @@ class MCWhitelist(AutomataPlugin):
     async def whitelist_remove(self, ctx: commands.Context):
         """Remove users from the MUNCS Craft servers whitelist."""
         whitelisted_account = await self.get_whitelisted_account(ctx.author)
-        if not whitelisted_account:
+        if whitelisted_account is None:
             await ctx.send(
                 f"You don't have the Minecraft account to remove, run !whitelist add <username> first."
             )
@@ -148,7 +135,7 @@ class MCWhitelist(AutomataPlugin):
         await ctx.send(f"Minecraft account '{username}' removed from the whitelist.")
 
     @whitelist.command(name="disallow")
-    @is_executive()
+    @commands.has_permissions(view_audit_log=True)
     async def whitelist_disallow(self, ctx: commands.Context):
         """Disallow users from adding themselves to the MUNCS Craft whitelist."""
         mentions = ctx.message.mentions
@@ -164,7 +151,7 @@ class MCWhitelist(AutomataPlugin):
             return
 
         whitelisted_account = await self.get_whitelisted_account(mentioned)
-        if whitelisted_account:
+        if whitelisted_account is not None:
             await self.remove_whitelisted_account(ctx, whitelisted_account)
             await ctx.send("User now disallowed, and removed from the whitelist.")
         else:
@@ -173,20 +160,12 @@ class MCWhitelist(AutomataPlugin):
         await self.disallowed_members.insert_one({"discord_id": mentions[0].id})
 
     @whitelist.command(name="allow")
-    @is_executive()
-    async def whitelist_allow(self, ctx: commands.Context):
+    @commands.has_permissions(view_audit_log=True)
+    async def whitelist_allow(self, ctx: commands.Context, user: discord.Member):
         """Allows users to add themselves to the MUNCS Craft whitelist, if previously disallowed."""
-        mentions = ctx.message.mentions
-
-        if len(mentions) != 1:
-            await ctx.send("Too many/little mentions in your message!")
-            return
-
-        mentioned = mentions[0]
-
-        if not await self.is_disallowed(mentioned):
+        if not await self.is_disallowed(user):
             await ctx.send("User already allowed.")
             return
 
-        await self.disallowed_members.delete_many({"discord_id": mentions[0].id})
+        await self.disallowed_members.delete_many({"discord_id": user.id})
         await ctx.send("User now allowed.")

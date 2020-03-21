@@ -29,41 +29,43 @@ class MojangAPI:
         )
 
     def info_from_username(self, username):
-        try:
-            return requests.get(f"{MojangAPI.username_base}/{username}").json()
-        except:
-            return None
+        resp = requests.get(f"{MojangAPI.username_base}/{username}")
+
+        if resp.status_code == 200:
+            return resp.json()
 
     async def profile_from_uuid(self, uuid):
         cached = await self.profile_cache.find_one({"uuid": uuid})
 
-        if cached:
+        if cached is not None:
             return cached["data"]
 
-        try:
-            resp = requests.get(f"{MojangAPI.profile_base}/{uuid}").json()
-        except:
-            resp = None
+        resp = requests.get(f"{MojangAPI.profile_base}/{uuid}")
+
+        if resp.status_code == 200:
+            data = resp.json()
+        else:
+            data = None
 
         await self.profile_cache.insert_one(
-            {"datetime": datetime.utcnow(), "uuid": uuid, "data": resp}
+            {"datetime": datetime.utcnow(), "uuid": uuid, "data": data}
         )
-        return resp
+        return data
 
     def skin_url_from_profile(self, profile):
-        if (not profile) and (not profile["properties"]):
+        if (profile is None) and (profile["properties"] is None):
             return None
 
         textures_encoded = next(
             x for x in profile["properties"] if x["name"] == "textures"
         )
 
-        if not textures_encoded:
+        if textures_encoded is None:
             return None
 
         textures = json.loads(b64decode(textures_encoded["value"]))
 
-        if (not textures["textures"]) and (not textures["SKIN"]):
+        if (textures["textures"] is None) and (textures["SKIN"] is None):
             return None
 
         return textures["textures"]["SKIN"]["url"]

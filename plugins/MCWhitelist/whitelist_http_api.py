@@ -1,4 +1,5 @@
 import json
+
 import requests
 
 from Globals import mongo_client, WHITELIST_HTTP_API_BEARER_TOKEN
@@ -9,16 +10,16 @@ HEADERS = {"authorization": f"WHA {WHITELIST_HTTP_API_BEARER_TOKEN}"}
 
 class WhitelistHttpApi:
     def whitelist(self):
-        return requests.request("GET", WHITELIST_HTTP_API_BASE, headers=HEADERS).json()
+        return requests.get(WHITELIST_HTTP_API_BASE, headers=HEADERS).json()
 
     def add(self, username):
-        data = json.dumps({"name": username})
-        requests.request(
-            "POST", WHITELIST_HTTP_API_BASE, data=data, headers=HEADERS
+        data = {"name": username}
+        requests.post(
+            WHITELIST_HTTP_API_BASE, json=data, headers=HEADERS
         ).raise_for_status()
 
     def remove(self, username):
-        data = json.dumps({"name": username})
-        requests.request(
-            "DELETE", WHITELIST_HTTP_API_BASE, data=data, headers=HEADERS
+        data = {"name": username}
+        requests.delete(
+            WHITELIST_HTTP_API_BASE, json=data, headers=HEADERS
         ).raise_for_status()
