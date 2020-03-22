@@ -9,7 +9,7 @@ For feature requests / help getting the bot running, don't fret to ask questions
 
 ## Running locally
 
-1. Clone the project by running `git@github.com:MUNComputerScienceSociety/Automata.git`, and change into the directory by running `cd ./Automata`
+1. Clone the project by running `https://github.com/MUNComputerScienceSociety/Automata.git`, and change into the directory by running `cd ./Automata`
 2. Copy `.env.dist` to `.env`
 3. Fill out the required information in the `.env`
    - At the moment, the only required environment variable required is `AUTOMATA_TOKEN`, which is a Discord token, which you can see how to get [here](https://discordpy.readthedocs.io/en/latest/discord.html)
@@ -75,6 +75,13 @@ When you make changes to your plugins, restart the Automata container using `doc
 
 1. Just edit the core files / plugins directly :)
 2. Start the bot using the instructions from [Running locally](#running-locally)
+
+## Pushing changes to GitHub
+
+1. Fork this repository, clone your fork, and commit your changes to a branch on your fork
+2. Create a PR to merge your branch into the `master` branch here, and make sure to tag an executive / mention the PR in Discord so we see it
+3. We'll likely request some changes before it is merged
+4. Once it's good, a few minutes after the PR is merged the feature should be live, since Automata uses CI/CD :)
 
 ## Container responsibilities
 
