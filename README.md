@@ -38,7 +38,7 @@ For feature requests / help getting the bot running, don't fret to ask questions
 > And start it _only_ by running `docker-compose up -d mongo`
 
 2. Install the requirements found in the `requirements.txt` file using `pip install -r requirements.txt`
-   - Using a virtual environment is highly recommended, [this section of the Flask documentation explains this well](https://flask.palletsprojects.com/en/1.1.x/installation/#virtual-environments)).
+   - Using a virtual environment is highly recommended, [this section of the Flask documentation explains this well](https://flask.palletsprojects.com/en/1.1.x/installation/#virtual-environments).
 3. Run the bot using `python Bot.py`
 
 ## Developing your own plugins
