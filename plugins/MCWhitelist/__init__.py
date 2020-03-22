@@ -136,28 +136,20 @@ class MCWhitelist(AutomataPlugin):
 
     @whitelist.command(name="disallow")
     @commands.has_permissions(view_audit_log=True)
-    async def whitelist_disallow(self, ctx: commands.Context):
+    async def whitelist_disallow(self, ctx: commands.Context, user: discord.Member):
         """Disallow users from adding themselves to the MUNCS Craft whitelist."""
-        mentions = ctx.message.mentions
-
-        if len(mentions) != 1:
-            await ctx.send("Too many/little mentions in your message!")
-            return
-
-        mentioned = mentions[0]
-
-        if await self.is_disallowed(mentioned):
+        if await self.is_disallowed(user):
             await ctx.send("User already disallowed.")
             return
 
-        whitelisted_account = await self.get_whitelisted_account(mentioned)
+        whitelisted_account = await self.get_whitelisted_account(user)
         if whitelisted_account is not None:
             await self.remove_whitelisted_account(ctx, whitelisted_account)
             await ctx.send("User now disallowed, and removed from the whitelist.")
         else:
             await ctx.send("User now disallowed.")
 
-        await self.disallowed_members.insert_one({"discord_id": mentions[0].id})
+        await self.disallowed_members.insert_one({"discord_id": user.id})
 
     @whitelist.command(name="allow")
     @commands.has_permissions(view_audit_log=True)

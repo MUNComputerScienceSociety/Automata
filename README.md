@@ -5,15 +5,41 @@
 
 Discord bot handling the management of the MUN Computer Science Society Discord server.
 
+For feature requests / help getting the bot running, don't fret to ask questions in the `#automata` channel in the guild!
+
 ## Running locally
 
 1. Clone the project by running `git@github.com:MUNComputerScienceSociety/Automata.git`, and change into the directory by running `cd ./Automata`
-2. Create the directory `mounted_plugins` within the project by running `mkdir ./mounted_plugins`
-3. Copy `.env.dist` to `.env`
-4. Fill out the required information in the `.env`
+2. Copy `.env.dist` to `.env`
+3. Fill out the required information in the `.env`
    - At the moment, the only required environment variable required is `AUTOMATA_TOKEN`, which is a Discord token, which you can see how to get [here](https://discordpy.readthedocs.io/en/latest/discord.html)
-5. Create the network `web` by running `docker network create web`
-6. Start the containers by running `docker-compose up -d`
+
+### Using Docker
+
+1. Create the network `web` by running `docker network create web`
+2. Create the directory `mounted_plugins` within the project by running `mkdir ./mounted_plugins`
+3. Start the containers by running `docker-compose up -d`
+
+### Without Docker
+
+1. Run MongoDB
+
+> You can use Docker for running MongoDB (recommended), just add the following to the `docker-compose.yml` file to expose it to your local machine.
+>
+> ```yml
+>   ...
+>   mongo:
+>     ...
+>     ports:
+>       - "127.0.0.1:27017:27017"
+>   ...
+> ```
+>
+> And start it _only_ by running `docker-compose up -d mongo`
+
+2. Install the requirements found in the `requirements.txt` file using `pip install -r requirements.txt`
+   - Using a virtual environment is highly recommended, [this section of the Flask documentation explains this well](https://flask.palletsprojects.com/en/1.1.x/installation/#virtual-environments)).
+3. Run the bot using `python Bot.py`
 
 ## Developing your own plugins
 
