@@ -1,40 +1,42 @@
-# import discord
-# from discord.ext import commands
+import discord
+from discord.ext import commands
 from datetime import datetime
+from month import month
 
-# from Plugin import AutomataPlugin
-
-# class TodayAtMun(AutomataPlugin):
-
-
-fileName = "diary.txt"
-
-date = str(datetime.now().strftime("%Y-%#m-%#d"))
-month = {
-    1: "January",
-    2: "Febuary",
-    3: "March",
-    4: "April",
-    5: "May",
-    6: "June",
-    7: "July",
-    8: "August",
-    9: "September",
-    10: "October",
-    11: "November",
-    12: "December"
-}
+#from Plugin import AutomataPlugin
 
 
-dice = date.split("-")
+class TodayAtMun():
+    """
+        Provides Significant Dates on the Mun Calendar
+    """
 
-currYear = dice[0]
-currMonth = int(dice[1])
-currDay = dice[2]
+    fileName = "diary.txt"
+    date = str(datetime.now().strftime("%Y-%#m-%#d"))
 
+    dice = date.split("-")
 
-lookUp = f"{month[currMonth]} {currDay}, {currYear}"
+    currYear = dice[0]
+    currMonth = int(dice[1])
+    currDay = dice[2]
 
-print(lookUp)
-fileReader = open(fileName, "r")
-# fileName.close()
+    lookUp = f"{month[currMonth]} {currDay}, {currYear}"
+    
+    print(lookUp)
+    fileReader = open(fileName, "r")
+    # fileName.close()
+
+    @commands.Command()
+    async def getCurrDate(self):
+        date = str(datetime.now().strftime("%Y-%#m-%#d"))
+
+        dice = date.split("-")
+
+        currYear = dice[0]
+        currMonth = int(dice[1])
+        currDay = dice[2]
+
+        lookUp = f"{month[currMonth]} {currDay}, {currYear}"
+
+        send(lookUp)
+    
