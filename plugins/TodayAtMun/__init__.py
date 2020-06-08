@@ -4,7 +4,6 @@ from discord.ext import commands
 from plugins.TodayAtMun.Month import month
 from datetime import datetime
 from json import load
-
 from Plugin import AutomataPlugin
 
 
@@ -18,9 +17,12 @@ class TodayAtMun(AutomataPlugin):
         with open(path.join(self.manifest["path"], "diary.json"), "r") as f:
             self.info = load(f)
 
-
     def getCurrDate(self):
-        """ Provides Current Date formatted to Muns style."""
+        """ 
+        Provides Current Date formatted to Muns style.
+            params: none
+            returns: string of the current day
+        """
 
         date = str(datetime.now().strftime("%Y-%#m-%#d-%A")).split("-")
 
@@ -33,5 +35,13 @@ class TodayAtMun(AutomataPlugin):
 
     @commands.command()
     async def today(self, ctx):
+        """ Provides the significant event on the mun calendar """
         date = self.getCurrDate()
         print(f"Today is: {date}.")
+        if date.endswith("Sunday"):
+            await ctx.send("It's Sunday OvO")
+        else:
+            for key in self.info:
+                if key == date:
+                    print(self.info[key])
+                    await ctx.send(self.info[key])
