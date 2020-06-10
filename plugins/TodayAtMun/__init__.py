@@ -16,21 +16,23 @@ class TodayAtMun(AutomataPlugin):
 
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
-        self.date = None
+        self.result = ""
         with open(path.join(self.manifest["path"], "diary.json"), "r") as f:
             self.info = load(f)
+        self.set_current_date()
 
     def set_current_date(self):
-        # self.date = str(datetime.now().strftime("%Y-%#m-%#d-%A")).split("-")
-        self.date = datetime.now().strftime("%Y-%#m-%#d-%A")
+        """ Current Day, Month, Hour, second """
+        self.date = datetime.now()
 
-    def format_date(self):
+    def format_date(self, date):
         """ 
         Provides Current Date formatted to Muns style.
             params: none
-            returns: string of the current day
+            returns: string
         """
-        temp = self.date.split("-")
+        temp = date.strftime("%Y-%#m-%#d-%A").split("-")
+        print(temp)
         currYear = temp[0]
         currMonth = int(temp[1])
         currDay = temp[2]
@@ -39,27 +41,29 @@ class TodayAtMun(AutomataPlugin):
         return f"{month[currMonth]} {currDay}, {currYear}, {currDayOfWeek}"
 
     def nextDay(self):
-        self.date += timedelta(days=1)
-        print(self.date)
+        """Increases Day By One """
+        self.date = self.date + timedelta(days=1)
         return self.date
+
+    def findEvent(self, d):
+        """ Provides the significant event on the mun calendar """
+        self.fdate = self.format_date(self.date)
+        for key in self.info:
+            if key == self.fdate:
+                self.infoDay = self.info[key]
+                return
+
+        self.findEvent(self.nextDay())
 
     @commands.command()
     async def today(self, ctx):
-        """ Provides the significant event on the mun calendar """
+        """ Sends quick update on Muns Uni Diary - today or next date """
         self.set_current_date()
-        self.date = self.format_date()
-        print(f"Today is: {self.date}.")
-        # Appears Sunday is never in the Mun diary ( could change )
-        if self.date.endswith("Sunday"):
-            await ctx.send("Nothing on Sundays")
-        else:
-            for key in self.info:
-                if key == self.date:
-                    embed = discord.Embed(
-                        title=self.date,
-                        description=f"{key}",
-                        color=discord.Colour.red(),
-                    )
-                    await ctx.send(embed)
-                    return
-            self.nextDay()
+        self.findEvent(self.date)
+        embed = discord.Embed(
+            title=f"{self.format_date(self.date)}",
+            description=f"```{self.infoDay}```",
+            url="https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086",
+            colour=discord.Colour.orange(),
+        )
+        await ctx.send(embed=embed)
