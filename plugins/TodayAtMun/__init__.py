@@ -7,6 +7,7 @@ from datetime import timedelta
 from json import load
 from Plugin import AutomataPlugin
 from Bot import bot
+from plugins.TodayAtMun.diary_parser import diary_parser
 
 
 class TodayAtMun(AutomataPlugin):
@@ -32,7 +33,6 @@ class TodayAtMun(AutomataPlugin):
             returns: string
         """
         temp = date.strftime("%Y-%#m-%#d-%A").split("-")
-        print(temp)
         currYear = temp[0]
         currMonth = int(temp[1])
         currDay = temp[2]
@@ -56,8 +56,13 @@ class TodayAtMun(AutomataPlugin):
         self.findEvent(self.nextDay())
 
     @commands.command()
-    async def today(self, ctx):
+    async def today(self, ctx, arg=None):
         """ Sends quick update on Muns Uni Diary - today or next date """
+        if arg == "reset":
+            diary_parser()
+            await ctx.send("Data Reset.")
+            return
+
         self.set_current_date()
         self.findEvent(self.date)
         embed = discord.Embed(
@@ -67,3 +72,4 @@ class TodayAtMun(AutomataPlugin):
             colour=discord.Colour.orange(),
         )
         await ctx.send(embed=embed)
+
