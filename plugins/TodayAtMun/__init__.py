@@ -1,5 +1,4 @@
 import discord
-#from os import path
 from discord.ext import commands
 from plugins.TodayAtMun.Month import month
 from datetime import datetime
@@ -19,7 +18,7 @@ class TodayAtMun(AutomataPlugin):
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
         self.result = ""
-        path =  Path(__file__).parent
+        path = Path(__file__).parent
         file_name = path / "diary.json"
         with open(file_name, "r") as f:
             self.info = load(f)
@@ -61,6 +60,7 @@ class TodayAtMun(AutomataPlugin):
     @commands.command()
     async def today(self, ctx, arg=None):
         """ Sends quick update on Muns Uni Diary - today or next date """
+        # Resets the data file from the diary.
         if arg == "reset":
             diary_parser()
             await ctx.send("Data Reset.")
@@ -75,4 +75,3 @@ class TodayAtMun(AutomataPlugin):
             colour=discord.Colour.orange(),
         )
         await ctx.send(embed=embed)
-
