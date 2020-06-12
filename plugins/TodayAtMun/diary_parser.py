@@ -3,19 +3,19 @@ import requests
 import os
 from os import path
 import json
+from pathlib import Path
+
 
 class diary_parser:
     def __init__(self):
-        if path.exists("diary.json"):
-            os.remove("diary.json")
-            print("File Removed")
+        BASE_DIR = Path(__file__).parent
+        file_name = BASE_DIR / "diary.json"
         r = requests.get(
             "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086", verify=False
         ).text
-
         soup = BeautifulSoup(r, "html.parser")
 
-        with open("diary.json", "w") as file:
+        with open(file_name, "w") as file:
 
             data = soup.find_all("td", attrs={"align": "left"})
             data2 = soup.find_all("td", attrs={"align": "justify"})
@@ -31,3 +31,5 @@ class diary_parser:
                     continue
 
             diary_file = file.write(json.dumps(diary))
+
+diary_parser()

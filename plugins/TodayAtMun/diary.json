@@ -1,80 +1,49 @@
 {
-    "June 8, 2020, Monday": [
-        "Last date for undergraduate and graduate students to drop courses without academic prejudice, Intersession",
-        "Last day for undergraduate students to drop courses and receive a 25% refund of tuition fees",
-        "14-week Spring semester. No tuition fees will be refunded for 14-week Spring semester courses dropped after this date."
-    ],
-    "June 19, 2020, Friday": [
-        "Final date for submission of Master's and Doctoral Theses and Reports for examination, by candidates who expect to receive their degree at the Fall Convocation 2020. Theses and Reports received after this date will be processed as time and resources permit.",
-        "Lectures end, Intersession"
-    ],
-    "June 22, 2020, Monday": [
-        "Examinations begin, Intersession",
-        "Semester Break begins",
-        "14-week Spring semester"
-    ],
-    "June 24, 2020, Wednesday": [
-        "Examinations end, Intersession"
-    ],
-    "June 25, 2020, Thursday": [
-        " Lectures resume,",
-        "14-week Spring semester"
-    ],
-    "June 26,2020, Friday": [
-        "Academic year ends for Residents",
-        "Sessions end for Medical students (Classes of 2022 and 2023)"
-    ],
-    "June 29, 2020, Monday": [
-        "Final date for departments to submit Recommendation for Award of Degree in order for graduate students to receive a 50% refund of continuance fees, Spring semester",
-        "Lectures begin for Summer session"
-    ],
-    "July 1, 2020, Wednesday": [
-        "Memorial Day holiday, no lectures"
-    ],
-    "July 6, 2020, Monday": [
-        "End of Regular Registration Period and last day for undergraduate and graduate students to add courses, Summer session",
-        " Last date for undergraduate and graduate students to drop courses without academic prejudice,",
-        "14-week Spring semester",
-        "Last day for undergraduate students to drop courses and receive a 100% refund of tuition fees, Summer session"
-    ],
-    "July 9, 2020, Thursday": [
-        "Last day for undergraduate students to drop courses and receive a 50% refund of tuition fees, Summer session."
-    ],
-    "July 13, 2020, Monday": [
-        "Last day for undergraduate students to drop courses and receive a 25% refund of tuition fees, Summer session. No tuition fees will be refunded for Summer session courses dropped after this date."
-    ],
-    "July 15, 2020, Wednesday": [
-        "Final date for filing, with the Registrar, applications for Degrees and Diplomas for the Fall Convocation 2020. Applications received after this date will be processed as time and resources permit."
-    ],
-    "July 20, 2020, Monday": [
-        "Final date for Departments to submit Recommendation for Award of Degree in order for graduate students to receive a 25% refund of continuance fees, Spring semester"
-    ],
-    "July 27, 2020, Monday": [
-        "Last date for undergraduate and graduate students to drop courses without academic prejudice, Summer session"
-    ],
-    "July 31, 2020, Friday": [
-        "Sessions end for Medical students (Class of 2021)"
-    ],
-    "August 7, 2020, Friday": [
-        "Lectures end",
-        "14-week Spring semester. Lectures will follow the Wednesday schedule on this day only"
-    ],
-    "August 8, 2020, Saturday": [
-        "Lectures end, Summer session. Lectures will follow the Wednesday schedule on this day only."
-    ],
-    "August 10, 2020, Monday": [
-        "Examinations begin,",
-        "14-week Spring semester and Summer session",
-        "Final date for submission of Work Reports by Co-operative Education students"
-    ],
-    "August 12, 2020, Wednesday": [
-        "Examinations end, Summer session"
-    ],
-    "August 15, 2020, Saturday": [
-        "Examinations end,",
-        "14-week Spring semester"
-    ],
-    "August 21, 2020, Friday": [
-        "Spring Work Term ends for Co-operative Education students"
-    ]
+    "June 1, 2020, Monday": "Registration begins for Residents",
+    "July 14, 2020, Tuesday": "Registration begins for eligible students registering in undergraduate courses, Fall semester 2020",
+    "August 3, 2020, Monday": "Deadline for registration and fee payment for ResidentsRegistration begins for graduate students, Fall semester 2020",
+    "September 7, 2020, Monday": "Labour Day, no lectures",
+    "September 9, 2020, Wednesday": "Deadline for fees payment Fall semesterLectures begin, Fall semester",
+    "September 16, 2020, Wednesday": "Final date for receipt, by the Registrar, of replacement grades for \"INCOMPLETE\" grades in undergraduate and graduate courses, Spring semester (Intersession, Summer session and 14-week) 2020",
+    "September 23, 2020, Wednesday": "End of Regular Registration Period and last day for undergraduate and graduate students to add courses, Fall semesterLast day for Medical students to withdraw from a Phase and receive 100% refund of tuition fees, Payment 1Last day for undergraduate students to drop courses and receive a 100% refund of tuition fees, Fall semester",
+    "September 30, 2020, Wednesday": "Final date for departments to submit Recommendation for Award of Degree in order for graduate students to be deregistered from Graduate Registration 9000/Medicine 9900 without incurring any liability for continuance fees, Fall semesterFinal date for graduate students to withdraw from programs without incurring liability for tuition fees, Fall semesterLast day for Medical students to withdraw from a Phase and receive 50% refund of tuition fees, Payment 2Last day for undergraduate students to drop courses and receive a 50% refund of tuition fees, Fall semester",
+    "October 7, 2020, Wednesday": "Last day for Medical students to withdraw from a Phase and receive 25% refund of tuition fees, Payment 1. No tuition fees are refunded for withdrawing from a Phase after this date.Last day for undergraduate students to drop courses and receive a 25% refund of tuition fees, Fall semester. No tuition fees are refunded for courses dropped after this date.",
+    "October 15, 2020, Thursday": "Lectures will follow the Tuesday schedule on this day only",
+    "October 16, 2020, Friday": "Lectures will follow the Monday schedule on this day only",
+    "October 28, 2020, Wednesday": "Final date for departments to submit Recommendation for Award of Degree in order for graduate students to receive a 50% refund of continuance fees, Fall semester",
+    "November 2, 2020, Monday": "Registration begins for eligible students registering in undergraduate courses, Winter semester 2021",
+    "November 4, 2020, Wednesday": "Last day for undergraduate students and graduate students to drop courses without academic prejudice, Fall semester",
+    "November 23, 2020, Monday": "Registration begins for graduate students, Winter semester 2021",
+    "January 6, 2021, Wednesday": "Deadline for fees payment, including for undergraduate Medical students, Winter semesterLectures begin, Winter semester",
+    "January 13, 2021, Wednesday": "Final date for receipt, by the Registrar, of replacement grades for \"INCOMPLETE\" grades in undergraduate and graduate courses, Fall semester 2020Final date for submission of Master's and Doctoral Theses and Reports for examination, by candidates who expect to receive their degree at the Spring Convocation 2021. Theses and Reports received after this date will be processed as time and resources permit.",
+    "January 20, 2021, Wednesday": "End of Regular Registration Period and last day for undergraduate and graduate students to add courses, Winter semesterLast day for Medical students to withdraw from a Phase and receive 100% refund of tuition fees, Payment 2Last day for undergraduate students to drop courses and receive a 100% refund of tuition fees, Winter semester",
+    "January 27, 2021, Wednesday": "Final date for departments to submit Recommendation for Award of Degree in order for graduate students to be deregistered from Graduate Registration 9000/Medicine 9900 without incurring any liability for continuance fees, Winter semesterFinal date for graduate students to withdraw from programs without incurring liability for tuition fees, Winter semesterLast day for Medical students to withdraw from a Phase and receive 50% refund of tuition fees, Payment 2Last day for undergraduate students to drop courses and receive a 50% refund of tuition fees, Winter semester",
+    "February 3, 2021, Wednesday": "Last day for Medical students to withdraw from a Phase and receive 25% refund of tuition fees, Payment 2. No tuition fees are refunded for withdrawing from a Phase after this date.Last day for undergraduate students to drop courses and receive a 25% refund of tuition fees, Winter semester. No tuition fees are refunded for courses dropped after this date.",
+    "February 24, 2021, Wednesday": "Final date for departments to submit Recommendation for Award of Degree in order for graduate students to receive a 50% refund of continuance fees, Winter semester",
+    "March 3, 2021, Wednesday": "Last date for undergraduate and graduate students to drop courses without academic prejudice, Winter semester",
+    "March 17, 2021, Wednesday": "Final date for Departments to submit Recommendation for Award of Degree in order for graduate students to receive a 25% refund of continuance fees, Winter semester",
+    "March 22, 2021, Monday": "Registration begins for eligible students registering in undergraduate courses, Spring semester (14-week courses, Intersession and Summer session) 2021",
+    "April 9, 2021, Friday": "Lectures end, Winter semester",
+    "April 12, 2021, Monday": "Registration begins for graduate students, Spring semester (14-week courses, Intersession and Summer session) 2021",
+    "May 10, 2021, Monday": "Deadline for fees payment, Spring semester (14-week courses, Intersession and Summer session)Lectures begin, Intersession and 14-week Spring semester",
+    "May 17, 2021, Monday": "End of Regular Registration Period and last day for undergraduate and graduate students to add courses, IntersessionFinal date for receipt, by the Registrar, of replacement grades for \"INCOMPLETE\" grades in undergraduate and graduate courses, Winter semester 2021Last day for undergraduate students to drop courses and receive a 100% refund of tuition fees, Intersession",
+    "May 20, 2021, Thursday": "Last day for undergraduate students to drop courses and receive a 50% refund of tuition fees, Intersession",
+    "May 24, 2021, Monday": "End of Regular Registration Period and last day for undergraduate and graduate students to add courses, 14-week Spring semesterLast day for undergraduate students to drop courses and receive a 100% refund of tuition fees, 14-week Spring semesterLast day for undergraduate students to drop courses and receive a 25% refund of tuition fees, Intersession. No tuition fees will be refunded for Intersession courses dropped after this date.",
+    "May 31, 2021, Monday": "Final date for departments to submit Recommendation for Award of Degree in order for graduate students to be deregistered from Graduate Registration 9000/Medicine 9900 without incurring any liability for continuance fees, Spring semesterFinal date for graduate students to withdraw from programs without incurring any liability for tuition fees, 14-week Spring semesterLast day for undergraduate students to drop courses and receive a 50% refund of tuition fees, 14-week Spring semester",
+    "June 7, 2021, Monday": "Last date for undergraduate and graduate students to drop courses without academic prejudice, IntersessionLast day for undergraduate students to drop courses and receive a 25% refund of tuition fees, 14-week Spring semester. No tuition fees will be refunded for 14-week Spring semester courses dropped after this date.",
+    "June 18, 2021, Friday": "Final date for submission of Master's and Doctoral Theses and Reports for examination, by candidates who expect to receive their degree at the Fall Convocation 2021. Theses and Reports received after this date will be processed as time and resources permit.Lectures end, Intersession",
+    "June 21, 2021, Monday": "Examinations begin, IntersessionSemester Break begins, 14-week Spring semester",
+    "June 23, 2021, Wednesday": "Examination end, Intersession",
+    "June 24, 2021, Thursday": "Lectures resume, 14-week Spring semester",
+    "June 28, 2021, Monday": "Final date for departments to submit Recommendation for Award of Degree in order for graduate students to receive a 50% refund of continuance fees, Spring semesterLectures begin for Summer session",
+    "July 1, 2021, Thursday": "Memorial Day holiday, no lectures",
+    "July 5, 2021, Monday": "End of Regular Registration Period and last day for undergraduate and graduate students to add courses, Summer sessionLast date for undergraduate and graduate students to drop courses without academic prejudice, 14-week Spring semesterLast day for undergraduate students to drop courses and receive a 100% refund of tuition fees, Summer session",
+    "July 8, 2021, Thursday": "Last day for undergraduate students to drop courses and receive a 50% refund of tuition fees, Summer session",
+    "July 12, 2021, Monday": "Last day for undergraduate students to drop courses and receive a 25% refund of tuition fees, Summer session. No tuition fees will be refunded for Summer session courses dropped after this date.",
+    "July 19, 2021, Monday": "Final date for Departments to submit Recommendation for Award of Degree in order for graduate students to receive a 25% refund of continuance fees, Spring semester",
+    "July 26, 2021, Monday": "Last date for undergraduate and graduate students to drop courses without academic prejudice, Summer session",
+    "August 6, 2021, Friday": "Lectures end, 14-week Spring semester",
+    "August 9, 2021, Monday": "Examinations begin, 14-week Spring semester and Summer session",
+    "August 11, 2021, Wednesday": "Examinations end, Summer session",
+    "August 14, 2021, Saturday": "Examinations end, 14-week Spring semester"
 }

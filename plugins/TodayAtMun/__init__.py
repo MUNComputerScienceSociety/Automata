@@ -1,5 +1,5 @@
 import discord
-from os import path
+#from os import path
 from discord.ext import commands
 from plugins.TodayAtMun.Month import month
 from datetime import datetime
@@ -8,6 +8,7 @@ from json import load
 from Plugin import AutomataPlugin
 from Bot import bot
 from plugins.TodayAtMun.diary_parser import diary_parser
+from pathlib import Path
 
 
 class TodayAtMun(AutomataPlugin):
@@ -18,7 +19,9 @@ class TodayAtMun(AutomataPlugin):
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
         self.result = ""
-        with open(path.join(self.manifest["path"], "diary.json"), "r") as f:
+        path =  Path(__file__).parent
+        file_name = path / "diary.json"
+        with open(file_name, "r") as f:
             self.info = load(f)
         self.set_current_date()
 
