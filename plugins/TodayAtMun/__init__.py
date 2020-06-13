@@ -29,11 +29,7 @@ class TodayAtMun(AutomataPlugin):
         self.date = datetime.now()
 
     def format_date(self, date):
-        """ 
-        Provides Current Date formatted to Muns style.
-            params: none
-            returns: string
-        """
+        """Provides Current Date formatted to Muns style."""
         temp = date.strftime("%Y-%#m-%#d-%A").split("-")
         currYear = temp[0]
         currMonth = int(temp[1])
@@ -47,7 +43,7 @@ class TodayAtMun(AutomataPlugin):
         self.date = self.date + timedelta(days=1)
         return self.date
 
-    def findEvent(self, d):
+    def findEvent(self, date):
         """ Provides the significant event on the mun calendar """
         self.fdate = self.format_date(self.date)
         for key in self.info:
@@ -59,8 +55,14 @@ class TodayAtMun(AutomataPlugin):
 
     @commands.command()
     async def today(self, ctx, arg=None):
-        """ Sends quick update on Muns Uni Diary - today or next date """
-        # Resets the data file from the diary.
+        """ 
+        Sends quick update on Muns Next Calendar Date on the Uni Diary
+            
+        args:
+            reset - resets the data from Muns Diary.
+            "" - default to the function
+                
+        """
         if arg == "reset":
             diary_parser()
             await ctx.send("Data Reset.")
@@ -75,3 +77,10 @@ class TodayAtMun(AutomataPlugin):
             colour=discord.Colour.orange(),
         )
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def varietyToday(self, ctx, arg=1):
+        """
+        Sends (n) amounts of dates coming up on the univsersity diary
+        """
+        pass
