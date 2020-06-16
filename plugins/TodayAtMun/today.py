@@ -4,15 +4,23 @@ from plugins.TodayAtMun.Month import month
 from pathlib import Path
 from json import load
 
-class Today:
 
-    def set_current_date(self):
-        """ Current Day, Month, Hour, second """
+class Today:
+    def __init__(self):
         self.date = datetime.now()
         path = Path(__file__).parent
         file_name = path / "diary.json"
         with open(file_name, "r") as f:
             self.info = load(f)
+        self.nextEvents = []
+        self.temp_date = datetime.now()
+
+    def set_current_date(self):
+        """ Current Day, Month, Hour, second """
+        self.date = datetime.now()
+
+    def get_current_date(self):
+        return self.date
 
     def format_date(self, date):
         """Provides Current Date formatted to Muns style."""
@@ -34,10 +42,15 @@ class Today:
 
     def findEvent(self, date):
         """ Provides the significant event on the mun calendar """
-        self.fdate = self.format_date(self.date)
+        #self.set_current_date()
+        self.fdate = self.format_date(date)
         for key in self.info:
             if key == self.fdate:
                 self.infoDay = self.info[key]
-                return True
+                return key
 
         self.findEvent(self.nextDay())
+
+    def next_Event(self,date):
+        self.nextEvent = self.findEvent(date)
+        self.goToEvent()

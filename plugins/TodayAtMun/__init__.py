@@ -15,23 +15,15 @@ class TodayAtMun(AutomataPlugin):
         super().__init__(manifest, bot)
         self.result = ""
         self.ins_Today = Today()
-        self.ins_Today.set_current_date()
 
-    @commands.command()
-    async def today(self, ctx, arg=None):
-        """ 
-        Sends quick update on Muns Next Calendar Date on the Uni Diary
-            
-        args:
-            reset - resets the data from Muns Diary.
-            "" - default to the function
-                
-        """
-        if arg == "reset":
-            diary_parser()
-            await ctx.send("Data Reset.")
-            return
+    @commands.group()
+    async def today(self, ctx):
+        if not ctx.invoked_subcommand:
+            await ctx.send("Please Provide Subcommand e.g !today [soon]")
 
+    @today.command(name="soon")
+    async def today_soon(self, ctx):
+        """Sends quick update on Muns Next Calendar Date on the Uni Diary"""
         self.ins_Today.set_current_date()
         self.ins_Today.findEvent(self.ins_Today.date)
         embed = discord.Embed(
@@ -42,15 +34,26 @@ class TodayAtMun(AutomataPlugin):
         )
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def varietyToday(self, ctx, arg=1):
+    @today.command(name="reset")
+    async def today_reset(self, ctx):
+        """Re-Parses data from Mun Diary."""
+        diary_parser()
+        await ctx.send("Data Reset!")
+        return
+
+    @today.command(name="next")
+    async def varietyToday(self, ctx):
         """
         Sends (n) amounts of dates coming up on the univsersity diary
         """
         self.ins_Today.set_current_date()
-        self.ins_Today.findEvent(self.date)
-        self.ins_Today.goToEvent()
-        self.set = iter(self.info)
-        for i in range(arg):
-            setOfDates = next(self.set)
-            await ctx.send(setOfDates)
+        self.ins_Today.findEvent(self.ins_Today.date)
+        self.ins_Today.nextDay()
+        self.ins_Today.next_Event(self.ins_Today.date)
+        embed = discord.Embed(
+            title=f"Next Important Date: {self.ins_Today.fdate}",
+            description=f"```{self.ins_Today.thisDate}```",
+            url="https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086",
+            colour=discord.Colour.orange(),
+        )
+        await ctx.send(embed=embed)
