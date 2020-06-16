@@ -4,7 +4,7 @@ from discord.ext import commands
 from Bot import bot
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.diary_parser import diary_parser
-from plugins.TodayAtMun.today import Today
+from plugins.TodayAtMun.Today import Today
 
 
 class TodayAtMun(AutomataPlugin):
