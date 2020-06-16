@@ -1,8 +1,8 @@
-from datetime import datetime
-from datetime import timedelta
-from plugins.TodayAtMun.Month import month
-from pathlib import Path
+from datetime import datetime, timedelta
 from json import load
+from pathlib import Path
+
+from plugins.TodayAtMun.Month import month
 
 
 class Today:
@@ -43,15 +43,15 @@ class Today:
         self.temp_date = datetime.now()
 
     def set_current_date(self) -> None:
-        """ Current Day, Month, Hour, second """
+        #Current Day, Month, Hour, second
         self.date = datetime.now()
 
     def get_current_date(self) -> datetime:
-        """Getter method for date"""
+        #Getter method for date
         return self.date
 
     def format_date(self, date: datetime) -> str:
-        """Provides Current Date formatted to Muns style."""
+        #Provides Current Date formatted to Muns style.
         temp = date.strftime("%Y-%#m-%#d-%A").split("-")
         currYear = temp[0]
         currMonth = int(temp[1])
@@ -61,15 +61,16 @@ class Today:
         return f"{month[currMonth]} {currDay}, {currYear}, {currDayOfWeek}"
 
     def nextDay(self) -> datetime:
-        """Increases Day By One """
+        #Increases Day By One
         self.date = self.date + timedelta(days=1)
         return self.date
 
     def goToEvent(self):
+        # sets dict value
         self.thisDate = self.info[self.fdate]
 
     def findEvent(self, date: datetime) -> str:
-        """ Provides the significant event on the mun calendar """
+        #Provides the significant event on the mun calendar
         self.fdate = self.format_date(date)
         for key in self.info:
             if key == self.fdate:
@@ -79,5 +80,6 @@ class Today:
         self.findEvent(self.nextDay())
 
     def next_Event(self, date: datetime):
+        # Gets following event after next
         self.nextEvent = self.findEvent(date)
         self.goToEvent()
