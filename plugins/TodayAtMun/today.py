@@ -3,15 +3,41 @@ from datetime import timedelta
 from plugins.TodayAtMun.Month import month
 from pathlib import Path
 from json import load
-from typing import NewType
 
 
 class Today:
+    """
+    A class used to go find significant days on Mun Calendar
+
+    ...
+
+    Attributes:
+    ------------
+    None
+
+    Methods
+    ----------
+    set_current_day() : None
+        sets the current date at the moment called
+    get_current_date() : datetime
+        returns the the current date
+    format_date() : str
+        returns the formatted time string for dict lookup
+    next_date() : None
+        increases the date by one.
+    goToEvent(): None
+        dictionary lookup sets this to a variable
+    findEvent() : str
+        Looks for the next date in the dictionary. Starting at a date
+    next_Event(): None
+        Goes to the next date if user calls this after finding first event
+    """
+
     def __init__(self):
 
         path = Path(__file__).parent
-        self.file_name = path / "diary.json"
-        with open(self.file_name, "r") as f:
+        file_name = path / "diary.json"
+        with open(file_name, "r") as f:
             self.info = load(f)
         self.nextEvents = []
         self.temp_date = datetime.now()
@@ -21,6 +47,7 @@ class Today:
         self.date = datetime.now()
 
     def get_current_date(self) -> datetime:
+        """Getter method for date"""
         return self.date
 
     def format_date(self, date: datetime) -> str:
@@ -43,7 +70,6 @@ class Today:
 
     def findEvent(self, date: datetime) -> str:
         """ Provides the significant event on the mun calendar """
-        #self.set_current_date()
         self.fdate = self.format_date(date)
         for key in self.info:
             if key == self.fdate:
@@ -52,6 +78,6 @@ class Today:
 
         self.findEvent(self.nextDay())
 
-    def next_Event(self,date: datetime) -> None:
+    def next_Event(self, date: datetime):
         self.nextEvent = self.findEvent(date)
         self.goToEvent()
