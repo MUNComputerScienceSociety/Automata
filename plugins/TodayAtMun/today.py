@@ -33,11 +33,6 @@ class Today:
     """
 
     def __init__(self,diary:Dict):
-
-        #path = Path(__file__).parent
-        #file_name = path / "diary.json"
-        #with open(file_name, "r") as f:
-            #self.info = load(f)
         self.diary = diary
         self.nextEvents = []
         self.temp_date = datetime.now()
