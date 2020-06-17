@@ -3,18 +3,20 @@ import os
 from os import path
 from pathlib import Path
 
-import requests
+import certifi
+import urllib3
 from bs4 import BeautifulSoup
 
 
 class DiaryParser:
     def __init__(self):
         self.diary = {}
-
-        r = requests.get(
-            "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086", verify=False
-        ).text
-        soup = BeautifulSoup(r, "html.parser")
+        self.data_source = 'https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086'
+        http = urllib3.PoolManager(cert_reqs="CERT_REQUIRED", ca_certs=certifi.where())
+        mun_request = http.request(
+            "GET", self.data_source
+        )
+        soup = BeautifulSoup(mun_request.data, "html.parser")
         left_aligned_data = soup.find_all("td", attrs={"align": "left"})
         right_aligned_data = soup.find_all("td", attrs={"align": "justify"})
 
