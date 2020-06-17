@@ -3,6 +3,7 @@ from json import load
 from pathlib import Path
 from typing import Dict
 
+
 class Today:
     """
     A class used to go find significant days on Mun Calendar
