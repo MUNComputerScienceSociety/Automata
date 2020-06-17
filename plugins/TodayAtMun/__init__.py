@@ -25,18 +25,12 @@ class TodayAtMun(AutomataPlugin):
         self.tod.set_current_date()
         self.tod.find_event(self.tod.date)
         embed = discord.Embed(
-            title=f"{self.tod.format_date(self.tod.date)}",
+            title=f"{self.tod.fdate}",
             description=f"```{self.tod.infoDay}``` ( !today later ) to get next event",
             url="https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086",
             colour=discord.Colour.orange(),
         )
         await ctx.send(embed=embed)
-
-    @today.command(name="reset")
-    async def today_reset(self, ctx):
-        """Re-Parses data from Mun Diary."""
-        DiaryParser()
-        await ctx.send("Data Reset!")
 
     @today.command(name="later")
     async def today_after(self, ctx):
