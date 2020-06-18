@@ -9,13 +9,12 @@ from bs4 import BeautifulSoup
 
 
 class DiaryParser:
+    DATA_SOURCE = "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
+
     def __init__(self):
         self.diary = {}
-        self.data_source = 'https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086'
         http = urllib3.PoolManager(cert_reqs="CERT_REQUIRED", ca_certs=certifi.where())
-        mun_request = http.request(
-            "GET", self.data_source
-        )
+        mun_request = http.request("GET", self.DATA_SOURCE)
         soup = BeautifulSoup(mun_request.data, "html.parser")
         left_aligned_data = soup.find_all("td", attrs={"align": "left"})
         right_aligned_data = soup.find_all("td", attrs={"align": "justify"})

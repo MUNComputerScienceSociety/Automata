@@ -30,7 +30,7 @@ class TodayAtMun(AutomataPlugin):
         embed = discord.Embed(
             title=f"{self.tod.fdate}",
             description=f"```{self.tod.info_day}``` ( !today later ) to get next event",
-            url=self.parse.data_source,
+            url=self.parse.DATA_SOURCE,
             colour=discord.Colour.orange(),
         )
         await ctx.send(embed=embed)
@@ -45,7 +45,7 @@ class TodayAtMun(AutomataPlugin):
         embed = discord.Embed(
             title=f"Next Important Date: {self.tod.fdate}",
             description=f"```{self.tod.this_date}```",
-            url=self.parse.data_source,
+            url=self.parse.DATA_SOURCE,
             colour=discord.Colour.red(),
         )
         await ctx.send(embed=embed)
