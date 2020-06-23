@@ -1,53 +1,48 @@
 from datetime import datetime, timedelta
-from json import load
-from pathlib import Path
 from typing import Dict
 
 
 class Today:
-    """A class used to go find significant days on Mun Calendar"""
+    """Provides methods to manipulate dates and lookup/match parsed data."""
 
     def __init__(self, diary: Dict):
         self.diary = diary
 
     def set_current_date(self) -> None:
-        """Current day, month, hour, second"""
+        """Sets the current date at that moment."""
         self.date = datetime.now()
 
     def get_current_date(self) -> datetime:
-        """Getter method for date"""
+        """Returns current date."""
         return self.date
 
     def format_date(self, date: datetime) -> str:
-        """Provides current date formatted to Muns style."""
-        time_format = date.strftime("%Y-%B-%#d-%A").split("-")
-        curr_year = time_format[0]
-        curr_month = time_format[1]
-        curr_day = time_format[2]
-        curr_day_of_week = time_format[3]
-
-        return f"{curr_month} {curr_day}, {curr_year}, {curr_day_of_week}"
+        """Provides current date formatted to MUN style."""
+        return date.strftime("%B %#d, %Y, %A")
 
     def next_day(self) -> datetime:
-        """Increases day by one"""
+        """Increases day by one returns date."""
         self.date = self.date + timedelta(days=1)
         return self.date
 
-    def go_to_event(self):
-        """Sets dict value"""
-        self.this_date = self.diary[self.fdate]
+    def go_to_event(self) -> None:
+        """Look up key in dict and set it to variable."""
+        self.this_date = self.diary[self.formatted_date]
 
     def find_event(self, date: datetime) -> str:
-        """Provides the significant event on the mun calendar"""
-        self.fdate = self.format_date(date)
+        """Searches for date/event pair in MUN calendar."""
+        if self.date.year - datetime.now().year > 1:
+            # Parsed data lookup is outside of 1 year.
+            return
+        self.formatted_date = self.format_date(date)
         for key in self.diary:
-            if key == self.fdate:
+            if key == self.formatted_date:
                 self.info_day = self.diary[key]
                 return key
 
         self.find_event(self.next_day())
 
-    def next_event(self, date: datetime):
-        """Gets following event after next"""
+    def next_event(self, date: datetime) -> None:
+        """Finds the next significant date in diary."""
         self.find_event(date)
         self.go_to_event()

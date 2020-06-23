@@ -1,10 +1,4 @@
-import json
-import os
-from os import path
-from pathlib import Path
-
-import certifi
-import urllib3
+import requests
 from bs4 import BeautifulSoup
 
 
@@ -13,16 +7,18 @@ class DiaryParser:
 
     def __init__(self):
         self.diary = {}
-        http = urllib3.PoolManager(cert_reqs="CERT_REQUIRED", ca_certs=certifi.where())
-        mun_request = http.request("GET", self.DATA_SOURCE)
-        soup = BeautifulSoup(mun_request.data, "html.parser")
-        left_aligned_data = soup.find_all("td", attrs={"align": "left"})
-        right_aligned_data = soup.find_all("td", attrs={"align": "justify"})
+        mun_request = requests.get(
+            "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086", verify=False
+        ).text
+        soup = BeautifulSoup(mun_request, "html.parser")
+        dates_in_diary= soup.find_all("td", attrs={"align": "left"})
+        description_of_date= soup.find_all("td", attrs={"align": "justify"})
 
-        for i, j in zip(left_aligned_data, right_aligned_data):
+        for left_item, right_item in zip(dates_in_diary, description_of_date):
             try:
-                self.diary[i.find("p").get_text().strip("\n\t")] = (
-                    j.get_text().replace("\n", "").replace("\t", "").replace("'", '"')
+                self.diary[left_item.find("p").get_text().strip("\n\t")] = (
+                    right_item.get_text().replace("\n", "").replace("\t", "").replace("'", '"')
                 )
             except AttributeError:
-                continue
+                self.diary[left_item.find("li").get_text().strip("\n\t")] = (right_item.get_text().replace("\n","").replace("\t","").replace("'",'"'))
+
