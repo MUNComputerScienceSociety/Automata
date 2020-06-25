@@ -6,6 +6,7 @@ from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryParser import DiaryParser
 from plugins.TodayAtMun.Today import Today
 
+
 class TodayAtMun(AutomataPlugin):
     """Provides a utility for MUN diary lookup specifically significant dates."""
 
