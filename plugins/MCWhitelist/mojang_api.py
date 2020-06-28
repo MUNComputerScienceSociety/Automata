@@ -65,7 +65,7 @@ class MojangAPI:
 
         textures = json.loads(b64decode(textures_encoded["value"]))
 
-        if (textures["textures"] is None) and (textures["SKIN"] is None):
+        if (textures["textures"] is None) or (textures["textures"]["SKIN"] is None):
             return None
 
         return textures["textures"]["SKIN"]["url"]
