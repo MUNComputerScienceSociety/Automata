@@ -8,7 +8,7 @@ class DiaryParser:
     def __init__(self):
         self.diary = {}
         mun_request = requests.get(
-            "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086", verify=False
+            "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
         ).text
         soup = BeautifulSoup(mun_request, "html.parser")
         dates_in_diary = soup.find_all("td", attrs={"align": "left"})
