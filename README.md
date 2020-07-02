@@ -19,9 +19,8 @@ For feature requests / help getting the bot running, don't fret to ask questions
 
 ### Using Docker
 
-1. Create the network `web` by running `docker network create web`
-2. Create the directory `mounted_plugins` within the project by running `mkdir ./mounted_plugins`
-3. Start the containers by running `docker-compose up -d`
+1. Create the directory `mounted_plugins` within the project by running `mkdir ./mounted_plugins`
+2. Start the containers by running `docker-compose up -d`
 
 ### Without Docker
 
@@ -104,7 +103,3 @@ Automata is comprised of a number of containers, each with distinct responsibili
 | --- | --- |
 | automata | The Discord bot itself |
 | mongo | A MongoDB server used to provide persistent data storage to the `automata` container |
-| prometheus | A Prometheus server used to collect statistics from the `automata` container |
-| grafana | A Grafana instance that collects data from `prometheus` and uses them to produce graphs |
-| cadvisor | Exports stats on running docker containers to `prometheus` |
-| mongodbexporter | Exports stats from `mongo` to `prometheus` |
