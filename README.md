@@ -1,13 +1,16 @@
-# Automata
+# **Automata**
 
 [![Build Status](https://drone.rileyflynn.me/api/badges/MUNComputerScienceSociety/Automata/status.svg)](https://drone.rileyflynn.me/MUNComputerScienceSociety/Automata)
-[![](https://images.microbadger.com/badges/image/muncs/automata.svg)](https://microbadger.com/images/muncs/automata "Get your own image badge on microbadger.com")
+[![Build Size](https://images.microbadger.com/badges/image/muncs/automata.svg)](https://microbadger.com/images/muncs/automata)
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 Discord bot handling the management of the MUN Computer Science Society Discord server
 
 For feature requests / help getting the bot running, don't fret to ask questions in the `#automata` channel in the guild!
 
-## Running locally
+---
+
+## **Running locally**
 
 1. Clone the project by running `https://github.com/MUNComputerScienceSociety/Automata.git`, and change into the directory by running `cd ./Automata`
 2. Copy `.env.dist` to `.env`
@@ -24,26 +27,30 @@ For feature requests / help getting the bot running, don't fret to ask questions
 
 1. Run MongoDB
 
-> You can use Docker for running MongoDB (recommended), just add the following to the `docker-compose.yml` file to expose it to your local machine
->
-> ```yml
->   ...
->   mongo:
->     ...
->     ports:
->       - "127.0.0.1:27017:27017"
->   ...
-> ```
->
-> And start it _only_ by running `docker-compose up -d mongo`
+   > You can use Docker for running MongoDB (recommended), just add the following to the `docker-compose.yml` file to expose it to your local machine
+   >
+   > ```yml
+   >   ...
+   >   mongo:
+   >     ...
+   >     ports:
+   >       - "127.0.0.1:27017:27017"
+   >   ...
+   > ```
+   >
+   > And start it _only_ by running `docker-compose up -d mongo`
 
 2. Install the requirements found in the `requirements.txt` file using `pip install -r requirements.txt`
+
    - Using a virtual environment is highly recommended, [this section of the Flask documentation explains this well](https://flask.palletsprojects.com/en/1.1.x/installation/#virtual-environments).
+
 3. Run the bot using `python Bot.py`
 
-## Developing your own plugins
+---
 
-Automata is built around the [discord.py](https://discordpy.readthedocs.io/en/latest/) framework, therefore the plugins make heavy use of its decorators to abstract most of the complexity behind the scenes
+## **Developing your own plugins**
+
+- Automata is built around the [discord.py](https://discordpy.readthedocs.io/en/latest/) framework, therefore the plugins make heavy use of its decorators to abstract most of the complexity behind the scenes.
 
 ### Using Docker
 
@@ -63,7 +70,9 @@ When you make changes to your plugins, restart the Automata container using `doc
 1. Create a new plugin, following the directions above within 'Using Docker', but within the `plugins` folder instead
 2. Start the bot using the instructions from [Running locally](#running-locally)
 
-### Developing the bot core and built-in plugins
+---
+
+## **Developing the bot core and built-in plugins**
 
 ### Using Docker
 
@@ -76,14 +85,18 @@ When you make changes to your plugins, restart the Automata container using `doc
 1. Just edit the core files / plugins directly :)
 2. Start the bot using the instructions from [Running locally](#running-locally)
 
-## Pushing changes to GitHub
+---
+
+## **Pushing changes to GitHub**
 
 1. Fork this repository, clone your fork, and commit your changes to a branch on your fork
 2. Create a PR to merge your branch into the `master` branch here, and make sure to tag an executive / mention the PR in Discord so we see it
 3. We'll likely request some changes before it is merged
 4. Once it's good, a few minutes after the PR is merged the feature should be live, since Automata uses CI/CD :)
 
-## Container responsibilities
+---
+
+## **Container responsibilities**
 
 Automata is comprised of a number of containers, each with distinct responsibilities. Their responsibilities are as follows:
 

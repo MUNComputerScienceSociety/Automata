@@ -104,3 +104,12 @@ venv.bak/
 .mypy_cache/
 
 data/mongo/
+
+### VisualStudioCode ###
+.vscode/*
+*.code-workspace
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
