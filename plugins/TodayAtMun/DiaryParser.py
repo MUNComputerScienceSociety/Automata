@@ -7,7 +7,7 @@ class DiaryParser:
 
     def __init__(self):
         self.diary = {}
-        mun_request = requests.get(DATA_SOURCE).text
+        mun_request = requests.get(self.DATA_SOURCE).text
         soup = BeautifulSoup(mun_request, "html.parser")
         dates_in_diary = soup.find_all("td", attrs={"align": "left"})
         description_of_date = soup.find_all("td", attrs={"align": "justify"})
