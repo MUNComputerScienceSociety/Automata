@@ -18,7 +18,7 @@ class Today:
 
     def format_date(self, date: datetime) -> str:
         """Provides current date formatted to MUN style."""
-        return date.strftime("%B %#d, %Y, %A")
+        return date.strftime("%B %-d, %Y, %A")
 
     def next_day(self) -> datetime:
         """Increases day by one returns date."""
@@ -35,10 +35,9 @@ class Today:
             # Parsed data lookup is outside of 1 year.
             return
         self.formatted_date = self.format_date(date)
-        for key in self.diary:
-            if key == self.formatted_date:
-                self.info_day = self.diary[key]
-                return key
+        for self.key in self.diary:
+            if self.key == self.formatted_date:
+                return self.key
 
         self.find_event(self.next_day())
 

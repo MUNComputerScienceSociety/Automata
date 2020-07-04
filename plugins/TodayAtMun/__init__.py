@@ -30,7 +30,7 @@ class TodayAtMun(AutomataPlugin):
         self.today_fun.find_event(self.today_fun.date)
         embed = discord.Embed(
             title=self.today_fun.formatted_date,
-            description=f"```{self.today_fun.info_day}``` ( !today later ) to get next event",
+            description=f"```{self.today_fun.diary[self.today_fun.key]}``` ( !today later ) to get next event",
             url=self.parse.DATA_SOURCE,
             colour=discord.Colour.orange(),
         )
@@ -41,7 +41,6 @@ class TodayAtMun(AutomataPlugin):
         """Sends the event after the 'next' event."""
         self.today_fun.set_current_date()
         self.today_fun.find_event(self.today_fun.date)
-        self.today_fun.next_day()
         self.today_fun.next_event(self.today_fun.date)
         embed = discord.Embed(
             title=f"Following Important Date: {self.today_fun.formatted_date}",
