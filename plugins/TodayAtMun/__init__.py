@@ -79,7 +79,7 @@ class TodayAtMun(AutomataPlugin):
                 name=f"**{date}:**", value=f"`{context}.`", inline=False
             )
         self.date_context_embed.set_footer(
-            text='\u200b',
+            text="\u200b",
             icon_url="https://raw.githubusercontent.com/MUNComputerScienceSociety/csclub-homepage/master/listing_cs_logo.png",
         )
         await ctx.send(embed=self.date_context_embed)
