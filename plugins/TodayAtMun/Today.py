@@ -45,3 +45,16 @@ class Today:
         """Finds the next significant date in diary."""
         self.find_event(date)
         self.go_to_event()
+
+    def package_of_events(self, date: datetime, weight: int) -> dict:
+        """Creates a package of upcoming events in MUN diary."""
+        package_size = 0
+        self.packaged_items = {}
+        self.find_event(self.date)
+        self.first_event = self.format_date(self.date)
+        while package_size < weight:
+            self.packaged_items[self.formatted_date] = self.diary[self.formatted_date]
+            self.next_event(self.next_day())
+            package_size += 1
+        self.last_event = self.format_date(self.date)
+        return self.packaged_items
