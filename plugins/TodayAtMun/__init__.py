@@ -14,7 +14,9 @@ class TodayAtMun(AutomataPlugin):
         self.parse = DiaryParser()
         self.today_fun = Today(self.parse.diary)
 
-    async def today_embed_template(self):
+    @staticmethod
+    def today_embed_template():
+        """Provides initial embed attributes."""
         embed = discord.Embed()
         embed.colour = discord.Colour.dark_green()
         embed.set_footer(
@@ -36,7 +38,7 @@ class TodayAtMun(AutomataPlugin):
         """Sends next upcoming date on the MUN calendar."""
         self.today_fun.set_current_date()
         self.today_fun.find_event(self.today_fun.date)
-        embed = await self.today_embed_template()
+        embed = self.today_embed_template()
         embed.add_field(
             name=self.today_fun.formatted_date,
             value=f"`{self.today_fun.diary[self.today_fun.key]} ( !today later ) to get next event`",
@@ -50,7 +52,7 @@ class TodayAtMun(AutomataPlugin):
         self.today_fun.find_event(self.today_fun.date)
         self.today_fun.next_day()
         self.today_fun.next_event(self.today_fun.date)
-        embed = await self.today_embed_template()
+        embed = self.today_embed_template()
         embed.add_field(
             name=f"Following Important Date: {self.today_fun.formatted_date}",
             value=f"`{self.today_fun.this_date}`",
@@ -68,7 +70,7 @@ class TodayAtMun(AutomataPlugin):
         """Sends the next five events coming up in MUN diary."""
         self.today_fun.set_current_date()
         self.today_fun.package_of_events(self.today_fun.date, 5)
-        embed = await self.today_embed_template()
+        embed = self.today_embed_template()
         embed.add_field(
             name=f"__**Showing next five upcoming events in MUN diary from {self.today_fun.first_event} to {self.today_fun.last_event}.**__",
             value="\u200b",
