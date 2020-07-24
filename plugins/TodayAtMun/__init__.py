@@ -25,6 +25,13 @@ class TodayAtMun(AutomataPlugin):
         )
         return embed
 
+    def today_is_next(self, date: str) -> str:
+        """Provides an emoji indicator if the next event occurs on current day."""
+        today_date = self.today_fun.format_date(self.today_fun.curr_date)
+        if today_date == date:
+            return ":red_circle:"
+        return ""
+
     @commands.group()
     async def today(self, ctx: commands.Context):
         """Provides brief info of significant dates on the MUN calendar."""
@@ -38,10 +45,11 @@ class TodayAtMun(AutomataPlugin):
         """Sends next upcoming date on the MUN calendar."""
         self.today_fun.set_current_date()
         self.today_fun.find_event(self.today_fun.date)
+        next_event_date = self.today_fun.format_date(self.today_fun.date)
         embed = self.today_embed_template()
         embed.add_field(
-            name=self.today_fun.formatted_date,
-            value=f"`{self.today_fun.diary[self.today_fun.key]} ( !today later ) to get next event`",
+            name=f"{self.today_is_next(next_event_date)} {next_event_date}",
+            value=f"`{self.today_fun.diary[self.today_fun.key]}.`\n( !today later ) to get next event.",
         )
         await ctx.send(embed=embed)
 
@@ -76,5 +84,9 @@ class TodayAtMun(AutomataPlugin):
             value="\u200b",
         )
         for date, context in self.today_fun.packaged_items.items():
-            embed.add_field(name=f"**{date}:**", value=f"`{context}.`", inline=False)
+            embed.add_field(
+                name=f"{self.today_is_next(date)} **{date}**: ",
+                value=f"`{context}.`",
+                inline=False,
+            )
         await ctx.send(embed=embed)

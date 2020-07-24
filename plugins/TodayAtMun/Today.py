@@ -7,6 +7,7 @@ class Today:
 
     def __init__(self, diary: Dict):
         self.diary = diary
+        self.curr_date = datetime.now()
 
     def set_current_date(self) -> None:
         """Sets the current date at that moment."""
