@@ -10,6 +10,7 @@ services:
       - mongo
     env_file:
       - .env
+
   mongo:
     image: mvertes/alpine-mongo
     restart: always
