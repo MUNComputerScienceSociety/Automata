@@ -13,6 +13,8 @@ WHITELIST_HTTP_API_BEARER_TOKEN = os.getenv("WHITELIST_HTTP_API_BEARER_TOKEN", N
 MONGO_HOST = os.getenv("AUTOMATA_MONGO_HOST", "mongo")
 MONGO_ADDRESS = f"mongodb://{MONGO_HOST}/automata"
 
+DISCORD_AUTH_URI = os.getenv("DISCORD_AUTH_URI", "https://discord.muncompsci.ca/identity/")
+
 mongo_client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_ADDRESS)
 
 if os.getenv("SENTRY_DSN", None):
