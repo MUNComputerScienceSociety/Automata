@@ -5,7 +5,7 @@ from discord.ext import commands
 import requests
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client, PRIMARY_GUILD, VERIFIED_ROLE
+from Globals import mongo_client, PRIMARY_GUILD, VERIFIED_ROLE, DISCORD_AUTH_URI
 
 
 class MUNIdentity(AutomataPlugin):
@@ -74,7 +74,7 @@ class MUNIdentity(AutomataPlugin):
                 "Your identity is already verified. If for some reason you need to change your verified username, contact an executive."
             )
             return
-        resp = requests.get(f"https://discord.muncompsci.ca/identity/{code}")
+        resp = requests.get(f"{DISCORD_AUTH_URI}/identity/{code}")
         if resp.status_code == requests.codes.ok:
             username = resp.text
             current_identity = await self.get_identity(mun_username=username)
