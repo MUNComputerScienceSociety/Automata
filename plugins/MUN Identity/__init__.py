@@ -111,3 +111,32 @@ class MUNIdentity(AutomataPlugin):
             embed.colour = discord.Colour.red()
             embed.add_field(name="MUN Username", value="No username verified.")
             await ctx.send(embed=embed)
+
+    @identity.command(name="associate")
+    @commands.has_permissions(manage_messages=True)
+    async def identity_associate(
+        self, ctx: commands.Context, user: discord.Member, mun_username: str
+    ):
+        """Manually associate a Discord account to a MUN username."""
+        identity = await self.get_identity(member=user)
+        if identity is not None:
+            await ctx.send(
+                "Specified Discord user already has a MUN username associated with their account."
+            )
+            return
+
+        identity = await self.get_identity(mun_username=mun_username)
+        if identity is not None:
+            await ctx.send(
+                "Specified MUN username is already associated with a Discord user."
+            )
+            return
+
+        await self.identities.insert_one(
+            {"discord_id": user.id, "mun_username": mun_username}
+        )
+        await self.bot.get_guild(PRIMARY_GUILD).get_member(user.id).add_roles(
+            self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+            reason=f"Identity manually associated by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {mun_username}",
+        )
+        await ctx.send("Identity associated.")
