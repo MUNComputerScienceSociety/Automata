@@ -137,6 +137,6 @@ class MUNIdentity(AutomataPlugin):
         )
         await self.bot.get_guild(PRIMARY_GUILD).get_member(user.id).add_roles(
             self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
-            reason=f"Identity manually associated by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {username}",
+            reason=f"Identity manually associated by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {mun_username}",
         )
         await ctx.send("Identity associated.")
