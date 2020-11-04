@@ -118,21 +118,24 @@ class MUNIdentity(AutomataPlugin):
         """Remove the identity from a user."""
         identity = await self.get_identity(member=user)
         if identity is not None:
-            await self.identities.delete_one(
-                {"discord_id": user.id}
-            )
+            await self.identities.delete_one({"discord_id": user.id})
             await self.bot.get_guild(PRIMARY_GUILD).get_member(user.id).remove_roles(
                 self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
                 reason=f"Identity manually removed by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {identity['mun_username']}",
             )
             embed = discord.Embed()
             embed.colour = discord.Colour.green()
-            embed.add_field(name="MUN Username", value=f"User `{user.name}#{user.discriminator}` with username `{identity['mun_username']}` was removed.")
+            embed.add_field(
+                name="MUN Username",
+                value=f"User `{user.name}#{user.discriminator}` with username `{identity['mun_username']}` was removed.",
+            )
             await ctx.send(embed=embed)
         else:
             embed = discord.Embed()
             embed.colour = discord.Colour.red()
-            embed.add_field(name="MUN Username", value="No username verified for the given user.")
+            embed.add_field(
+                name="MUN Username", value="No username verified for the given user."
+            )
             await ctx.send(embed=embed)
 
     @identity.command(name="associate")
