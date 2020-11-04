@@ -48,9 +48,13 @@ if not AUTOMATA_TOKEN:
     )
     exit(1)
 
+intents = discord.Intents.default()
+intents.members = True
+
 bot = commands.Bot(
     "!",
     description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.",
+    intents=intents
 )
 
 
