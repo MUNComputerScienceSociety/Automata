@@ -71,8 +71,6 @@ class ExecutiveDocs(AutomataPlugin):
 
         self.posted_documents = mongo_client.automata.executivedocs_posted_documents
 
-        self.posted_documents.drop()
-
         loop = asyncio.get_event_loop()
         self.check_for_new_docs.start()
 
