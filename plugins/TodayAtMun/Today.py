@@ -19,7 +19,8 @@ class Today:
 
     def format_date(self, date: datetime) -> str:
         """Provides current date formatted to MUN style."""
-        return date.strftime("%B %-d, %Y, %A")
+        print("%B %-d, %Y, %A")
+        return date.strftime("%B %d, %Y, %A")
 
     def next_day(self) -> datetime:
         """Increases day by one returns date."""
@@ -34,7 +35,7 @@ class Today:
         """Searches for date/event pair in MUN calendar."""
         if self.date.year - datetime.now().year > 1:
             # Parsed data lookup is outside of 1 year.
-            return
+            return ""
         self.formatted_date = self.format_date(date)
         for self.key in self.diary:
             if self.key == self.formatted_date:
