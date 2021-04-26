@@ -1,8 +1,8 @@
-FROM python:3.8-alpine3.10
+FROM python:3.9-alpine3.13
 COPY . /app
 WORKDIR /app
 
-RUN apk --update add --virtual build-dependencies gcc=8.3.0-r0 musl-dev=1.1.22-r3 --no-cache \
+RUN apk --update add --virtual build-dependencies gcc musl-dev --no-cache \
   && pip install -r requirements.txt \
   && apk del build-dependencies
 
