@@ -2,24 +2,29 @@ from datetime import datetime, timedelta
 from typing import Dict
 
 
-class Today:
+class Diary:
     """Provides methods to manipulate dates and lookup/match parsed data."""
 
-    def __init__(self, diary: Dict):
+    def __init__(self, diary: Dict[str, str]):
         self.diary = diary
-        self.curr_date = datetime.now()
+        self.date = datetime.now()
+        self.last_event = self.format_date(self.date)
+        self.first_event = self.format_date(self.date)
+
+    @staticmethod
+    def get_current_date() -> datetime:
+        return datetime.now()
 
     def set_current_date(self) -> None:
         """Sets the current date at that moment."""
         self.date = datetime.now()
 
-    def get_current_date(self) -> datetime:
+    def get_date(self) -> datetime:
         """Returns current date."""
         return self.date
 
     def format_date(self, date: datetime) -> str:
         """Provides current date formatted to MUN style."""
-        print("%B %-d, %Y, %A")
         return date.strftime("%B %d, %Y, %A")
 
     def next_day(self) -> datetime:
@@ -51,12 +56,17 @@ class Today:
     def package_of_events(self, date: datetime, weight: int) -> dict:
         """Creates a package of upcoming events in MUN diary."""
         package_size = 0
-        self.packaged_items = {}
+        packaged_items = {}
         self.find_event(self.date)
-        self.first_event = self.format_date(self.date)
         while package_size < weight:
-            self.packaged_items[self.formatted_date] = self.diary[self.formatted_date]
+            packaged_items[self.formatted_date] = self.diary[self.formatted_date]
             self.next_event(self.next_day())
             package_size += 1
-        self.last_event = self.format_date(self.date)
-        return self.packaged_items
+        return packaged_items
+
+    def today_is_next(self, date: str) -> str:
+        """Provides an emoji indicator if the next event occurs on current day."""
+        today_date = self.format_date(self.get_current_date())
+        if today_date == date:
+            return "🔴"
+        return ""
