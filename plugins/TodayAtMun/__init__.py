@@ -1,9 +1,10 @@
+from random import choice
+
 import discord
 from discord.ext import commands
-
 from Plugin import AutomataPlugin
-from plugins.TodayAtMun.DiaryParser import DiaryParser
 from plugins.TodayAtMun.Diary import Diary
+from plugins.TodayAtMun.DiaryParser import DiaryParser
 
 MUN_LOGO = "https://www.cs.mun.ca/~csclub/assets/logos/others/mun-color.png"
 
@@ -14,13 +15,14 @@ class TodayAtMun(AutomataPlugin):
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
         self.parse = DiaryParser()
-        self.today_fun = Diary(self.parse.diary)
+        self.diary_util = Diary(self.parse.diary)
 
     @staticmethod
     def today_embed_template():
         """Provides initial embed attributes."""
         embed = discord.Embed()
-        embed.colour = discord.Colour.dark_green()
+        mun_colours = [0x822433, 0xFFFFFF, 0x838486]
+        embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
             text="TodayAtMun", icon_url=MUN_LOGO,
         )
@@ -37,13 +39,13 @@ class TodayAtMun(AutomataPlugin):
     @diary.command(name="next", aliases=["n"])
     async def today_next(self, ctx: commands.Context):
         """Sends next upcoming date on the MUN calendar."""
-        self.today_fun.set_current_date()
-        self.today_fun.find_event(self.today_fun.date)
-        next_event_date = self.today_fun.format_date(self.today_fun.date)
+        self.diary_util.set_current_date()
+        self.diary_util.find_event(self.diary_util.date)
+        next_event_date = self.diary_util.format_date(self.diary_util.date)
         embed = self.today_embed_template()
         embed.add_field(
-            name=f"{self.today_fun.today_is_next(next_event_date)} {next_event_date}",
-            value=f"`{self.today_fun.diary[self.today_fun.key]}.`\n( !diary later ) to get next event.",
+            name=f"{self.diary_util.today_is_next(next_event_date)} {next_event_date}, ⌛ ~`{self.diary_util.time_delta_event(self.diary_util.date)}` days away",
+            value=f"{self.diary_util.diary[self.diary_util.key]}.\n\n*( !diary later ) to see next following event.*",
             inline=False,
         )
         await ctx.send(embed=embed)
@@ -51,14 +53,14 @@ class TodayAtMun(AutomataPlugin):
     @diary.command(name="later", aliases=["l"])
     async def today_after(self, ctx: commands.Context):
         """Sends the event after the 'next' event."""
-        self.today_fun.set_current_date()
-        self.today_fun.find_event(self.today_fun.date)
-        self.today_fun.next_day()
-        self.today_fun.next_event(self.today_fun.date)
+        self.diary_util.set_current_date()
+        self.diary_util.find_event(self.diary_util.date)
+        self.diary_util.next_day()
+        self.diary_util.next_event(self.diary_util.date)
         embed = self.today_embed_template()
         embed.add_field(
-            name=f"Following Important Date: {self.today_fun.formatted_date}",
-            value=f"`{self.today_fun.this_date}`",
+            name=f"Following Important Date: {self.diary_util.formatted_date}, ⌛ ~`{self.diary_util.time_delta_event(self.diary_util.date)}` days away.",
+            value=f"{self.diary_util.this_date}",
             inline=False,
         )
         await ctx.send(embed=embed)
@@ -66,23 +68,23 @@ class TodayAtMun(AutomataPlugin):
     @diary.command(name="date")
     async def today_date(self, ctx: commands.Context):
         """Sends the current date at that instance."""
-        self.today_fun.set_current_date()
-        await ctx.send(self.today_fun.format_date(self.today_fun.date))
+        self.diary_util.set_current_date()
+        await ctx.send(self.diary_util.format_date(self.diary_util.date))
 
     @diary.command(name="nextfive")
     async def today_nextfive(self, ctx: commands.Context):
         """Sends the next five events coming up in MUN diary."""
-        self.today_fun.set_current_date()
-        packaged_events = self.today_fun.package_of_events(self.today_fun.date, 5)
+        self.diary_util.set_current_date()
+        packaged_events = self.diary_util.package_of_events(self.diary_util.date, 5)
         embed = self.today_embed_template()
         embed.add_field(
-            name=f"__**Showing next five upcoming events in MUN diary**__\n*{self.today_fun.first_event}* **-** *{self.today_fun.last_event}*",
+            name=f"__**Showing next five upcoming events in MUN diary**__\n*{self.diary_util.first_event}* **-** *{self.diary_util.last_event}*",
             value="\u200b",
             inline=False,
         )
         for event, (date, context) in enumerate(packaged_events.items()):
             embed.add_field(
-                name=f"{self.today_fun.today_is_next(date)} **{date}**:",
+                name=f"{self.diary_util.today_is_next(date)} **{date}**:",
                 value=f"{context}",
                 inline=False,
             )

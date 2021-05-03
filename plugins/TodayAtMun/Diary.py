@@ -70,3 +70,8 @@ class Diary:
         if today_date == date:
             return "🔴"
         return ""
+
+    def time_delta_event(self, event_date: datetime) -> int:
+        """Provides time delta of days remaining until for a given date to current date."""
+        current_date = self.get_current_date()
+        return (event_date - current_date).days
