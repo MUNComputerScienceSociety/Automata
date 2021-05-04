@@ -8,8 +8,6 @@ class Diary:
     def __init__(self, diary: Dict[str, str]):
         self.diary = diary
         self.date = datetime.now()
-        self.last_event = self.format_date(self.date)
-        self.first_event = self.format_date(self.date)
 
     @staticmethod
     def get_current_date() -> datetime:
@@ -58,10 +56,12 @@ class Diary:
         package_size = 0
         packaged_items = {}
         self.find_event(self.date)
+        self.first_event = self.format_date(self.date)
         while package_size < weight:
             packaged_items[self.formatted_date] = self.diary[self.formatted_date]
             self.next_event(self.next_day())
             package_size += 1
+        self.last_event = self.format_date(self.date)
         return packaged_items
 
     def today_is_next(self, date: str) -> str:
