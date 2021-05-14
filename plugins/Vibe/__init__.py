@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from Plugin import AutomataPlugin
 
-VIBE_IMAGE = "https://i.imgur.com/MLCiGMd.gif"
+VIBE_IMAGE = "https://s3.gifyu.com/images/catvibe.gif"
 
 class Vibe(AutomataPlugin):
     """Cat Bop"""
