@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from Plugin import AutomataPlugin
 
-
+VIBE_IMAGE = "https://imgur.com/a/pKwXAH5"
 class Vibe(AutomataPlugin):
     """Cat Bop"""
 
@@ -11,4 +11,4 @@ class Vibe(AutomataPlugin):
     async def vibe(self, ctx: commands.Context):
         """Replies with a Cat Bop Gif!"""
 
-        await ctx.send("https://imgur.com/a/pKwXAH5")
+        await ctx.send(VIBE_IMAGE)
