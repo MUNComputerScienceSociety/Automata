@@ -13,7 +13,7 @@ class Vibe(AutomataPlugin):
     @commands.command()
     async def vibe(self, ctx: commands.Context, vibelevel: int = 1):
         """Replies with a Cat Bop Gif! Vibe levels from 1-3 can also be specified."""
-        if vibelevel == 1:
+        if vibelevel <= 1:
             await ctx.send(VIBE_IMAGE)
         elif vibelevel == 2:
             await ctx.send(VIBIER_IMAGE)
