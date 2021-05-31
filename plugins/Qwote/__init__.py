@@ -20,7 +20,7 @@ class Qwote(AutomataPlugin):
 
         formatted = response.format(
             text = quote['text'],
-            author = quote['author'] if 'author' in quote.keys() and quote['author'] != None else 'Unknown')
+            author = quote['author'] if 'author' in quote.keys() and quote['author'] != None else 'Unknown'
         )
 
         transform = formatted.lower().replace('r', 'w').replace('l', 'w').replace('n', 'ny')
