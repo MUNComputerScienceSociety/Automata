@@ -8,5 +8,5 @@ class Hewwo(AutomataPlugin):
 
     @commands.command()
     async def hewwo(self, ctx: commands.Context, *, arg):
-        transform = arg.lower().replace('r', 'w').replace('l', 'w').replace('n', 'ny')
+        transform = discord.utils.escape_mentions(arg).lower().replace('r', 'w').replace('l', 'w').replace('n', 'ny')
         await ctx.send(transform)
