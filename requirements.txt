@@ -27,3 +27,4 @@ urllib3==1.24.3
 websockets==8
 wrapt==1.12.1
 yarl==1.4.2
+inflection=0.5
