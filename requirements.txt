@@ -24,6 +24,6 @@ soupsieve==2.0.1
 toml==0.10.1
 typed-ast==1.4.1
 urllib3==1.24.3
-websockets==8
+websockets==9.1
 wrapt==1.12.1
 yarl==1.4.2
