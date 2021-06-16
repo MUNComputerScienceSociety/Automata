@@ -35,6 +35,17 @@ class TodayAtMun(AutomataPlugin):
         )
         return embed
 
+    def time_delta_emojify(self) -> str:
+        remaining_time = self.diary_util.time_delta_event(self.diary_util.date)
+        emoji_delta = ""
+        if remaining_time > 1:
+            emoji_delta = f"⏳ {remaining_time} day(s)"
+        elif 0 < remaining_time <= 1:
+            emoji_delta = f"⌛ {remaining_time} day(s)"
+        else:
+            emoji_delta = "🔴"
+        return emoji_delta
+
     def today_embed_next_template(self, next_event_date):
         embed = self.today_embed_template()
         embed.set_author(
@@ -89,7 +100,8 @@ class TodayAtMun(AutomataPlugin):
     async def today_nextfive(self, ctx: commands.Context):
         """Sends the next five events coming up in MUN diary."""
         self.diary_util.set_current_date()
-        packaged_events = self.diary_util.package_of_events(self.diary_util.date, 5)
+        packaged_events = self.diary_util.package_of_events(
+            self.diary_util.date, 5)
         embed = self.today_embed_template()
         embed.add_field(
             name=f"__**Showing next five upcoming events in MUN diary**__\n*{self.diary_util.first_event}* **-** *{self.diary_util.last_event}*",
@@ -136,9 +148,10 @@ class TodayAtMun(AutomataPlugin):
         await self.bot.wait_until_ready()
 
     async def update_event_msg(self):
-        channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)
+        channel = self.bot.get_guild(
+            PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)
         message = await channel.fetch_message(channel.last_message_id)
         message.embeds[0].set_author(
-            name=f"⏳ ~{self.diary_util.time_delta_event(self.diary_util.date)} days"
+            name=self.time_delta_emojify()
         )
         await message.edit(embed=message.embeds[0])

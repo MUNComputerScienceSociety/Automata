@@ -2,7 +2,7 @@ version: '3'
 
 services:
   automata:
-    image: ''
+    #image: ''
     build: .
     restart: always
     volumes:
