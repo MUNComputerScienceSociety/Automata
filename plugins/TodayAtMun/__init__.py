@@ -19,7 +19,7 @@ class TodayAtMun(AutomataPlugin):
         self.parse = DiaryParser()
         self.diary_util = Diary(self.parse.diary)
 
-        self.posted_events = mongo_client.automata.automata
+        self.posted_events = mongo_client.automata.mun_diary
 
         loop = asyncio.get_event_loop()
         self.check_for_new_event.start()

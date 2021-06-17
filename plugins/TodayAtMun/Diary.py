@@ -23,7 +23,7 @@ class Diary:
 
     def format_date(self, date: datetime) -> str:
         """Provides current date formatted to MUN style."""
-        return date.strftime("%B %d, %Y, %A")
+        return date.strftime("%B %-d, %Y, %A")
 
     def next_day(self) -> datetime:
         """Increases day by one returns date."""
@@ -72,6 +72,6 @@ class Diary:
         return ""
 
     def time_delta_event(self, event_date: datetime) -> int:
-        """Provides time delta of days remaining until for a given date to current date."""
+        """Provides time delta of days remaining for a given date to current date."""
         current_date = self.get_current_date()
         return (event_date - current_date).days
