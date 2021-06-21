@@ -74,8 +74,8 @@ class FAQ(AutomataPlugin):
             await ctx.send(embed=embed)
             
         elif degree.upper() in ARTS:
-            embed_sample = await self.create_embed_arts()
-            await ctx.send(embed=embed_sample)
+            embed = await self.create_embed_arts()
+            await ctx.send(embed=embed)
             
         else:
             # No type of degree was specified
