@@ -79,7 +79,9 @@ class FAQ(AutomataPlugin):
             
         else:
             # No type of degree was specified
-            await ctx.send(f"Specify the type of degree (Valid arguments: bsc, b.sc, science, ba, b.a, arts)\n")                
+            valid_args = SCIENCE + ARTS
+            args_str = ', '.join(valid_args)
+            await ctx.send("Specify the type of degree (Valid arguments: " + args_str + ")")                
 
     @commands.command()
     async def admission(self, ctx: commands.Context):
