@@ -12,7 +12,7 @@ class Ecoji(AutomataPlugin):
 
     @commands.command()
     async def ecoji(self, ctx: commands.Context, amount=MIN):
-        f"""Replies with random emojis, amount defaults to {MIN}, and can be set up to {MAX}"""
+        """Replies with random emojis, amount defaults to 1, and can be set up to 400"""
 
         if amount < MIN:
             await ctx.send(f"Amount must be greater than {MIN - 1}")
