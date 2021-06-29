@@ -11,7 +11,7 @@ from Plugin import AutomataPlugin
 
 
 class Ecoji(AutomataPlugin):
-    """Sends randomly generated emojis from Jack Harrhy's Ecoji project"""
+    f"""Sends randomly generated emojis from {URANDOM_ECOJI_URI}"""
 
     @commands.command()
     async def ecoji(self, ctx: commands.Context, limit):
