@@ -6,6 +6,9 @@ from discord.ext import commands
 
 URANDOM_ECOJI_URI = "https://jackharrhy.dev/urandom/ecoji/"
 
+
+# Will add the fetch requests function (https://docs.python-requests.org/en/master/) later on. For now, I've got somethin' else to do. Please excuse any inconveniences.
+
 from Plugin import AutomataPlugin
 
 class Ecoji(AutomataPlugin):
