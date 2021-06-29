@@ -1,13 +1,9 @@
-import json
-
 import discord
 import requests
 from discord.ext import commands
+from Plugin import AutomataPlugin
 
 URANDOM_ECOJI_URI = "https://jackharrhy.dev/urandom/ecoji/"
-
-
-from Plugin import AutomataPlugin
 
 
 class Ecoji(AutomataPlugin):
