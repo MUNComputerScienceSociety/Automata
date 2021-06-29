@@ -1,14 +1,22 @@
-import discord
 import requests
 from discord.ext import commands
 from Plugin import AutomataPlugin
 
 URANDOM_ECOJI_URI = "https://jackharrhy.dev/urandom/ecoji/"
+MIN = 1
+MAX = 400
 
 
 class Ecoji(AutomataPlugin):
-    f"""Sends randomly generated emojis from {URANDOM_ECOJI_URI}"""
+    """Sends randomly generated emojis from https://github.com/jackharrhy/DUaaS"""
 
     @commands.command()
-    async def ecoji(self, ctx: commands.Context, limit):
-        await ctx.send(requests.get(f"{URANDOM_ECOJI_URI}{limit}").text)
+    async def ecoji(self, ctx: commands.Context, amount=MIN):
+        f"""Replies with random emojis, amount defaults to {MIN}, and can be set up to {MAX}"""
+
+        if amount < MIN:
+            await ctx.send(f"Amount must be greater than {MIN - 1}")
+        elif amount > MAX:
+            await ctx.send(f"Amount must be less than than {MAX + 1}")
+        else:
+            await ctx.send(requests.get(f"{URANDOM_ECOJI_URI}{amount}").text)
