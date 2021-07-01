@@ -9,6 +9,9 @@ from plugins.TodayAtMun.Diary import Diary
 from plugins.TodayAtMun.DiaryParser import DiaryParser
 
 MUN_LOGO = "https://www.cs.mun.ca/~csclub/assets/logos/others/mun-color.png"
+MUN_COLOUR_RED = 0x822433
+MUN_COLOUR_WHITE = 0xFFFFFF
+MUN_COLOUR_GREY = 0x838486
 
 
 class TodayAtMun(AutomataPlugin):
@@ -28,7 +31,7 @@ class TodayAtMun(AutomataPlugin):
     def today_embed_template():
         """Provides initial embed attributes."""
         embed = discord.Embed()
-        mun_colours = [0x822433, 0xFFFFFF, 0x838486]
+        mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
         embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
             text="TodayAtMun", icon_url=MUN_LOGO,
