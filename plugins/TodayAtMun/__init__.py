@@ -1,4 +1,5 @@
 import asyncio
+from datetime import date, datetime, timedelta
 from random import choice
 
 import discord
@@ -21,10 +22,7 @@ class TodayAtMun(AutomataPlugin):
         super().__init__(manifest, bot)
         self.parse = DiaryParser()
         self.diary_util = Diary(self.parse.diary)
-
         self.posted_events = mongo_client.automata.mun_diary
-
-        loop = asyncio.get_event_loop()
         self.check_for_new_event.start()
 
     @staticmethod
@@ -34,25 +32,26 @@ class TodayAtMun(AutomataPlugin):
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
         embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
-            text="TodayAtMun", icon_url=MUN_LOGO,
+            text="TodayAtMun\t!help diary",
+            icon_url=MUN_LOGO,
         )
         return embed
 
     def time_delta_emojify(self) -> str:
-        remaining_time = self.diary_util.time_delta_event(self.diary_util.date)
-        emoji_delta = ""
+        remaining_time = self.diary_util.time_delta_event(
+            self.diary_util.str_to_datetime(self.diary_util.key)
+        )
         if remaining_time > 1:
-            emoji_delta = f"⏳ {remaining_time} day(s)"
+            return f"⏳ {remaining_time} day(s)"
         elif 0 < remaining_time <= 1:
-            emoji_delta = f"⌛ {remaining_time} day(s)"
+            return f"⌛ {remaining_time} day"
         else:
-            emoji_delta = "🔴"
-        return emoji_delta
+            return "🔴"
 
-    def today_embed_next_template(self, next_event_date):
+    def today_embed_next_template(self, next_event_date: datetime) -> discord.Embed:
         embed = self.today_embed_template()
         embed.set_author(
-            name=f"⏳ ~{self.diary_util.time_delta_event(self.diary_util.date)} days"
+            name=f"⏳ ~{self.diary_util.time_delta_event(self.diary_util.str_to_datetime(next_event_date))} days"
         )
         embed.add_field(
             name=f"{self.diary_util.today_is_next(next_event_date)} {next_event_date}",
@@ -61,21 +60,18 @@ class TodayAtMun(AutomataPlugin):
         )
         return embed
 
-    @commands.group(aliases=["d"])
+    @commands.group(aliases=["d", "today"])
     async def diary(self, ctx: commands.Context):
         """Provides brief info of significant dates on the MUN calendar."""
-        if not ctx.invoked_subcommand:
-            await ctx.send(
-                "Please provide subcommand e.g !diary [next] \n ( !help today ) for more."
-            )
+        ...
 
     @diary.command(name="next", aliases=["n"])
     async def today_next(self, ctx: commands.Context):
         """Sends next upcoming date on the MUN calendar."""
         self.diary_util.set_current_date()
         self.diary_util.find_event(self.diary_util.date)
-        next_event_date = self.diary_util.format_date(self.diary_util.date)
-        embed = self.today_embed_next_template(next_event_date)
+        # next_event_date = self.diary_util.format_date(self.diary_util.key)
+        embed = self.today_embed_next_template(self.diary_util.key)
         await ctx.send(embed=embed)
 
     @diary.command(name="later", aliases=["l"])
@@ -83,11 +79,12 @@ class TodayAtMun(AutomataPlugin):
         """Sends the event after the 'next' event."""
         self.diary_util.set_current_date()
         self.diary_util.find_event(self.diary_util.date)
-        self.diary_util.next_day()
-        self.diary_util.next_event(self.diary_util.date)
+        self.diary_util.next_event(
+            self.diary_util.str_to_datetime(self.diary_util.key) + timedelta(days=1)
+        )
         embed = self.today_embed_template()
         embed.add_field(
-            name=f"Following Important Date: {self.diary_util.formatted_date}, ⌛ ~`{self.diary_util.time_delta_event(self.diary_util.date)}` days away.",
+            name=f"{self.diary_util.formatted_date}, ⌛ ~`{Diary.time_to_dt_delta(self.diary_util.key)}` days away.",
             value=f"{self.diary_util.this_date}",
             inline=False,
         )
@@ -99,19 +96,21 @@ class TodayAtMun(AutomataPlugin):
         self.diary_util.set_current_date()
         await ctx.send(self.diary_util.format_date(self.diary_util.date))
 
-    @diary.command(name="nextfive")
-    async def today_nextfive(self, ctx: commands.Context):
-        """Sends the next five events coming up in MUN diary."""
+    @diary.command(name="bundle", aliases=["b", "nextfive"])
+    async def today_nextfive(self, ctx: commands.Context, events: int = 5):
+        """Sends the next n number of events coming up in MUN diary."""
         self.diary_util.set_current_date()
         packaged_events = self.diary_util.package_of_events(
-            self.diary_util.date, 5)
+            self.diary_util.date, events
+        )
+        packaged_keys = list(packaged_events.keys())
         embed = self.today_embed_template()
         embed.add_field(
-            name=f"__**Showing next five upcoming events in MUN diary**__\n*{self.diary_util.first_event}* **-** *{self.diary_util.last_event}*",
+            name=f"__**Showing next five upcoming events in MUN diary**__\n*{packaged_keys[0]}* **-** *{packaged_keys[len(packaged_keys)-1]}*",
             value="\u200b",
             inline=False,
         )
-        for event, (date, context) in enumerate(packaged_events.items()):
+        for _, (date, context) in enumerate(packaged_events.items()):
             embed.add_field(
                 name=f"{self.diary_util.today_is_next(date)} **{date}**:",
                 value=f"{context}",
@@ -119,30 +118,28 @@ class TodayAtMun(AutomataPlugin):
             )
         await ctx.send(embed=embed)
 
-    async def post_next_event(self, event):
+    async def post_next_event(self, event: str):
         self.diary_util.set_current_date()
         self.diary_util.find_event(self.diary_util.date)
-        next_event_date = self.diary_util.format_date(self.diary_util.date)
-        next_embed = self.today_embed_next_template(next_event_date)
+        next_embed = self.today_embed_next_template(self.diary_util.key)
         await self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL).send(
             embed=next_embed
         )
-        await self.posted_events.insert_one({"date": next_event_date})
+        await self.posted_events.insert_one({"date": event})
 
     async def post_new_events(self):
         self.diary_util.set_current_date()
         self.diary_util.find_event(self.diary_util.date)
-        next_event_date = self.diary_util.format_date(self.diary_util.date)
+        next_event_date = self.diary_util.key
         retrieve_event = await self.posted_events.find_one({"date": next_event_date})
 
         if retrieve_event is None:
             await self.post_next_event(next_event_date)
-            await asyncio.sleep(5)
         else:
             await self.update_event_msg()
-            await asyncio.sleep(5)
+        await asyncio.sleep(5)
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(hours=6)
     async def check_for_new_event(self):
         await self.post_new_events()
 
@@ -159,10 +156,7 @@ class TodayAtMun(AutomataPlugin):
         self.check_for_new_event.restart()
 
     async def update_event_msg(self):
-        channel = self.bot.get_guild(
-            PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)
+        channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)
         message = await channel.fetch_message(channel.last_message_id)
-        message.embeds[0].set_author(
-            name=self.time_delta_emojify()
-        )
+        message.embeds[0].set_author(name=self.time_delta_emojify())
         await message.edit(embed=message.embeds[0])

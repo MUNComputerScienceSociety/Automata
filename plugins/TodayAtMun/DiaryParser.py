@@ -2,12 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 
 
-class DiaryParser:
-    DATA_SOURCE = "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
+DIARY_DATA_SOURCE = "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
 
+
+class DiaryParser:
     def __init__(self):
         self.diary = {}
-        mun_request = requests.get(DiaryParser.DATA_SOURCE).text
+        mun_request = requests.get(DIARY_DATA_SOURCE).text
         soup = BeautifulSoup(mun_request, "html.parser")
         dates_in_diary = soup.find_all("td", attrs={"align": "left"})
         description_of_date = soup.find_all("td", attrs={"align": "justify"})

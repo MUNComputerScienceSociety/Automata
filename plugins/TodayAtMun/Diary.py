@@ -47,10 +47,10 @@ class Diary:
         """Provides current date formatted to MUN style."""
         return date.strftime("%B %-d, %Y, %A")
 
-    def next_day(self) -> datetime:
+    def next_day(self, date: datetime) -> datetime:
         """Increases day by one returns date."""
-        self.date = self.date + timedelta(days=1)
-        return self.date
+        date = date + timedelta(days=1)
+        return date
 
     def go_to_event(self) -> None:
         """Look up key in dict and set it to variable."""
@@ -58,32 +58,30 @@ class Diary:
 
     def find_event(self, date: datetime) -> str:
         """Searches for date/event pair in MUN calendar."""
-        if self.date.year - datetime.now().year > 1:
-            # Parsed data lookup is outside of 1 year.
+        if date.year - datetime.now().year > 1:
             return ""
         self.formatted_date = self.format_date(date)
         for self.key in self.diary:
             if self.key == self.formatted_date:
                 return self.key
-
-        self.find_event(self.next_day())
+        self.find_event(self.next_day(date))
 
     def next_event(self, date: datetime) -> None:
         """Finds the next significant date in diary."""
         self.find_event(date)
         self.go_to_event()
 
-    def package_of_events(self, date: datetime, weight: int) -> dict:
-        """Creates a package of upcoming events in MUN diary."""
-        package_size = 0
+    def package_of_events(self, date, weight):
+        """Creates a package of upcoming events in MUN diary"""
+        if weight < 0 or weight > 10:
+            weight = 10
         packaged_items = {}
-        self.find_event(self.date)
-        self.first_event = self.format_date(self.date)
-        while package_size < weight:
-            packaged_items[self.formatted_date] = self.diary[self.formatted_date]
-            self.next_event(self.next_day())
-            package_size += 1
-        self.last_event = self.format_date(self.date)
+        self.find_event(date)
+        self.find_event(date)
+        while len(packaged_items) < weight:
+            packaged_items[self.key] = self.diary[self.key]
+            date = self.next_day(date)
+            self.find_event(date)
         return packaged_items
 
     def today_is_next(self, date: str) -> str:
@@ -92,8 +90,3 @@ class Diary:
         if today_date == date:
             return "🔴"
         return ""
-
-    def time_delta_event(self, event_date: datetime) -> int:
-        """Provides time delta of days remaining for a given date to current date."""
-        current_date = self.get_current_date()
-        return (event_date - current_date).days
