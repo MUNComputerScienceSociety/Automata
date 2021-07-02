@@ -150,6 +150,14 @@ class TodayAtMun(AutomataPlugin):
     async def before_check_test(self):
         await self.bot.wait_until_ready()
 
+    @diary.command("reset")
+    @commands.has_permissions(view_audit_log=True)
+    async def reset_recurrent_events(self, ctx):
+        """Executive Use Only: Resets automated event postings"""
+        await mongo_client.automata.drop_collection("mun_diary")
+        await mongo_client.automata.mun_diary.insert_one({"data": "foo"})
+        self.check_for_new_event.restart()
+
     async def update_event_msg(self):
         channel = self.bot.get_guild(
             PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)

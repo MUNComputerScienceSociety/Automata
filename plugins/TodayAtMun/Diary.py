@@ -13,6 +13,28 @@ class Diary:
     def get_current_date() -> datetime:
         return datetime.now()
 
+    @staticmethod
+    def str_to_datetime(str_date: str):
+        return datetime.strptime(str_date, "%B %d, %Y, %A")
+
+    @staticmethod
+    def time_delta_event(
+        event_date: datetime, curr_date: datetime = datetime.now()
+    ) -> int:
+        """Provides time delta of days remaining for a given date to current date."""
+        return (
+            Diary.truncate_date_time(event_date) - Diary.truncate_date_time(curr_date)
+        ).days
+
+    @staticmethod
+    def truncate_date_time(date: datetime) -> datetime:
+        return datetime(date.year, date.month, date.day)
+
+    @staticmethod
+    def time_to_dt_delta(date: str) -> int:
+        convert_date = Diary.str_to_datetime(date)
+        return Diary.time_delta_event(convert_date)
+
     def set_current_date(self) -> None:
         """Sets the current date at that moment."""
         self.date = datetime.now()
