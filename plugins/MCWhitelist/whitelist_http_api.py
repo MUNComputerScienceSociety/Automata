@@ -1,8 +1,6 @@
-import json
-
 import requests
 
-from Globals import mongo_client, WHITELIST_HTTP_API_BEARER_TOKEN
+from Globals import WHITELIST_HTTP_API_BEARER_TOKEN
 
 WHITELIST_HTTP_API_BASE = "http://craft.muncompsci.ca:7500"
 HEADERS = {"authorization": f"WHA {WHITELIST_HTTP_API_BEARER_TOKEN}"}
