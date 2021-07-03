@@ -9,7 +9,7 @@ from Plugin import AutomataPlugin
 from plugins.TodayAtMun.Diary import Diary
 from plugins.TodayAtMun.DiaryParser import DiaryParser
 
-MUN_LOGO = "https://www.cs.mun.ca/~csclub/assets/logos/others/mun-color.png"
+MUN_LOGO = "https://www.cs.mun.ca/~csclub/assets/logos/color-square-trans.jpg"
 MUN_COLOUR_RED = 0x822433
 MUN_COLOUR_WHITE = 0xFFFFFF
 MUN_COLOUR_GREY = 0x838486
@@ -159,4 +159,6 @@ class TodayAtMun(AutomataPlugin):
         channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)
         message = await channel.fetch_message(channel.last_message_id)
         message.embeds[0].set_author(name=self.time_delta_emojify())
+        edit_time = Diary.get_current_date().strftime("%Y%m%d%H%M%S")
+        message.embeds[0].set_footer(text=f"Last update: {edit_time}", icon_url=MUN_LOGO)
         await message.edit(embed=message.embeds[0])
