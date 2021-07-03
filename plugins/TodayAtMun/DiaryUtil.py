@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Dict
 
 
-class Diary:
+class DiaryUtil:
     """Provides methods to manipulate dates and lookup/match parsed data."""
 
     def __init__(self, diary: Dict[str, str]):
@@ -23,7 +23,7 @@ class Diary:
     ) -> int:
         """Provides time delta of days remaining for a given date to current date."""
         return (
-            Diary.truncate_date_time(event_date) - Diary.truncate_date_time(curr_date)
+            DiaryUtil.truncate_date_time(event_date) - DiaryUtil.truncate_date_time(curr_date)
         ).days
 
     @staticmethod
@@ -32,8 +32,8 @@ class Diary:
 
     @staticmethod
     def time_to_dt_delta(date: str) -> int:
-        convert_date = Diary.str_to_datetime(date)
-        return Diary.time_delta_event(convert_date)
+        convert_date = DiaryUtil.str_to_datetime(date)
+        return DiaryUtil.time_delta_event(convert_date)
 
     def set_current_date(self) -> None:
         """Sets the current date at that moment."""
@@ -54,15 +54,15 @@ class Diary:
 
     def go_to_event(self) -> None:
         """Look up key in dict and set it to variable."""
-        self.this_date = self.diary[self.formatted_date]
+        self.this_date = self.diary[self.key]
 
     def find_event(self, date: datetime) -> str:
         """Searches for date/event pair in MUN calendar."""
         if date.year - datetime.now().year > 1:
             return ""
-        self.formatted_date = self.format_date(date)
+        formatted_date = self.format_date(date)
         for self.key in self.diary:
-            if self.key == self.formatted_date:
+            if self.key == formatted_date:
                 return self.key
         self.find_event(self.next_day(date))
 
@@ -77,7 +77,6 @@ class Diary:
             weight = 10
         packaged_items = {}
         self.find_event(date)
-        self.find_event(date)
         while len(packaged_items) < weight:
             packaged_items[self.key] = self.diary[self.key]
             date = self.next_day(date)
@@ -90,3 +89,9 @@ class Diary:
         if today_date == date:
             return "🔴"
         return ""
+
+    def find_following_event(self):
+        """Provides date immediately following the next date in the calendar"""
+        self.set_current_date()
+        self.find_event(self.date)
+        self.next_event(DiaryUtil.str_to_datetime(self.key) + timedelta(days=1))

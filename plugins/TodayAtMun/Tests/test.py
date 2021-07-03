@@ -6,7 +6,7 @@ import pytest
 
 sys.path.append("../")
 from datetime import date, datetime, timedelta
-from Diary import Diary
+from DiaryUtil import DiaryUtil
 from DiaryParser import DiaryParser
 
 
@@ -14,7 +14,7 @@ class TestDateMethods(unittest.TestCase):
     """Testing TodayAtMun Plugin"""
 
     parse = DiaryParser()
-    diary = Diary(parse.diary)
+    diary = DiaryUtil(parse.diary)
 
     def test1_today_is_next(self):
         print("Start today_is_next tests")
@@ -46,7 +46,7 @@ class TestDateMethods(unittest.TestCase):
 
 @pytest.fixture
 def parsed_diary():
-    return Diary(DiaryParser().diary)
+    return DiaryUtil(DiaryParser().diary)
 
 @pytest.mark.parametrize(
     "date, expected",
@@ -57,7 +57,7 @@ def parsed_diary():
 )
 def test_today_is_next(date, expected):
     parse = DiaryParser()
-    diary = Diary(parse.diary)
+    diary = DiaryUtil(parse.diary)
     date = diary.format_date(diary.truncate_date_time(date))
     assert diary.today_is_next(date) == expected
 
@@ -71,7 +71,7 @@ def test_today_is_next(date, expected):
 )
 def test_time_delta_event(today_time, event_time, expected):
     parse = DiaryParser()
-    diary = Diary(parse.diary)
+    diary = DiaryUtil(parse.diary)
     assert diary.time_delta_event(today_time, event_time) == expected
 
 
@@ -82,6 +82,5 @@ def test_package_of_events(parsed_diary):
         "December 10, 2010, Friday": "December",
         "December 30, 2010, Thursday": "Last Day of the year",
     }
-    diary = Diary(diary_data)
     date = datetime(2010, 10, 22)
-    TestCase().assertDictEqual(diary.package_of_events(date, 4), diary_data)
+    TestCase().assertDictEqual(parsed_diary.package_of_events(date, 4), diary_data)
