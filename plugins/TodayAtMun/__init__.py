@@ -32,21 +32,10 @@ class TodayAtMun(AutomataPlugin):
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
         embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
-            text="TodayAtMun\t!help diary",
+            text="TodayAtMun\t\t\t\t\t!help diary",
             icon_url=MUN_LOGO,
         )
         return embed
-
-    def time_delta_emojify(self) -> str:
-        remaining_time = DiaryUtil.time_delta_event(
-            DiaryUtil.str_to_datetime(self.diary_util.key)
-        )
-        if remaining_time > 1:
-            return f"⏳ {remaining_time} day(s)"
-        elif 0 < remaining_time <= 1:
-            return f"⌛ {remaining_time} day"
-        else:
-            return "🔴"
 
     def today_embed_next_template(self, next_event_date: datetime) -> discord.Embed:
         embed = self.today_embed_template()
@@ -119,7 +108,7 @@ class TodayAtMun(AutomataPlugin):
     async def today_next_bundle_handler(self, ctx, error):
         error = getattr(error, 'original', error)
         if isinstance(error, commands.BadArgument):
-            await ctx.reply("Invalid use of bundle, must use a number instead. Of ")
+            await ctx.reply("Invalid use of bundle, must use a number instead.")
 
     async def post_next_event(self, event: str):
         self.diary_util.set_current_date()
@@ -153,15 +142,15 @@ class TodayAtMun(AutomataPlugin):
     @diary.command("reset")
     @commands.has_permissions(view_audit_log=True)
     async def reset_recurrent_events(self, ctx):
-        """Executive Use Only: Resets automated event postings"""
+        """Executive Use Only: Resets automated event posting."""
         await mongo_client.automata.drop_collection("mun_diary")
         await mongo_client.automata.mun_diary.insert_one({"data": "foo"})
         self.check_for_new_event.restart()
 
     async def update_event_msg(self):
-        channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)
-        message = await channel.fetch_message(channel.last_message_id)
-        message.embeds[0].set_author(name=self.time_delta_emojify())
+        diary_daily_channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)
+        message = await diary_daily_channel.fetch_message(diary_daily_channel.last_message_id)
+        message.embeds[0].set_author(name=self.diary_util.time_delta_emojify())
         edit_time = DiaryUtil.get_current_date().strftime("%Y%m%d%H%M%S")
         message.embeds[0].set_footer(
             text=f"Last update: {edit_time}", icon_url=MUN_LOGO

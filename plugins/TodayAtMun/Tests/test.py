@@ -75,7 +75,7 @@ def test_time_delta_event(today_time, event_time, expected):
     assert diary.time_delta_event(today_time, event_time) == expected
 
 
-def test_package_of_events(parsed_diary):
+def test_package_of_events():
     diary_data = {
         "October 23, 2010, Saturday": "Pizza Party",
         "November 20, 2010, Saturday": "foo",
@@ -83,4 +83,16 @@ def test_package_of_events(parsed_diary):
         "December 30, 2010, Thursday": "Last Day of the year",
     }
     date = datetime(2010, 10, 22)
-    TestCase().assertDictEqual(parsed_diary.package_of_events(date, 4), diary_data)
+    diary = DiaryUtil(diary_data)
+    TestCase().assertDictEqual(diary.package_of_events(date, 4), diary_data)
+
+def test_find_event(parsed_diary):
+
+    future_date = datetime.now() + timedelta(days=400)
+    formatted_future_date = parsed_diary.format_date(future_date)
+    diary_data = {
+        f"{formatted_future_date}": "2 years away"
+    }
+    diary_util = DiaryUtil(diary_data)
+    date = datetime.now()
+    assert diary_util.find_event(date) == ""

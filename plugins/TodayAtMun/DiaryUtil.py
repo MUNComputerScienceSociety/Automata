@@ -35,6 +35,17 @@ class DiaryUtil:
         convert_date = DiaryUtil.str_to_datetime(date)
         return DiaryUtil.time_delta_event(convert_date)
 
+    def time_delta_emojify(self) -> str:
+        remaining_time = DiaryUtil.time_delta_event(
+            DiaryUtil.str_to_datetime(self.key)
+        )
+        if remaining_time > 1:
+            return f"⏳ {remaining_time} day(s)"
+        elif 0 < remaining_time <= 1:
+            return f"⌛ {remaining_time} day"
+        else:
+            return "🔴"
+
     def set_current_date(self) -> None:
         """Sets the current date at that moment."""
         self.date = datetime.now()
@@ -58,13 +69,13 @@ class DiaryUtil:
 
     def find_event(self, date: datetime) -> str:
         """Searches for date/event pair in MUN calendar."""
-        if date.year - datetime.now().year > 1:
+        if (date - datetime.now()).days == 365:
             return ""
         formatted_date = self.format_date(date)
         for self.key in self.diary:
             if self.key == formatted_date:
                 return self.key
-        self.find_event(self.next_day(date))
+        return self.find_event(self.next_day(date))
 
     def next_event(self, date: datetime) -> None:
         """Finds the next significant date in diary."""
