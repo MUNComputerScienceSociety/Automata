@@ -87,11 +87,10 @@ class DiaryUtil:
         if weight < 0 or weight > 10:
             weight = 10
         packaged_items = {}
-        self.find_event(date)
         while len(packaged_items) < weight:
+            self.find_event(date)
             packaged_items[self.key] = self.diary[self.key]
             date = self.next_day(date)
-            self.find_event(date)
         return packaged_items
 
     def today_is_next(self, date: str) -> str:

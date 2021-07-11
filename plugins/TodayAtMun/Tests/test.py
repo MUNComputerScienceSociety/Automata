@@ -48,12 +48,10 @@ class TestDateMethods(unittest.TestCase):
 def parsed_diary():
     return DiaryUtil(DiaryParser().diary)
 
+
 @pytest.mark.parametrize(
     "date, expected",
-    [
-    (date(2021, 10, 22), ""),
-    (datetime.now(), "🔴")
-    ],
+    [(date(2021, 10, 22), ""), (datetime.now(), "🔴")],
 )
 def test_today_is_next(date, expected):
     parse = DiaryParser()
@@ -61,12 +59,14 @@ def test_today_is_next(date, expected):
     date = diary.format_date(diary.truncate_date_time(date))
     assert diary.today_is_next(date) == expected
 
+
 @pytest.mark.parametrize(
     " today_time, event_time, expected",
     [
         (datetime(2022, 10, 2), datetime(2022, 10, 1), 1),
         (datetime(2022, 10, 2), datetime(2022, 10, 1), 1),
         (datetime(2022, 10, 3, 23, 0), datetime(2022, 10, 2, 22, 59), 1),
+        (datetime(2000, 8, 2), datetime(2000, 8, 2), 0),
     ],
 )
 def test_time_delta_event(today_time, event_time, expected):
@@ -78,21 +78,44 @@ def test_time_delta_event(today_time, event_time, expected):
 def test_package_of_events():
     diary_data = {
         "October 23, 2010, Saturday": "Pizza Party",
-        "November 20, 2010, Saturday": "foo",
-        "December 10, 2010, Friday": "December",
-        "December 30, 2010, Thursday": "Last Day of the year",
+        "November 20, 2010, Saturday": "Santa Clause parade lol",
+        "December 10, 2010, Friday": "December is on the go",
+        "December 30, 2010, Thursday": "NYE EVE",
+        "December 31, 2010, Friday": "Friday NYE",
+        "January 1, 2011, Saturday": "NYD",
     }
+
+    test1_diary_expected = {
+        "October 23, 2010, Saturday": "Pizza Party",
+        "November 20, 2010, Saturday": "Santa Clause parade lol",
+        "December 10, 2010, Friday": "December is on the go",
+        "December 30, 2010, Thursday": "NYE EVE",
+    }
+
+    test2_diary_expected = {
+        "October 23, 2010, Saturday": "Pizza Party",
+        "November 20, 2010, Saturday": "Santa Clause parade lol",
+        "December 10, 2010, Friday": "December is on the go",
+        "December 30, 2010, Thursday": "NYE EVE",
+        "December 31, 2010, Friday": "Friday NYE",
+        }
     date = datetime(2010, 10, 22)
     diary = DiaryUtil(diary_data)
-    TestCase().assertDictEqual(diary.package_of_events(date, 4), diary_data)
+    TestCase().assertDictEqual(diary.package_of_events(date, 4), test1_diary_expected)
+    TestCase().assertDictEqual(diary.package_of_events(date, 5), test2_diary_expected)
 
 def test_find_event(parsed_diary):
 
     future_date = datetime.now() + timedelta(days=400)
     formatted_future_date = parsed_diary.format_date(future_date)
-    diary_data = {
-        f"{formatted_future_date}": "2 years away"
-    }
+    diary_data = {f"{formatted_future_date}": "2 years away"}
     diary_util = DiaryUtil(diary_data)
     date = datetime.now()
     assert diary_util.find_event(date) == ""
+
+    future_date2 = datetime.now() + timedelta(days=30)
+    formated_date2 = parsed_diary.format_date(future_date2)
+    diary_data = {f"{formated_date2}": "40 days away"}
+    diary_util = DiaryUtil(diary_data)
+    assert diary_data[diary_util.find_event(date)] == "40 days away"
+
