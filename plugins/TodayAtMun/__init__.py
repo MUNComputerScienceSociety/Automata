@@ -37,7 +37,7 @@ class TodayAtMun(AutomataPlugin):
         )
         return embed
 
-    def today_embed_next_template(self, next_event_date: datetime) -> discord.Embed:
+    def today_embed_next_template(self, next_event_date: str) -> discord.Embed:
         embed = self.today_embed_template()
         embed.set_author(
             name=f"⏳ ~{self.diary_util.time_delta_event(self.diary_util.str_to_datetime(next_event_date))} days"
@@ -92,7 +92,7 @@ class TodayAtMun(AutomataPlugin):
         packaged_keys = list(packaged_events.keys())
         embed = self.today_embed_template()
         embed.add_field(
-            name=f"__**Showing next five upcoming events in MUN diary**__\n*{packaged_keys[0]}* **-** *{packaged_keys[len(packaged_keys)-1]}*",
+            name=f"__**Showing next {len(packaged_keys)} upcoming events in MUN diary**__\n*{packaged_keys[0]}* **-** *{packaged_keys[len(packaged_keys)-1]}*",
             value="\u200b",
             inline=False,
         )
