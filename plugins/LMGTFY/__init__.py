@@ -1,3 +1,4 @@
+import urllib
 import discord
 from discord.ext import commands
 
@@ -11,5 +12,7 @@ class LMGTFY(AutomataPlugin):
     async def lmgtfy(self, ctx: commands.Context, *, search_terms: str):       
         """Creates a LMGTFY link with the given search terms"""
 
-        search_terms = search_terms.replace(" ", "+")       
-        await ctx.send(f"http://lmgtfy.com/?q={search_terms}")
+        search_terms = urllib.parse.quote(search_terms)
+        url = f"http://lmgtfy.com/?q={search_terms}"
+
+        await ctx.send(url)
