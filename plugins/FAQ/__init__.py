@@ -36,13 +36,10 @@ class FAQ(AutomataPlugin):
             inline=False,
         )
         embed_science.add_field(
-            name=f"What science electives should I take?",
-            value=f"_The science electives should be in the same discipline (Ex: Econ 1010 and Econ 1020). A list of science electives can be found [here](https://www.mun.ca/undergrad/first-year-information/courses-available-in-first-year/)_",
-            inline=False,
-        )
-        embed_science.set_footer(
-            text="Students who have not completed Computer Science 1003 in their first year will not be able to register for Computer Science 2001/2/3 in the fall of their second year."
-        )
+            name=f'What science electives should I take?',
+            value=f'_A list of science electives can be found [here](https://www.mun.ca/science/students/majors.php)_', 
+            inline=False)
+        embed_science.set_footer(text="Students who have not completed Computer Science 1003 in their first year will not be able to register for Computer Science 2001/2/3 in the fall of their second year.")
 
         return embed_science
 
@@ -120,10 +117,9 @@ class FAQ(AutomataPlugin):
             inline=False,
         )
         embed_admission.add_field(
-            name=f"**What is the minimum required average for acceptance?**",
-            value=f"Students who fulfill the eligibility requirements compete for a limited number of available spaces. Selection is based on academic performance, normally cumulative average and performance in recent courses.  For 2022 applications, students must also have a mean grade of at least 65% in Computer Science 1001 and 1002.",
-            inline=False,
-        )
+            name=f'**What is the minimum required average for acceptance?**',
+            value=f'Students who fulfill the eligibility requirements compete for a limited number of available spaces. Selection is based on academic performance, normally cumulative average and performance in recent courses.  For 2022 applications, students must also have a mean grade of at least 65% in Computer Science 1001 and 1002. Starting Fall 2021 students need an average of 65% in COMP 1001 and COMP 1002 to get in the major', 
+            inline=False)
 
         await ctx.send(embed=embed_admission)
 
