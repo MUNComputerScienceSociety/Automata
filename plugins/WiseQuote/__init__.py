@@ -4,6 +4,7 @@ from Plugin import AutomataPlugin
 
 QUOTES_ENDPOINT = "https://type.fit/api/quotes"
 
+
 class WiseQuote(AutomataPlugin):
     """Quotes from wise people"""
 
@@ -14,10 +15,14 @@ class WiseQuote(AutomataPlugin):
     @commands.command()
     async def wisequote(self, ctx):
         """Replies with a quote from a wise person"""
-        
+
         quote = random.choice(self.quotes)
         response = '"{text}" -**{author}**'
-        await ctx.send(response.format(
-            text = quote['text'],
-            author = quote['author'] if 'author' in quote.keys() and quote['author'] != None else 'Unknown')
+        await ctx.send(
+            response.format(
+                text=quote["text"],
+                author=quote["author"]
+                if "author" in quote.keys() and quote["author"] != None
+                else "Unknown",
+            )
         )
