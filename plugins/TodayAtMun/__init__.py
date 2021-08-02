@@ -1,18 +1,21 @@
 import asyncio
-from datetime import date, datetime, timedelta
 from random import choice
 
 import discord
+import mechanicalsoup
+import requests
+from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
 from Globals import DIARY_DAILY_CHANNEL, PRIMARY_GUILD, mongo_client
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
-from plugins.TodayAtMun.DiaryParser import DiaryParser
 
-MUN_LOGO = "https://www.cs.mun.ca/~csclub/assets/logos/color-square-trans.png"
+MUN_CSS_LOGO = "https://www.cs.mun.ca/~csclub/assets/logos/color-square-trans.png"
 MUN_COLOUR_RED = 0x822433
 MUN_COLOUR_WHITE = 0xFFFFFF
 MUN_COLOUR_GREY = 0x838486
+DIARY_DATA_SOURCE = "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
+EXAMS_DATA_SOURCE = "https://www3.mun.ca/admit/swkgexm.P_Query_Exam?p_term_code=202003&p_internal_campus_code=CAMP_STJ&p_title=STJ_SPRG"
 
 
 class TodayAtMun(AutomataPlugin):
@@ -20,8 +23,8 @@ class TodayAtMun(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-        self.parse = DiaryParser()
-        self.diary_util = DiaryUtil(self.parse.diary)
+        self.parse = TodayAtMun.parse_diary()
+        self.diary_util = DiaryUtil(self.parse)
         self.posted_events = mongo_client.automata.mun_diary
         self.check_for_new_event.start()
 
@@ -32,8 +35,8 @@ class TodayAtMun(AutomataPlugin):
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
         embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
-            text="TodayAtMun\t\t\t\t\t!help diary",
-            icon_url=MUN_LOGO,
+            text="TodayAtMun ● !help TodayAtMun",
+            icon_url=MUN_CSS_LOGO,
         )
         return embed
 
@@ -51,7 +54,9 @@ class TodayAtMun(AutomataPlugin):
 
     @commands.group(aliases=["d", "today"])
     async def diary(self, ctx: commands.Context):
-        """Provides brief info of significant dates on the MUN calendar."""
+        """Provides brief info of significant dates on the MUN calendar.
+        Examples: !d next, !d later, !d bundle 10
+        """
         await ctx.trigger_typing()
         if ctx.invoked_subcommand is None:
             await ctx.reply(content="Invalid command, check !help diary for more.")
@@ -83,17 +88,23 @@ class TodayAtMun(AutomataPlugin):
         await ctx.reply(self.diary_util.format_date(self.diary_util.date))
 
     @diary.command(name="bundle", aliases=["b", "nextfive"])
-    async def today_bundle(self, ctx: commands.Context, events:int = 5):
-        """Sends the next n number of events coming up in MUN diary."""
+    async def today_bundle(self, ctx: commands.Context, events: int = 5):
+        """Sends the next n number of events coming up in MUN diary.
+        Usage: !diary bundle <size>
+        Example: !diary bundle 10
+        """
         self.diary_util.set_current_date()
         packaged_events = self.diary_util.package_of_events(
             self.diary_util.date, events
         )
         packaged_keys = list(packaged_events.keys())
+        first_event_date = packaged_keys[0]
+        last_event_data = packaged_keys[-1]
+        bundle_size = len(packaged_events)
         embed = self.today_embed_template()
         embed.add_field(
-            name=f"__**Showing next {len(packaged_keys)} upcoming events in MUN diary**__\n*{packaged_keys[0]}* **-** *{packaged_keys[len(packaged_keys)-1]}*",
-            value="\u200b",
+            name=f"__**Showing next {bundle_size} upcoming events in MUN diary**__",
+            value=f"*{first_event_date}* **-** *{last_event_data}*",
             inline=False,
         )
         for _, (date, context) in enumerate(packaged_events.items()):
@@ -106,9 +117,9 @@ class TodayAtMun(AutomataPlugin):
     
     @today_bundle.error
     async def today_next_bundle_handler(self, ctx, error):
-        error = getattr(error, 'original', error)
+        error = getattr(error, "original", error)
         if isinstance(error, commands.BadArgument):
-            await ctx.reply("Invalid use of bundle, must use a number instead.")
+            await ctx.reply("Invalid use of bundle, Usage: !d bundle <1 - 10 : int>")
 
     async def post_next_event(self, event: str):
         self.diary_util.set_current_date()
@@ -139,7 +150,7 @@ class TodayAtMun(AutomataPlugin):
     async def before_check_test(self):
         await self.bot.wait_until_ready()
 
-    @diary.command("reset")
+    @diary.command("restart")
     @commands.has_permissions(view_audit_log=True)
     async def reset_recurrent_events(self, ctx):
         """Executive Use Only: Resets automated event posting."""
@@ -148,11 +159,117 @@ class TodayAtMun(AutomataPlugin):
         self.check_for_new_event.restart()
 
     async def update_event_msg(self):
-        diary_daily_channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL)
-        message = await diary_daily_channel.fetch_message(diary_daily_channel.last_message_id)
+        diary_daily_channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(
+            DIARY_DAILY_CHANNEL
+        )
+        message = await diary_daily_channel.fetch_message(
+            diary_daily_channel.last_message_id
+        )
         message.embeds[0].set_author(name=self.diary_util.time_delta_emojify())
-        edit_time = DiaryUtil.get_current_date().strftime("%Y%m%d%H%M%S")
+        edit_time = DiaryUtil.get_current_date().strftime("%Y-%m-%d-%H-%M-%S")
         message.embeds[0].set_footer(
-            text=f"Last update: {edit_time}", icon_url=MUN_LOGO
+            text=f"Last update: {edit_time}", icon_url=MUN_CSS_LOGO
         )
         await message.edit(embed=message.embeds[0])
+
+    @commands.group(aliases=["e"])
+    @commands.cooldown(3, 60)
+    async def exam(
+        self,
+        ctx: commands.Context,
+        subj: str = "",
+        course_num: str = "",
+        sec_numb: str = "",
+        crn: str = "",
+    ):
+        """Provides Exam Info for current semester
+        Usage: !exam <subject> <course_number> <section_number> <crn>
+        Example: !exam COMP 1003
+        """
+        sched_heading, table_heading, exams_parsed = TodayAtMun.get_exams(
+            subj, course_num, sec_numb, crn
+        )
+        embed = self.today_embed_template()
+        embed.title = sched_heading
+        embed.add_field(name=table_heading, value="\u200b", inline=False)
+        for exam in exams_parsed:
+            embed.add_field(name=" | ".join(exam), value="\u200b", inline=False)
+        await ctx.send(embed=embed)
+
+    @exam.error
+    async def exam_handler(self, ctx, error):
+        error = getattr(error, "original", error)
+        await ctx.reply(error)
+
+    @staticmethod
+    def parse_diary():
+        diary = {}
+        mun_request = requests.get(DIARY_DATA_SOURCE).text
+        soup = BeautifulSoup(mun_request, "html.parser")
+        dates_in_diary = soup.find_all("td", attrs={"align": "left"})
+        description_of_date = soup.find_all("td", attrs={"align": "justify"})
+
+        for left_item, right_item in zip(dates_in_diary, description_of_date):
+            right_item_parse = right_item.get_text().split()
+            try:
+                diary[left_item.find("p").get_text().strip("\n\t")] = " ".join(
+                    right_item_parse
+                )
+            except AttributeError:
+                diary[left_item.find("li").get_text().strip("\n\t")] = " ".join(
+                    right_item_parse
+                )
+        return diary
+
+    @staticmethod
+    def submit_form(
+        subj: str = "", course_num: str = "", sec_numb: str = "", crn: str = ""
+    ):
+        browser = mechanicalsoup.StatefulBrowser(
+            soup_config={"features": "html.parser"}
+        )
+        browser.open(EXAMS_DATA_SOURCE)
+        browser.select_form('form[method="post"]')
+
+        browser["p_subj_code"] = subj
+        browser["p_crse_numb"] = course_num
+        browser["p_seq_numb"] = sec_numb
+        browser["p_crn"] = crn
+
+        browser.submit_selected()
+        return browser.page
+
+    @staticmethod
+    def parse_sched_heading(page) -> str:
+        return page.find("div", class_="infotextdiv").find("b").get_text().strip()
+
+    @staticmethod
+    def parse_headings(page: BeautifulSoup):
+        return " | ".join(
+            f"{heading.get_text()}"
+            for heading in page.find_all("td", class_="dbheader")
+        )
+
+    @staticmethod
+    def parse_form(page: BeautifulSoup):
+        exam_context = []
+        exams = []
+        for data_cell, course in enumerate(
+            page.find_all("td", class_="dbdefault"), start=1
+        ):
+            exam_context.append(course.get_text())
+            if data_cell % 6 == 0:
+                exams.append(exam_context)
+                exam_context = []
+        return exams
+
+    @staticmethod
+    def get_exams(
+        subj: str = "", course_num: str = "", sec_numb: str = "", crn: str = ""
+    ):
+        """Provides exam info - schedule brief, table heading and exam details"""
+        page = TodayAtMun.submit_form(subj, course_num, sec_numb, crn)
+        sched_heading = TodayAtMun.parse_sched_heading(page)
+        headings = TodayAtMun.parse_headings(page)
+        exams = TodayAtMun.parse_form(page)
+        return sched_heading, headings, exams

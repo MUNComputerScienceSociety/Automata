@@ -1,13 +1,12 @@
 from datetime import datetime, timedelta
-from typing import Dict
 
 
 class DiaryUtil:
     """Provides methods to manipulate dates and lookup/match parsed data."""
 
-    def __init__(self, diary: Dict[str, str]):
+    def __init__(self, diary: dict[str, str]):
         self.diary = diary
-        self.date = datetime.now()
+        self.date = DiaryUtil.get_current_date()
 
     @staticmethod
     def get_current_date() -> datetime:
@@ -23,7 +22,8 @@ class DiaryUtil:
     ) -> int:
         """Provides time delta of days remaining for a given date to current date."""
         return (
-            DiaryUtil.truncate_date_time(event_date) - DiaryUtil.truncate_date_time(curr_date)
+            DiaryUtil.truncate_date_time(event_date)
+            - DiaryUtil.truncate_date_time(curr_date)
         ).days
 
     @staticmethod
@@ -36,15 +36,15 @@ class DiaryUtil:
         return DiaryUtil.time_delta_event(convert_date)
 
     def time_delta_emojify(self) -> str:
-        remaining_time = DiaryUtil.time_delta_event(
-            DiaryUtil.str_to_datetime(self.key)
-        )
+        remaining_time = DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(self.key))
         if remaining_time > 1:
             return f"⏳ {remaining_time} day(s)"
         elif 0 < remaining_time <= 1:
             return f"⌛ {remaining_time} day"
-        else:
+        elif remaining_time == 0:
             return "🔴"
+        else:
+            return "✅"
 
     def set_current_date(self) -> None:
         """Sets the current date at that moment."""
@@ -69,7 +69,7 @@ class DiaryUtil:
 
     def find_event(self, date: datetime) -> str:
         """Searches for date/event pair in MUN calendar."""
-        if (date - datetime.now()).days == 365:
+        if (date - DiaryUtil.get_current_date()).days == 365:
             return ""
         formatted_date = self.format_date(date)
         for self.key in self.diary:
@@ -82,7 +82,7 @@ class DiaryUtil:
         self.find_event(date)
         self.go_to_event()
 
-    def package_of_events(self, date, weight):
+    def package_of_events(self, date: datetime, weight: int) -> list[datetime]:
         """Creates a package of upcoming events in MUN diary"""
         if weight < 0 or weight > 10:
             weight = 10
