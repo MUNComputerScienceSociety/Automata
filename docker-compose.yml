@@ -2,8 +2,7 @@ version: '3'
 
 services:
   automata:
-    #image: ''
-    build: .
+    image: muncs/automata
     restart: always
     volumes:
       - ./mounted_plugins:/app/mounted_plugins

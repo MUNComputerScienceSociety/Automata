@@ -41,10 +41,8 @@ class DiaryUtil:
             return f"⏳ {remaining_time} day(s)"
         elif 0 < remaining_time <= 1:
             return f"⌛ {remaining_time} day"
-        elif remaining_time == 0:
-            return "🔴"
         else:
-            return "✅"
+            return "🔴"
 
     def set_current_date(self) -> None:
         """Sets the current date at that moment."""
