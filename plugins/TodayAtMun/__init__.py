@@ -114,7 +114,7 @@ class TodayAtMun(AutomataPlugin):
                 inline=False,
             )
         await ctx.send(embed=embed)
-    
+
     @today_bundle.error
     async def today_next_bundle_handler(self, ctx, error):
         error = getattr(error, "original", error)
@@ -155,7 +155,6 @@ class TodayAtMun(AutomataPlugin):
     async def reset_recurrent_events(self, ctx):
         """Executive Use Only: Resets automated event posting."""
         await mongo_client.automata.drop_collection("mun_diary")
-        await mongo_client.automata.mun_diary.insert_one({"data": "foo"})
         self.check_for_new_event.restart()
 
     async def update_event_msg(self):
