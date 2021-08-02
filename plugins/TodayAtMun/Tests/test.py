@@ -4,17 +4,16 @@ from unittest.case import TestCase
 import pytest
 
 
-sys.path.append("../")
+sys.path.append("../../../")
 from datetime import date, datetime, timedelta
-from DiaryUtil import DiaryUtil
-from DiaryParser import DiaryParser
-
+from plugins.TodayAtMun.DiaryUtil import DiaryUtil
+from plugins.TodayAtMun.__init__ import TodayAtMun
 
 class TestDateMethods(unittest.TestCase):
     """Testing TodayAtMun Plugin"""
 
-    parse = DiaryParser()
-    diary = DiaryUtil(parse.diary)
+    parse = TodayAtMun.parse_diary()
+    diary = DiaryUtil(parse)
 
     def test1_today_is_next(self):
         print("Start today_is_next tests")
@@ -46,7 +45,8 @@ class TestDateMethods(unittest.TestCase):
 
 @pytest.fixture
 def parsed_diary():
-    return DiaryUtil(DiaryParser().diary)
+    diary = TodayAtMun.parse_diary()
+    return DiaryUtil(diary)
 
 
 @pytest.mark.parametrize(
@@ -54,8 +54,8 @@ def parsed_diary():
     [(date(2021, 10, 22), ""), (datetime.now(), "🔴")],
 )
 def test_today_is_next(date, expected):
-    parse = DiaryParser()
-    diary = DiaryUtil(parse.diary)
+    parse = TodayAtMun.parse_diary()
+    diary = DiaryUtil(parse)
     date = diary.format_date(diary.truncate_date_time(date))
     assert diary.today_is_next(date) == expected
 
@@ -70,8 +70,8 @@ def test_today_is_next(date, expected):
     ],
 )
 def test_time_delta_event(today_time, event_time, expected):
-    parse = DiaryParser()
-    diary = DiaryUtil(parse.diary)
+    diary = TodayAtMun.parse_diary()
+    diary = DiaryUtil(diary)
     assert diary.time_delta_event(today_time, event_time) == expected
 
 
