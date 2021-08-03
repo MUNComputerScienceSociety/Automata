@@ -13,7 +13,7 @@ class DiaryUtil:
         return datetime.now()
 
     @staticmethod
-    def str_to_datetime(str_date: str):
+    def str_to_datetime(str_date: str) -> datetime:
         return datetime.strptime(str_date, "%B %d, %Y, %A")
 
     @staticmethod

@@ -201,7 +201,7 @@ class TodayAtMun(AutomataPlugin):
         await ctx.reply(error)
 
     @staticmethod
-    def parse_diary():
+    def parse_diary() -> dict[str, str]:
         diary = {}
         mun_request = requests.get(DIARY_DATA_SOURCE).text
         soup = BeautifulSoup(mun_request, "html.parser")
@@ -223,7 +223,7 @@ class TodayAtMun(AutomataPlugin):
     @staticmethod
     def submit_form(
         subj: str = "", course_num: str = "", sec_numb: str = "", crn: str = ""
-    ):
+    ) -> BeautifulSoup:
         browser = mechanicalsoup.StatefulBrowser(
             soup_config={"features": "html.parser"}
         )
@@ -243,14 +243,14 @@ class TodayAtMun(AutomataPlugin):
         return page.find("div", class_="infotextdiv").find("b").get_text().strip()
 
     @staticmethod
-    def parse_headings(page: BeautifulSoup):
+    def parse_headings(page: BeautifulSoup) -> str:
         return " | ".join(
             f"{heading.get_text()}"
             for heading in page.find_all("td", class_="dbheader")
         )
 
     @staticmethod
-    def parse_form(page: BeautifulSoup):
+    def parse_form(page: BeautifulSoup) -> list[str]:
         exam_context = []
         exams = []
         for data_cell, course in enumerate(
@@ -265,7 +265,7 @@ class TodayAtMun(AutomataPlugin):
     @staticmethod
     def get_exams(
         subj: str = "", course_num: str = "", sec_numb: str = "", crn: str = ""
-    ):
+    ) -> tuple[str, str, list[str]]:
         """Provides exam info - schedule brief, table heading and exam details"""
         page = TodayAtMun.submit_form(subj, course_num, sec_numb, crn)
         sched_heading = TodayAtMun.parse_sched_heading(page)
