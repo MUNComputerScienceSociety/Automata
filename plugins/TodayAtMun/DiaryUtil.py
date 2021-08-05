@@ -17,9 +17,7 @@ class DiaryUtil:
         return datetime.strptime(str_date, "%B %d, %Y, %A")
 
     @staticmethod
-    def time_delta_event(
-        event_date: datetime, curr_date: datetime = datetime.now()
-    ) -> int:
+    def time_delta_event(event_date: datetime, curr_date: datetime) -> int:
         """Provides time delta of days remaining for a given date to current date."""
         return (
             DiaryUtil.truncate_date_time(event_date)
@@ -33,10 +31,12 @@ class DiaryUtil:
     @staticmethod
     def time_to_dt_delta(date: str) -> int:
         convert_date = DiaryUtil.str_to_datetime(date)
-        return DiaryUtil.time_delta_event(convert_date)
+        return DiaryUtil.time_delta_event(convert_date, datetime.now())
 
-    def time_delta_emojify(self) -> str:
-        remaining_time = DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(self.key))
+    def time_delta_emojify(self, next_event_date: str) -> str:
+        remaining_time = DiaryUtil.time_delta_event(
+            DiaryUtil.str_to_datetime(next_event_date), datetime.now()
+        )
         if remaining_time > 1:
             return f"⏳ {remaining_time} day(s)"
         elif 0 < remaining_time <= 1:
@@ -63,7 +63,7 @@ class DiaryUtil:
 
     def go_to_event(self) -> None:
         """Look up key in dict and set it to variable."""
-        self.this_date = self.diary[self.key]
+        self.event_desc = self.diary[self.key]
 
     def find_event(self, date: datetime) -> str:
         """Searches for date/event pair in MUN calendar."""

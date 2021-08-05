@@ -3,11 +3,11 @@ import unittest
 from unittest.case import TestCase
 import pytest
 
-
 sys.path.append("../../../")
 from datetime import date, datetime, timedelta
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
 from plugins.TodayAtMun.__init__ import TodayAtMun
+
 
 class TestDateMethods(unittest.TestCase):
     """Testing TodayAtMun Plugin"""
@@ -98,11 +98,12 @@ def test_package_of_events():
         "December 10, 2010, Friday": "December is on the go",
         "December 30, 2010, Thursday": "NYE EVE",
         "December 31, 2010, Friday": "Friday NYE",
-        }
+    }
     date = datetime(2010, 10, 22)
     diary = DiaryUtil(diary_data)
     TestCase().assertDictEqual(diary.package_of_events(date, 4), test1_diary_expected)
     TestCase().assertDictEqual(diary.package_of_events(date, 5), test2_diary_expected)
+
 
 def test_find_event(parsed_diary):
 
@@ -119,3 +120,37 @@ def test_find_event(parsed_diary):
     diary_util = DiaryUtil(diary_data)
     assert diary_data[diary_util.find_event(date)] == "40 days away"
 
+
+def test_daily_time_delta():
+    time = datetime(2021, 10, 22)
+    diary = {
+        (time + timedelta(days=10)).strftime("%B %-d, %Y, %A"): "First event",
+        (time + timedelta(days=20)).strftime("%B %-d, %Y, %A"): "Second event",
+        (time + timedelta(days=30)).strftime("%B %-d, %Y, %A"): "Third event",
+        (time + timedelta(days=40)).strftime("%B %-d, %Y, %A"): "Fourth event",
+    }
+    diary_key_list = list(diary)
+    diary_util = DiaryUtil(diary)
+
+    assert diary_util.find_event(time) == diary_key_list[0]
+    next_event_date = diary_util.find_event(time)
+    assert (
+        DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(next_event_date), time)
+        == 10
+    )
+    time = time + timedelta(days=1)
+    assert (
+        DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(next_event_date), time)
+        == 9
+    )
+    time = time + timedelta(days=1)
+    assert (
+        DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(next_event_date), time)
+        == 8
+    )
+    time = datetime(2021, 10, 31)
+    next_event_date = diary_util.find_event(time)
+    assert (
+        DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(next_event_date), time)
+        == 1
+    )

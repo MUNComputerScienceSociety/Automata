@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from random import choice
 
 import discord
@@ -43,7 +44,7 @@ class TodayAtMun(AutomataPlugin):
     def today_embed_next_template(self, next_event_date: str) -> discord.Embed:
         embed = self.today_embed_template()
         embed.set_author(
-            name=f"⏳ ~{self.diary_util.time_delta_event(self.diary_util.str_to_datetime(next_event_date))} days"
+            name=f"⏳ ~{self.diary_util.time_delta_event(self.diary_util.str_to_datetime(next_event_date), datetime.now())} day(s)"
         )
         embed.add_field(
             name=f"{self.diary_util.today_is_next(next_event_date)} {next_event_date}",
@@ -76,7 +77,7 @@ class TodayAtMun(AutomataPlugin):
         embed = self.today_embed_template()
         embed.add_field(
             name=f"{self.diary_util.key}, ⌛ ~`{DiaryUtil.time_to_dt_delta(self.diary_util.key)}` days away.",
-            value=f"{self.diary_util.this_date}",
+            value=f"{self.diary_util.event_desc}",
             inline=False,
         )
         await ctx.reply(embed=embed)
@@ -122,8 +123,8 @@ class TodayAtMun(AutomataPlugin):
             await ctx.reply("Invalid use of bundle, Usage: !d bundle <1 - 10 : int>")
 
     async def post_next_event(self, event: str):
-        self.diary_util.set_current_date()
-        self.diary_util.find_event(self.diary_util.date)
+        date = DiaryUtil.get_current_date()
+        self.diary_util.find_event(date)
         next_embed = self.today_embed_next_template(self.diary_util.key)
         await self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL).send(
             embed=next_embed
@@ -131,18 +132,17 @@ class TodayAtMun(AutomataPlugin):
         await self.posted_events.insert_one({"date": event})
 
     async def post_new_events(self):
-        self.diary_util.set_current_date()
-        self.diary_util.find_event(self.diary_util.date)
-        next_event_date = self.diary_util.key
+        date = DiaryUtil.get_current_date()
+        next_event_date = self.diary_util.find_event(date)
         retrieve_event = await self.posted_events.find_one({"date": next_event_date})
 
         if retrieve_event is None:
             await self.post_next_event(next_event_date)
         else:
-            await self.update_event_msg()
+            await self.update_event_msg(next_event_date)
         await asyncio.sleep(5)
 
-    @tasks.loop(hours=6)
+    @tasks.loop(hours=3)
     async def check_for_new_event(self):
         await self.post_new_events()
 
@@ -155,16 +155,19 @@ class TodayAtMun(AutomataPlugin):
     async def reset_recurrent_events(self, ctx):
         """Executive Use Only: Resets automated event posting."""
         await mongo_client.automata.drop_collection("mun_diary")
+        await mongo_client.automata.mun_diary.insert_one({"date": "init"})
         self.check_for_new_event.restart()
 
-    async def update_event_msg(self):
+    async def update_event_msg(self, next_event_date: str):
         diary_daily_channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(
             DIARY_DAILY_CHANNEL
         )
         message = await diary_daily_channel.fetch_message(
             diary_daily_channel.last_message_id
         )
-        message.embeds[0].set_author(name=self.diary_util.time_delta_emojify())
+        message.embeds[0].set_author(
+            name=self.diary_util.time_delta_emojify(next_event_date)
+        )
         edit_time = DiaryUtil.get_current_date().strftime("%Y-%m-%d-%H-%M-%S")
         message.embeds[0].set_footer(
             text=f"Last update: {edit_time}", icon_url=MUN_CSS_LOGO
