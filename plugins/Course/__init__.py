@@ -2,27 +2,35 @@ from discord.ext import commands
 import discord
 
 from Plugin import AutomataPlugin
-from plugins.Course.calendarScraper import get_name_and_info_from_ID
-from plugins.Course.bannerScraper import get_profs_from_course
-from plugins.Course.peopleScraper import get_prof_info_from_name
-from plugins.Course.rmpScraper import get_rating_from_prof_name
+from plugins.Course.calendarScraper import CalendarScraper
+from plugins.Course.bannerScraper import BannerScraper
+from plugins.Course.peopleScraper import PeopleScraper
+from plugins.Course.rmpScraper import RMPScraper
 
 colors = [discord.Color.blue(), discord.Color.red(), discord.Color.green(), 0]
 
 
 class Course(AutomataPlugin):
+
+    def __init__(self, manifest, bot):
+        super().__init__(manifest, bot)
+        self.calendar_scraper = CalendarScraper(604800) # 1 week cache lifetime
+        self.people_scraper = PeopleScraper(604800) # 1 week  cache lifetime
+        self.rmp_scraper = RMPScraper(604800) # 1 week cache lifetime
+        self.banner_scraper = BannerScraper(604800) # 1 week  cache lifetime
+
     '''Provides info on a course and its listings for the current semester'''
     @commands.command()
     async def course(self, ctx: commands.Context, course_ID):
         # Get the course name and info from the calendar
-        course_name, course_info = get_name_and_info_from_ID(course_ID)
+        course_name, course_info = await self.calendar_scraper.get_name_and_info_from_ID(course_ID)
         # If there is no name, tell the user that the course doesn't exist
         if not course_name:
             await ctx.send("That course doesn't exist!")
             return
 
         # Get the profs that are teaching the course this semester and the campuses where it's being taught
-        instructor_data = get_profs_from_course(course_ID)
+        instructor_data = await self.banner_scraper.get_profs_from_course(course_ID)
         campuses = list(instructor_data.keys())
 
         # Get the year/level of the course
@@ -56,11 +64,11 @@ class Course(AutomataPlugin):
                 prof_name = ""
                 rmp_string = ""
                 # Get their info using the dumb Banner name
-                prof_info = get_prof_info_from_name(instructor_data[campuses[i]][j])
+                prof_info = await self.people_scraper.get_prof_info_from_name(instructor_data[campuses[i]][j])
                 # If we couldn't get any info
                 if not prof_info:
                     # Try to find an RMP profile using the dumb Banner name
-                    rmp_string, rmp_name = get_rating_from_prof_name(
+                    rmp_string, rmp_name = await self.rmp_scraper.get_rating_from_prof_name(
                         instructor_data[campuses[i]][j]
                     )
                     # If there is an RMP profile
@@ -74,7 +82,7 @@ class Course(AutomataPlugin):
                 else:
                     # Get the correct name and then get try to find the RMP profile using it
                     prof_name = f"{prof_info['fname']} {prof_info['lname']}"
-                    rmp_string, rmp_name = get_rating_from_prof_name(prof_name)
+                    rmp_string, rmp_name = await self.rmp_scraper.get_rating_from_prof_name(prof_name)
                     prof_string = f"{prof_info['title']} **{prof_info['title']}** "
                 # Let the user know if a profile cannot be found, otherwise add the score to the prof string
                 prof_string += (

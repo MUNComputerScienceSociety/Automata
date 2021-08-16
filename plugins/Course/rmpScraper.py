@@ -1,5 +1,8 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+from Globals import mongo_client
+from datetime import datetime
+import asyncio
 
 # These are the parts that go into a RMP search for a MUN prof (minus the name)
 url_parts = [
@@ -7,71 +10,99 @@ url_parts = [
     "&sid=U2Nob29sLTE0NDE=",
 ]
 
-# Get the completed URL for the RMP search
-def get_rmp_url(separated_prof_name):
 
-    # Append every word from the name together with "%20" in between them
-    name_with_spaces = "%20".join(separated_prof_name)
+class RMPScraper:
 
-    return f"{url_parts[0]}{name_with_spaces}{url_parts[1]}"
+    def __init__(self, cache_lifetime):
+        self.rmp_cache = mongo_client.automata.rmp_scraper_cache
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.ensure_collection_expiry(cache_lifetime))
+
+    async def ensure_collection_expiry(self, lifetime):
+        await self.rmp_cache.create_index(
+            "datetime", expireAfterSeconds=lifetime
+        )
+
+    # Get the completed URL for the RMP search
+    def get_rmp_url(self, separated_prof_name):
+
+        # Append every word from the name together with "%20" in between them
+        name_with_spaces = "%20".join(separated_prof_name)
+
+        return f"{url_parts[0]}{name_with_spaces}{url_parts[1]}"
 
 
-# Get the soup from a URL
-def get_soup_from_url(url):
-    client = urlopen(url)
-    page_html = client.read()
-    client.close()
-    return BeautifulSoup(page_html, "html.parser")
+    # Get the soup from a URL
+    def get_soup_from_url(self, url):
+        client = urlopen(url)
+        page_html = client.read()
+        client.close()
+        return BeautifulSoup(page_html, "html.parser")
 
 
-def get_rating_from_prof_name(prof_name):
-    # Get the URL for the search
-    prof_name = prof_name.lower()
-    separated_name = prof_name.split(" ")
-    url = get_rmp_url(separated_name)
-    # Soup
-    soup = get_soup_from_url(url)
-    # Get all divs for profs
-    profs = soup.find_all(
-        "a", {"class": "TeacherCard__StyledTeacherCard-syjs0d-0 dLJIlx"}
-    )
+    async def get_rating_from_prof_name(self, prof_name):
+        prof_name = prof_name.lower()
 
-    # If there are no prof divs found we try again, but leave out the first name
-    if not profs:
-        url = get_rmp_url(separated_name[1:])
-        soup = get_soup_from_url(url)
+        cached = await self.rmp_cache.find_one({"prof_name": prof_name})
+
+        if cached is not None:
+            print("Got RMP data from cache")
+            return cached["rmp_string"], cached["prof_rmp_name"]
+
+        # Get the URL for the search
+        separated_name = prof_name.split(" ")
+        url = self.get_rmp_url(separated_name)
+        # Soup
+        soup = self.get_soup_from_url(url)
+        # Get all divs for profs
         profs = soup.find_all(
             "a", {"class": "TeacherCard__StyledTeacherCard-syjs0d-0 dLJIlx"}
         )
-        # Two fails means no profile
+
+        # If there are no prof divs found we try again, but leave out the first name
         if not profs:
-            return None, None
+            url = self.get_rmp_url(separated_name[1:])
+            soup = self.get_soup_from_url(url)
+            profs = soup.find_all(
+                "a", {"class": "TeacherCard__StyledTeacherCard-syjs0d-0 dLJIlx"}
+            )
+            # Two fails means no profile
+            if not profs:
+                return None, None
 
-    probably_the_right_prof = None
-    # If more than one prof is found from the search find the first one in the CS department
-    if len(profs) > 1:
-        found_cs_prof = False
-        for i in range(len(profs)):
-            if (
-                profs[i]
-                .find("div", {"class": "CardSchool__Department-sc-19lmz2k-0 haUIRO"})
-                .text
-                == "Computer Science"
-            ):
-                probably_the_right_prof = profs[i]
-                found_cs_prof = True
-                break
-        # If none of the ooptions are in the CS department there is no profile
-        if not found_cs_prof:
-            return None, None
-    else:
-        # Only one prof means that ones probably the right one
-        probably_the_right_prof = profs[0]
+        probably_the_right_prof = None
+        # If more than one prof is found from the search find the first one in the CS department
+        if len(profs) > 1:
+            found_cs_prof = False
+            for i in range(len(profs)):
+                if (
+                    profs[i]
+                    .find("div", {"class": "CardSchool__Department-sc-19lmz2k-0 haUIRO"})
+                    .text
+                    == "Computer Science"
+                ):
+                    probably_the_right_prof = profs[i]
+                    found_cs_prof = True
+                    break
+            # If none of the ooptions are in the CS department there is no profile
+            if not found_cs_prof:
+                return None, None
+        else:
+            # Only one prof means that ones probably the right one
+            probably_the_right_prof = profs[0]
 
-    # Format and return the output
-    score_box = probably_the_right_prof.div.div.div.find_all("div")[1:3]
-    output = f"{score_box[0].text} with {score_box[1].text}"
-    prof_rmp_name = probably_the_right_prof.div.find(
-        "div", {"class": "TeacherCard__CardInfo-syjs0d-1 fkdYMc"}
-    ).div.text
-    return output, prof_rmp_name
+        # Format and return the output string
+        score_box = probably_the_right_prof.div.div.div.find_all("div")[1:3]
+        rmp_string = f"{score_box[0].text} with {score_box[1].text}"
+        prof_rmp_name = probably_the_right_prof.div.find(
+            "div", {"class": "TeacherCard__CardInfo-syjs0d-1 fkdYMc"}
+        ).div.text
+
+        print("Scraping for RMP data")
+        await self.rmp_cache.insert_one(
+            {"datetime": datetime.utcnow(), "prof_name": prof_name, "rmp_string": rmp_string, "prof_rmp_name": prof_rmp_name}
+        )
+
+
+        return rmp_string, prof_rmp_name
