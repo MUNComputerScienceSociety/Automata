@@ -1,39 +1,39 @@
 from bs4 import BeautifulSoup
-from urllib.request import urlopen as uReq
+from urllib.request import urlopen
 
 # These are the parts that go into a RMP search for a MUN prof (minus the name)
-urlParts = [
+url_parts = [
     "https://www.ratemyprofessors.com/search/teachers?query=",
     "&sid=U2Nob29sLTE0NDE=",
 ]
 
 # Get the completed URL for the RMP search
-def getRMPURL(separatedProfName):
+def get_rmp_url(separated_prof_name):
 
-    finalUrl = urlParts[0]
+    url = url_parts[0]
 
     # Append every word from the name to the URL with "%20" in between them
-    finalUrl += "%20".join(separatedProfName)
+    url += "%20".join(separated_prof_name)
 
-    finalUrl += urlParts[1]
-    return finalUrl
+    url += url_parts[1]
+    return url
 
 
 # Get the soup from a URL
-def getSoupFromURL(url):
-    uClient = uReq(url)
-    page_html = uClient.read()
-    uClient.close()
+def get_soup_from_url(url):
+    client = urlopen(url)
+    page_html = client.read()
+    client.close()
     return BeautifulSoup(page_html, "html.parser")
 
 
-def getRatingFromProfName(profName):
+def get_rating_from_prof_name(prof_name):
     # Get the URL for the search
-    profName = profName.lower()
-    separatedName = profName.split(" ")
-    finalUrl = getRMPURL(separatedName)
+    prof_name = prof_name.lower()
+    separated_name = prof_name.split(" ")
+    url = get_rmp_url(separated_name)
     # Soup
-    soup = getSoupFromURL(finalUrl)
+    soup = get_soup_from_url(url)
     # Get all divs for profs
     profs = soup.find_all(
         "a", {"class": "TeacherCard__StyledTeacherCard-syjs0d-0 dLJIlx"}
@@ -41,8 +41,8 @@ def getRatingFromProfName(profName):
 
     # If there are no prof divs found we try again, but leave out the first name
     if not profs:
-        finalUrl = getRMPURL(separatedName[1:])
-        soup = getSoupFromURL(finalUrl)
+        url = get_rmp_url(separated_name[1:])
+        soup = get_soup_from_url(url)
         profs = soup.find_all(
             "a", {"class": "TeacherCard__StyledTeacherCard-syjs0d-0 dLJIlx"}
         )
@@ -50,10 +50,10 @@ def getRatingFromProfName(profName):
         if not profs:
             return None, None
 
-    probablyTheRightProf = None
+    probably_the_right_prof = None
     # If more than one prof is found from the search find the first one in the CS department
     if len(profs) > 1:
-        foundCSProf = False
+        found_cs_prof = False
         for i in range(len(profs)):
             if (
                 profs[i]
@@ -61,20 +61,20 @@ def getRatingFromProfName(profName):
                 .text
                 == "Computer Science"
             ):
-                probablyTheRightProf = profs[i]
-                foundCSProf = True
+                probably_the_right_prof = profs[i]
+                found_cs_prof = True
                 break
         # If none of the ooptions are in the CS department there is no profile
-        if not foundCSProf:
+        if not found_cs_prof:
             return None, None
     else:
         # Only one prof means that ones probably the right one
-        probablyTheRightProf = profs[0]
+        probably_the_right_prof = profs[0]
 
     # Format and return the output
-    scoreBox = probablyTheRightProf.div.div.div.find_all("div")[1:3]
-    output = scoreBox[0].text + " with " + scoreBox[1].text
-    profRMPName = probablyTheRightProf.div.find(
+    score_box = probably_the_right_prof.div.div.div.find_all("div")[1:3]
+    output = score_box[0].text + " with " + score_box[1].text
+    prof_rmp_name = probably_the_right_prof.div.find(
         "div", {"class": "TeacherCard__CardInfo-syjs0d-1 fkdYMc"}
     ).div.text
-    return output, profRMPName
+    return output, prof_rmp_name

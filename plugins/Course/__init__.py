@@ -1,42 +1,38 @@
 from discord.ext import commands
 import discord
 
-import sys
-
-# insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, "../../../")
-
 from Plugin import AutomataPlugin
-from plugins.Course.calendarScraper import getNameAndInfoFromID
-from plugins.Course.bannerScraper import getProfsFromCourse
-from plugins.Course.peopleScraper import getProfInfoFromName
-from plugins.Course.rmpScraper import getRatingFromProfName
+from plugins.Course.calendarScraper import get_name_and_info_from_ID
+from plugins.Course.bannerScraper import get_profs_from_course
+from plugins.Course.peopleScraper import get_prof_info_from_name
+from plugins.Course.rmpScraper import get_rating_from_prof_name
 
 colors = [discord.Color.blue(), discord.Color.red(), discord.Color.green(), 0]
 
 
 class Course(AutomataPlugin):
+    '''Provides info on a course and its listings for the current semester'''
     @commands.command()
-    async def course(self, ctx: commands.Context, courseID):
+    async def course(self, ctx: commands.Context, course_ID):
         # Get the course name and info from the calendar
-        courseName, courseInfo = getNameAndInfoFromID(courseID)
+        course_name, course_info = get_name_and_info_from_ID(course_ID)
         # If there is no name, tell the user that the course doesn't exist
-        if not courseName:
+        if not course_name:
             await ctx.send("That course doesn't exist!")
             return
 
         # Get the profs that are teaching the course this semester and the campuses where it's being taught
-        instructorData = getProfsFromCourse(courseID)
-        campuses = list(instructorData.keys())
+        instructor_data = get_profs_from_course(course_ID)
+        campuses = list(instructor_data.keys())
 
         # Get the year/level of the course
-        courseYear = int(courseID[0])
+        course_year = int(course_ID[0])
 
         # Set up the initial embed for the message
         embed = discord.Embed(
-            title=("COMP " + courseID + ": " + courseName),
-            description=courseInfo,
-            color=colors[courseYear - 1],
+            title=("COMP " + course_ID + ": " + course_name),
+            description=course_info,
+            color=colors[course_year - 1],
         )
 
         # If nobody is teaching the course this semester tell the user
@@ -46,7 +42,7 @@ class Course(AutomataPlugin):
             return
 
         # If this is a course without an insturctor, send the embed as is
-        if not instructorData[campuses[0]]:
+        if not instructor_data[campuses[0]]:
             await ctx.send(embed=embed)
             return
 
@@ -54,44 +50,44 @@ class Course(AutomataPlugin):
 
         # For each campus
         for i in range(len(campuses)):
-            profStrings = []
+            prof_strings = []
             # For each prof
-            for j in range(len(instructorData[campuses[i]])):
-                profString = ""
-                profName = ""
-                rmpString = ""
+            for j in range(len(instructor_data[campuses[i]])):
+                prof_string = ""
+                prof_name = ""
+                rmp_string = ""
                 # Get their info using the dumb Banner name
-                profInfo = getProfInfoFromName(instructorData[campuses[i]][j])
+                prof_info = get_prof_info_from_name(instructor_data[campuses[i]][j])
                 # If we couldn't get any info
-                if not profInfo:
+                if not prof_info:
                     # Try to find an RMP profile using the dumb Banner name
-                    rmpString, rmpName = getRatingFromProfName(
-                        instructorData[campuses[i]][j]
+                    rmp_string, rmp_name = get_rating_from_prof_name(
+                        instructor_data[campuses[i]][j]
                     )
                     # If there is an RMP profile
-                    if rmpString:
-                        profName = rmpName
+                    if rmp_string:
+                        prof_name = rmp_name
                         # If there's no RMP profile either
                     else:
-                        profName = instructorData[campuses[i]][j]
-                    profString += "**" + profName + "** (Not a listed MUN Prof) "
+                        prof_name = instructor_data[campuses[i]][j]
+                    prof_string += "**" + prof_name + "** (Not a listed MUN Prof) "
                 # If we found the profs info in the first place
                 else:
                     # Get the correct name and then get try to find the RMP profile using it
-                    profName = profInfo["fname"] + " " + profInfo["lname"]
-                    rmpString, rmpName = getRatingFromProfName(profName)
-                    profString = profInfo["title"] + " **" + profName + "** "
-                # Let the user know if a profile cannot be found, otherwise add the score to the profString
-                profString += (
+                    prof_name = prof_info["fname"] + " " + prof_info["lname"]
+                    rmp_string, rmp_name = get_rating_from_prof_name(prof_name)
+                    prof_string = prof_info["title"] + " **" + prof_name + "** "
+                # Let the user know if a profile cannot be found, otherwise add the score to the prof string
+                prof_string += (
                     " - No profile on Rate My Prof\n"
-                    if rmpString == None
-                    else " - Rate My Prof Score: " + rmpString + "\n"
+                    if rmp_string == None
+                    else " - Rate My Prof Score: " + rmp_string + "\n"
                 )
-                profStrings.append(profString)
-            # Add a field containing the campus name and all of the profStrings
+                prof_strings.append(prof_string)
+            # Add a field containing the campus name and all of the prof strings
             embed.add_field(
                 name="__" + campuses[i] + "__",
-                value="\n".join(profStrings),
+                value="\n".join(prof_strings),
                 inline=False,
             )
 
