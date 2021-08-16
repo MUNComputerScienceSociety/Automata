@@ -10,13 +10,10 @@ url_parts = [
 # Get the completed URL for the RMP search
 def get_rmp_url(separated_prof_name):
 
-    url = url_parts[0]
+    # Append every word from the name together with "%20" in between them
+    name_with_spaces = "%20".join(separated_prof_name)
 
-    # Append every word from the name to the URL with "%20" in between them
-    url += "%20".join(separated_prof_name)
-
-    url += url_parts[1]
-    return url
+    return f"{url_parts[0]}{name_with_spaces}{url_parts[1]}"
 
 
 # Get the soup from a URL
@@ -73,7 +70,7 @@ def get_rating_from_prof_name(prof_name):
 
     # Format and return the output
     score_box = probably_the_right_prof.div.div.div.find_all("div")[1:3]
-    output = score_box[0].text + " with " + score_box[1].text
+    output = f"{score_box[0].text} with {score_box[1].text}"
     prof_rmp_name = probably_the_right_prof.div.find(
         "div", {"class": "TeacherCard__CardInfo-syjs0d-1 fkdYMc"}
     ).div.text

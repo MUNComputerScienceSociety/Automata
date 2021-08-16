@@ -29,4 +29,4 @@ def get_name_and_info_from_ID(course_ID):
     course = course_divs[course_index]
     course_name = course.find("p", {"class": "courseTitle"}).text.strip()
     course_desc = course.div.p.text.strip()
-    return course_name, course_name + " " + course_desc
+    return course_name, f"{course_name} {course_desc}"

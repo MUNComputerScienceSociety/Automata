@@ -74,7 +74,7 @@ def get_listings_from_ID(course_ID):
         for j in range(len(courses)):
             if courses[j][1:5] == course_ID:
                 # Append it and its campus name to the output
-                output.append([("COMP" + courses[j]).split("\n"), campus_name])
+                output.append([(f"COMP{courses[j]}").split("\n"), campus_name])
 
     return output
 

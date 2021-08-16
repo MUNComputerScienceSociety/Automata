@@ -30,14 +30,13 @@ class Course(AutomataPlugin):
 
         # Set up the initial embed for the message
         embed = discord.Embed(
-            title=("COMP " + course_ID + ": " + course_name),
-            description=course_info,
+            title=(f"COMP {course_ID}: {course_name}"),
             color=colors[course_year - 1],
         )
 
         # If nobody is teaching the course this semester tell the user
         if not campuses:
-            embed.description += "\n\n**Nobody** is teaching this course this semester"
+            embed.description = f"{course_info}\n\n**Nobody** is teaching this course this semester"
             await ctx.send(embed=embed)
             return
 
@@ -46,7 +45,7 @@ class Course(AutomataPlugin):
             await ctx.send(embed=embed)
             return
 
-        embed.description += "\n\nProfessor(s) teaching this course this semester:\n"
+        embed.description = f"{course_info}\n\nProfessor(s) teaching this course this semester:\n"
 
         # For each campus
         for i in range(len(campuses)):
@@ -70,13 +69,13 @@ class Course(AutomataPlugin):
                         # If there's no RMP profile either
                     else:
                         prof_name = instructor_data[campuses[i]][j]
-                    prof_string += "**" + prof_name + "** (Not a listed MUN Prof) "
+                    prof_string = f"**{prof_name}** (Not a listed MUN Prof) "
                 # If we found the profs info in the first place
                 else:
                     # Get the correct name and then get try to find the RMP profile using it
-                    prof_name = prof_info["fname"] + " " + prof_info["lname"]
+                    prof_name = f"{prof_info['fname']} {prof_info['lname']}"
                     rmp_string, rmp_name = get_rating_from_prof_name(prof_name)
-                    prof_string = prof_info["title"] + " **" + prof_name + "** "
+                    prof_string = f"{prof_info['title']} **{prof_info['title']}** "
                 # Let the user know if a profile cannot be found, otherwise add the score to the prof string
                 prof_string += (
                     " - No profile on Rate My Prof\n"
