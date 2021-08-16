@@ -11,6 +11,8 @@ colors = [discord.Color.blue(), discord.Color.red(), discord.Color.green(), 0]
 
 
 class Course(AutomataPlugin):
+    """Provides info on a CS course and its listings for the current semester"""
+
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
         # Initialize all of the web scrapers
@@ -19,10 +21,9 @@ class Course(AutomataPlugin):
         self.rmp_scraper = RMPScraper(604800)  # 1 week cache lifetime
         self.banner_scraper = BannerScraper(604800)  # 1 week cache lifetime
 
-    """Provides info on a course and its listings for the current semester"""
-
     @commands.command()
     async def course(self, ctx: commands.Context, course_ID):
+        """Replies with info on a CS course when given the courses number/ID"""
         # Get the course name and info from the calendar
         (
             course_name,
@@ -54,8 +55,9 @@ class Course(AutomataPlugin):
             await ctx.send(embed=embed)
             return
 
-        # If this is a course without an insturctor, send the embed as is
+        # If this is a course without an insturctor, send the embed with just the course description
         if not instructor_data[campuses[0]]:
+            embed.description = course_info
             await ctx.send(embed=embed)
             return
 
@@ -99,7 +101,7 @@ class Course(AutomataPlugin):
                         rmp_string,
                         rmp_name,
                     ) = await self.rmp_scraper.get_rating_from_prof_name(prof_name)
-                    prof_string = f"{prof_info['title']} **{prof_info['title']}** "
+                    prof_string = f"{prof_info['title']} **{prof_name}** "
                 # Let the user know if a profile cannot be found, otherwise add the score to the prof string
                 prof_string += (
                     " - No profile on Rate My Prof\n"
