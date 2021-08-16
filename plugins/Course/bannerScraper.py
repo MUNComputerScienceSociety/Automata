@@ -7,7 +7,7 @@ import datetime
 # Full credit to Jack for this stuff
 # --------------------------------------------------------------------------------------------------
 headers = {
-    "User-Agent": "github.com/cmoyates/MUN-Info-Discord-Bot",
+    "User-Agent": "github.com/MUNComputerScienceSociety/Automata",
     "Accept": "text/html",
     "Accept-Language": "en-US,en;q=0.5",
     "Content-Type": "application/x-www-form-urlencoded",
