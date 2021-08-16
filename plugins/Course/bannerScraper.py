@@ -61,7 +61,7 @@ class BannerScraper:
 
     # --------------------------------------------------------------------------------------------------
 
-    def get_listings_from_ID(self, course_ID):
+    async def get_listings_from_ID(self, course_ID):
         output = []
 
         # If it's before May in a given year, assume it's term 2 of the previous year
@@ -69,6 +69,13 @@ class BannerScraper:
         isTerm2 = current_date.month < 5
         year = (current_date.year - 1) if isTerm2 else current_date.year
         term = 2 if isTerm2 else 1
+
+        # Try to get the listings from the cache
+        cached = await self.banner_cache.find_one({"year": year, "term": term})
+
+        # If any were found return them
+        if cached is not None:
+            return cached["data"]
 
         # Get the HTML
         search_HTML = self.actually_fetch_banner(year, term, 1)
@@ -93,19 +100,16 @@ class BannerScraper:
                     # Append it and its campus name to the output
                     output.append([(f"COMP{courses[j]}").split("\n"), campus_name])
 
+        # Add the listing data to the cache and return it
+        await self.banner_cache.insert_one(
+            {"datetime": datetime.utcnow(), "year": year, "term": term, "data": output}
+        )
         return output
 
     async def get_profs_from_course(self, course_ID):
 
-        # Try to get the courses data from the cache
-        cached = await self.banner_cache.find_one({"course_ID": course_ID})
-
-        # If any data was found return it
-        if cached is not None:
-            return cached["data"]
-
-        # Otherwise, get the listing
-        listing = self.get_listings_from_ID(course_ID)
+        # Get the listing
+        listing = await self.get_listings_from_ID(course_ID)
 
         profs_by_campuses = {}
 
@@ -137,12 +141,4 @@ class BannerScraper:
                         if is_new:
                             profs_by_campuses[campus_name].append(prof_name)
 
-        # Add the courses data to the cache and return it
-        await self.banner_cache.insert_one(
-            {
-                "datetime": datetime.utcnow(),
-                "course_ID": course_ID,
-                "data": profs_by_campuses,
-            }
-        )
         return profs_by_campuses
