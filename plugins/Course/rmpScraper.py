@@ -12,17 +12,16 @@ url_parts = [
 
 
 class RMPScraper:
-
     def __init__(self, cache_lifetime):
+        # Get a reference to the cache
         self.rmp_cache = mongo_client.automata.rmp_scraper_cache
-
+        # Set up the cache data lifetimes
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.ensure_collection_expiry(cache_lifetime))
 
+    # Set up the cache data lifetimes
     async def ensure_collection_expiry(self, lifetime):
-        await self.rmp_cache.create_index(
-            "datetime", expireAfterSeconds=lifetime
-        )
+        await self.rmp_cache.create_index("datetime", expireAfterSeconds=lifetime)
 
     # Get the completed URL for the RMP search
     def get_rmp_url(self, separated_prof_name):
@@ -32,7 +31,6 @@ class RMPScraper:
 
         return f"{url_parts[0]}{name_with_spaces}{url_parts[1]}"
 
-
     # Get the soup from a URL
     def get_soup_from_url(self, url):
         client = urlopen(url)
@@ -40,14 +38,14 @@ class RMPScraper:
         client.close()
         return BeautifulSoup(page_html, "html.parser")
 
-
     async def get_rating_from_prof_name(self, prof_name):
         prof_name = prof_name.lower()
 
+        # Try to get the profs data from the cache
         cached = await self.rmp_cache.find_one({"prof_name": prof_name})
 
+        # If it's found return the profs "rmp string" and name from rmp
         if cached is not None:
-            print("Got RMP data from cache")
             return cached["rmp_string"], cached["prof_rmp_name"]
 
         # Get the URL for the search
@@ -78,7 +76,9 @@ class RMPScraper:
             for i in range(len(profs)):
                 if (
                     profs[i]
-                    .find("div", {"class": "CardSchool__Department-sc-19lmz2k-0 haUIRO"})
+                    .find(
+                        "div", {"class": "CardSchool__Department-sc-19lmz2k-0 haUIRO"}
+                    )
                     .text
                     == "Computer Science"
                 ):
@@ -99,10 +99,13 @@ class RMPScraper:
             "div", {"class": "TeacherCard__CardInfo-syjs0d-1 fkdYMc"}
         ).div.text
 
-        print("Scraping for RMP data")
+        # Add the data to the cache and return it
         await self.rmp_cache.insert_one(
-            {"datetime": datetime.utcnow(), "prof_name": prof_name, "rmp_string": rmp_string, "prof_rmp_name": prof_rmp_name}
+            {
+                "datetime": datetime.utcnow(),
+                "prof_name": prof_name,
+                "rmp_string": rmp_string,
+                "prof_rmp_name": prof_rmp_name,
+            }
         )
-
-
         return rmp_string, prof_rmp_name

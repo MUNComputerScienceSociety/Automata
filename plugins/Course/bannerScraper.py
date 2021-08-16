@@ -20,20 +20,18 @@ headers = {
 }
 # --------------------------------------------------------------------------------------------------
 
+
 class BannerScraper:
-
-
     def __init__(self, cache_lifetime):
+        # Get a reference to the cache
         self.banner_cache = mongo_client.automata.banner_scraper_cache
-
+        # Set up the cache data lifetimes
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.ensure_collection_expiry(cache_lifetime))
 
-
+    # Set up the cache data lifetimes
     async def ensure_collection_expiry(self, lifetime):
-        await self.banner_cache.create_index(
-            "datetime", expireAfterSeconds=lifetime
-        )
+        await self.banner_cache.create_index("datetime", expireAfterSeconds=lifetime)
 
     # --------------------------------------------------------------------------------------------------
 
@@ -48,7 +46,9 @@ class BannerScraper:
         }
 
         response = requests.post(
-            "https://www5.mun.ca/admit/hwswsltb.P_CourseResults", headers=headers, data=data
+            "https://www5.mun.ca/admit/hwswsltb.P_CourseResults",
+            headers=headers,
+            data=data,
         )
 
         soup = BeautifulSoup(response.text, "html.parser")
@@ -59,9 +59,7 @@ class BannerScraper:
 
         return soup
 
-
     # --------------------------------------------------------------------------------------------------
-
 
     def get_listings_from_ID(self, course_ID):
         output = []
@@ -97,16 +95,16 @@ class BannerScraper:
 
         return output
 
-
     async def get_profs_from_course(self, course_ID):
-        
+
+        # Try to get the courses data from the cache
         cached = await self.banner_cache.find_one({"course_ID": course_ID})
 
+        # If any data was found return it
         if cached is not None:
-            print("Got banner data from cache")
             return cached["data"]
 
-        # Get the listing
+        # Otherwise, get the listing
         listing = self.get_listings_from_ID(course_ID)
 
         profs_by_campuses = {}
@@ -139,9 +137,12 @@ class BannerScraper:
                         if is_new:
                             profs_by_campuses[campus_name].append(prof_name)
 
-        print("Scraping for banner data")
+        # Add the courses data to the cache and return it
         await self.banner_cache.insert_one(
-            {"datetime": datetime.utcnow(), "course_ID": course_ID, "data": profs_by_campuses}
+            {
+                "datetime": datetime.utcnow(),
+                "course_ID": course_ID,
+                "data": profs_by_campuses,
+            }
         )
-
         return profs_by_campuses
