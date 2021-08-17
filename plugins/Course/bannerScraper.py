@@ -73,18 +73,29 @@ class BannerScraper:
         # Try to get the listings from the cache
         cached = await self.banner_cache.find_one({"year": year, "term": term})
 
-        # If any were found return them
-        if cached is not None:
-            return cached["data"]
+        search_HTML = None
 
-        # Get the HTML
-        search_HTML = self.actually_fetch_banner(year, term, 1)
+        # If any were found store them in a variable
+        if cached is not None:
+            search_HTML = cached["data"]
+        else:
+            # Otherwise get them through webscraping and add them to the cache
+            search_HTML = self.actually_fetch_banner(year, term, 1).text
+            await self.banner_cache.insert_one(
+                {
+                    "datetime": datetime.utcnow(),
+                    "year": year,
+                    "term": term,
+                    "data": search_HTML,
+                }
+            )
+
         # If there is no HTML, panic
         if not search_HTML:
             return "Something went wrong..."
 
         # Split the HTML by campuses
-        courses_by_campus = search_HTML.text.split("Campus: ")
+        courses_by_campus = search_HTML.split("Campus: ")
         # Get rid of the first part because it's nonsense
         courses_by_campus.pop(0)
 
@@ -100,10 +111,6 @@ class BannerScraper:
                     # Append it and its campus name to the output
                     output.append([(f"COMP{courses[j]}").split("\n"), campus_name])
 
-        # Add the listing data to the cache and return it
-        await self.banner_cache.insert_one(
-            {"datetime": datetime.utcnow(), "year": year, "term": term, "data": output}
-        )
         return output
 
     async def get_profs_from_course(self, course_ID):
