@@ -43,8 +43,7 @@ class Course(AutomataPlugin):
 
         # Set up the initial embed for the message
         embed = discord.Embed(
-            title=(f"COMP {course_ID}: {course_name}"),
-            color=colors[course_year - 1],
+            title=(f"COMP {course_ID}: {course_name}"), color=colors[course_year - 1],
         )
 
         # If nobody is teaching the course this semester tell the user

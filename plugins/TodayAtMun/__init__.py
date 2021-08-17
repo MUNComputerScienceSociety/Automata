@@ -36,8 +36,7 @@ class TodayAtMun(AutomataPlugin):
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
         embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
-            text="TodayAtMun ● !help TodayAtMun",
-            icon_url=MUN_CSS_LOGO,
+            text="TodayAtMun ● !help TodayAtMun", icon_url=MUN_CSS_LOGO,
         )
         return embed
 
