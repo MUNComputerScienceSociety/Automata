@@ -50,8 +50,7 @@ def parsed_diary():
 
 
 @pytest.mark.parametrize(
-    "date, expected",
-    [(date(2021, 10, 22), ""), (datetime.now(), "🔴")],
+    "date, expected", [(date(2021, 10, 22), ""), (datetime.now(), "🔴")],
 )
 def test_today_is_next(date, expected):
     parse = TodayAtMun.parse_diary()

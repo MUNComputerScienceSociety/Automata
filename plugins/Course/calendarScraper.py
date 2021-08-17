@@ -14,14 +14,12 @@ class CalendarScraper:
         self.calendar_cache = mongo_client.automata.calendar_scraper_cache
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.setup_cache(cache_lifetime)
+        loop.run_until_complete(self.setup_cache(cache_lifetime))
 
     # Sets up the cache; deletes whats in it and ensures they expire within the given lifetime
     async def setup_cache(self, lifetime):
         await self.calendar_cache.delete_many()
         await self.calendar_cache.create_index("datetime", expireAfterSeconds=lifetime)
-
-
 
     async def get_calendar_HTML(self):
         # Try to get the HTML data from the cache
