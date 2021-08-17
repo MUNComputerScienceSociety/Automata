@@ -18,7 +18,7 @@ class CalendarScraper:
 
     # Sets up the cache; deletes whats in it and ensures they expire within the given lifetime
     async def setup_cache(self, lifetime):
-        await self.calendar_cache.delete_many()
+        await self.calendar_cache.delete_many({})
         await self.calendar_cache.create_index("datetime", expireAfterSeconds=lifetime)
 
     async def get_calendar_HTML(self):

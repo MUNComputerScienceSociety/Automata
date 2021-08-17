@@ -19,7 +19,7 @@ class PeopleScraper:
 
     # Sets up the cache; deletes whats in it and ensures they expire within the given lifetime
     async def setup_cache(self, lifetime):
-        await self.people_cache.delete_many()
+        await self.people_cache.delete_many({})
         await self.people_cache.create_index("datetime", expireAfterSeconds=lifetime)
 
     async def get_faculty_staff(self):
