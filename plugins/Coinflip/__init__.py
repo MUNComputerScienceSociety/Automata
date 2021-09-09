@@ -21,6 +21,6 @@ class Coinflip(AutomataPlugin):
                 else:
                     await ctx.send("Tails!")
         else:
-            await ctx.send("Too many flips to handle, try less than 6 and more than 0!")
+            await ctx.send(f"Too many flips to handle, try less than {MAXIMUM_FLIPS + 1} and more than {MINIMUM_FLIPS - 1}!")
 
 
