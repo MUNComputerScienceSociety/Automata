@@ -1,7 +1,6 @@
 {
-    "name": "FAQ",
-    "version": "1.0.0",
-    "author": "David Chiacs",
-    "main_class": "FAQ"
-  }
-  
+  "name": "FAQ",
+  "version": "1.0.0",
+  "author": "David Chicas",
+  "main_class": "FAQ"
+}

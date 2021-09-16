@@ -8,6 +8,7 @@ VIBIER_IMAGE = "https://s3.gifyu.com/images/ezgif.com-gif-maker-174e18faa852a302
 VIBIEST_IMAGE = "https://s3.gifyu.com/images/ezgif.com-gif-maker-2664260aedaea9638.gif"
 NO_VIBE = "https://s6.gifyu.com/images/ezgif.com-gif-maker682fded14a604d26.gif"
 
+
 class Vibe(AutomataPlugin):
     """Cat Bop"""
 
