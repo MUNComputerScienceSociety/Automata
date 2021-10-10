@@ -7,7 +7,7 @@ import os
 from Plugin import AutomataPlugin
 
 KEY = os.getenv("WEATHER_API_KEY")
-CALL_URI = "http://api.weatherapi.com/v1/current.json?key=" + KEY + "&q=A1B 3P7&aqi=no"
+CALL_URI = f"http://api.weatherapi.com/v1/current.json?key={KEY}&q=A1B 3P7&aqi=no"
 
 class Weather(AutomataPlugin):
     """A simple weather command to get the current weather cast."""
