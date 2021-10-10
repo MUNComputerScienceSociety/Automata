@@ -30,7 +30,23 @@ class Announce(AutomataPlugin):
             attachment = message.attachments[0]
             embed.set_image(url=attachment.url)
 
-        await ctx.send(embed = embed, content="@everyone")
+        announcement_message = await ctx.send(embed = embed)
+
+        await announcement_message.add_reaction("✅")
+
+        def check(reaction, user):
+            return user == message.author and str(reaction.emoji) == "✅" and reaction.message == announcement_message
+
+        try:
+            reaction, user = await ctx.bot.wait_for('reaction_add', check=check)
+        except:
+            await ctx.send('Discarded')
+        else:
+            await announcement_message.edit(
+                embed = embed,
+                content = "@everyone"
+            )
+            await announcement_message.clear_reactions()
 
         await message.delete()
         
