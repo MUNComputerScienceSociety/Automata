@@ -29,7 +29,7 @@ class MCWhitelist(AutomataPlugin):
         return await self.whitelisted_accounts.find_one(query)
 
     async def is_minecraft_account_already_associated(self, username):
-        whitelist = self.whitelist_http_api.whitelist()
+        whitelist = await self.whitelist_http_api.whitelist()
         return any(entry["name"] == username for entry in whitelist)
 
     async def is_disallowed(self, member):
@@ -38,7 +38,7 @@ class MCWhitelist(AutomataPlugin):
 
     async def remove_whitelisted_account(self, ctx, whitelisted_account):
         username = whitelisted_account["minecraft_username"]
-        self.whitelist_http_api.remove(username)
+        await self.whitelist_http_api.remove(username)
         await self.whitelisted_accounts.delete_many({"discord_id": ctx.author.id})
 
     async def account_embed(self, whitelisted_account):
@@ -95,7 +95,7 @@ class MCWhitelist(AutomataPlugin):
             )
             return
 
-        mojang_resp = self.mojang_api.info_from_username(username)
+        mojang_resp = await self.mojang_api.info_from_username(username)
         if mojang_resp is None:
             await ctx.send(
                 f"Error verifying username '{username}' from Mojang, are you sure you typed it correctly?"
@@ -108,7 +108,7 @@ class MCWhitelist(AutomataPlugin):
             )
             return
 
-        self.whitelist_http_api.add(username)
+        await self.whitelist_http_api.add(username)
 
         new_whitelisted_account = {
             "discord_id": ctx.author.id,

@@ -2,7 +2,7 @@ from typing import Optional, Union, Dict
 
 import discord
 from discord.ext import commands
-import requests
+import httpx
 
 from Plugin import AutomataPlugin
 from Globals import mongo_client, PRIMARY_GUILD, VERIFIED_ROLE, DISCORD_AUTH_URI
@@ -74,8 +74,9 @@ class MUNIdentity(AutomataPlugin):
                 "Your identity is already verified. If for some reason you need to change your verified username, contact an executive."
             )
             return
-        resp = requests.get(f"{DISCORD_AUTH_URI}/identity/{code}")
-        if resp.status_code == requests.codes.ok:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(f"{DISCORD_AUTH_URI}/identity/{code}")
+        if resp.status_code == httpx.codes.OK:
             username = resp.text
             current_identity = await self.get_identity(mun_username=username)
             if current_identity is not None:
