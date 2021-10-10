@@ -7,9 +7,11 @@ import httpx
 import mechanicalsoup
 from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
-from Globals import DIARY_DAILY_CHANNEL, PRIMARY_GUILD, mongo_client, GENERAL_CHANNEL
+from Globals import (DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD,
+                     mongo_client)
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
+import pytz
 
 MUN_CSS_LOGO = "https://www.cs.mun.ca/~csclub/assets/logos/color-square-trans.png"
 MUN_COLOUR_RED = 0x822433
@@ -123,7 +125,7 @@ class TodayAtMun(AutomataPlugin):
             await ctx.reply("Invalid use of bundle, Usage: !d bundle <1 - 10 : int>")
 
     async def post_next_event(self, event: str):
-        date = DiaryUtil.get_current_date()
+        date = DiaryUtil.get_current_time()
         self.diary_util.find_event(date)
         next_embed = self.today_embed_next_template(self.diary_util.key)
         await self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL).send(
@@ -137,7 +139,7 @@ class TodayAtMun(AutomataPlugin):
         )
 
     async def post_new_events(self):
-        date = DiaryUtil.get_current_date()
+        date = DiaryUtil.get_current_time()
         next_event_date = self.diary_util.find_event(date)
         retrieve_event = await self.posted_events.find_one({"date": next_event_date})
 
@@ -174,7 +176,8 @@ class TodayAtMun(AutomataPlugin):
         message.embeds[0].set_author(
             name=self.diary_util.time_delta_emojify(next_event_date)
         )
-        edit_time = DiaryUtil.get_current_date().strftime("%Y-%m-%d-%H-%M-%S")
+        tz_newfoundland = pytz.timezone('Canada/Newfoundland')
+        edit_time = DiaryUtil.get_current_time(tz_newfoundland).strftime("%-I:%M %p %Z %a %b %-d, %Y")
         message.embeds[0].set_footer(
             text=f"Last update: {edit_time}", icon_url=MUN_CSS_LOGO
         )
