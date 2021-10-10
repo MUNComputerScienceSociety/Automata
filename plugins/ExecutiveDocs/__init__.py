@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
 
-import requests
+import httpx
 import discord
 from discord.ext import commands, tasks
 
@@ -46,11 +46,13 @@ class ExecutiveDocs(AutomataPlugin):
         ).send(embed=embed)
         await self.posted_documents.insert_one(doc)
 
-    def fetch_docs_json(self):
-        return requests.get(EXECUTIVE_DOCS_JSON_URI).json()
+    async def fetch_docs_json(self):
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(EXECUTIVE_DOCS_JSON_URI)
+        return resp.json()
 
     async def post_new_docs(self):
-        docs_json = self.fetch_docs_json()
+        docs_json = await self.fetch_docs_json()
 
         for doc in docs_json:
             doc["time"] = datetime.strptime(doc["time"], "%Y-%m-%d %H:%M:%S")

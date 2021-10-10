@@ -1,5 +1,5 @@
 import asyncio
-import requests
+import httpx
 from bs4 import BeautifulSoup
 import json
 from Globals import mongo_client
@@ -30,7 +30,9 @@ class PeopleScraper:
             return cached["data"]
 
         # Convert the response to a dict and store the info as a list of dicts
-        faculty_staff = eval(requests.get(url).text)["results"]
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(url)
+            faculty_staff = eval(resp.text)["results"]
 
         # Add the faculty staff data to the cache and return it
         self.people_cache.insert_one(

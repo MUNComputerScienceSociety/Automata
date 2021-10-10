@@ -3,7 +3,7 @@ import json
 from base64 import b64decode
 from datetime import datetime
 
-import requests
+import httpx
 
 from Globals import mongo_client
 
@@ -28,8 +28,9 @@ class MojangAPI:
             "datetime", expireAfterSeconds=900  # 15 minutes
         )
 
-    def info_from_username(self, username):
-        resp = requests.get(f"{MojangAPI.username_base}/{username}")
+    async def info_from_username(self, username):
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(f"{MojangAPI.username_base}/{username}")
 
         if resp.status_code == 200:
             return resp.json()
@@ -39,8 +40,9 @@ class MojangAPI:
 
         if cached is not None:
             return cached["data"]
-
-        resp = requests.get(f"{MojangAPI.profile_base}/{uuid}")
+        
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(f"{MojangAPI.profile_base}/{uuid}")
 
         if resp.status_code == 200:
             data = resp.json()

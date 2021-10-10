@@ -2,7 +2,7 @@ from os import name
 from discord import colour
 from discord.ext import commands
 import discord
-import requests
+import httpx
 from Plugin import AutomataPlugin
 from Globals import WEATHER_API_KEY
 
@@ -16,7 +16,9 @@ class Weather(AutomataPlugin):
     async def weather(self, ctx: commands.Context):
         """Replies an embed of current weather"""
 
-        weather_data = requests.get(CALL_URI).json()
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(CALL_URI)
+        weather_data = resp.json()
 
         icon = weather_data["current"]["condition"]["icon"]
 

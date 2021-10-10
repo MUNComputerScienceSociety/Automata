@@ -1,4 +1,4 @@
-import requests
+import httpx
 
 from Globals import WHITELIST_HTTP_API_BEARER_TOKEN
 
@@ -7,17 +7,26 @@ HEADERS = {"authorization": f"WHA {WHITELIST_HTTP_API_BEARER_TOKEN}"}
 
 
 class WhitelistHttpApi:
-    def whitelist(self):
-        return requests.get(WHITELIST_HTTP_API_BASE, headers=HEADERS).json()
+    async def whitelist(self):
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(WHITELIST_HTTP_API_BASE, headers=HEADERS)
+        
+        return resp.json()
 
-    def add(self, username):
+    async def add(self, username):
         data = {"name": username}
-        requests.post(
-            WHITELIST_HTTP_API_BASE, json=data, headers=HEADERS
-        ).raise_for_status()
 
-    def remove(self, username):
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                WHITELIST_HTTP_API_BASE, json=data, headers=HEADERS
+            )
+        resp.raise_for_status()
+
+    async def remove(self, username):
         data = {"name": username}
-        requests.delete(
-            WHITELIST_HTTP_API_BASE, json=data, headers=HEADERS
-        ).raise_for_status()
+
+        async with httpx.AsyncClient() as client:
+            resp = await client.delete(
+                WHITELIST_HTTP_API_BASE, json=data, headers=HEADERS
+            )
+        resp.raise_for_status()
