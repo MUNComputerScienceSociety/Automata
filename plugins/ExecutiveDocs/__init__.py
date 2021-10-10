@@ -1,5 +1,4 @@
 import asyncio
-import pathlib
 from datetime import datetime
 
 import requests
