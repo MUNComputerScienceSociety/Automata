@@ -10,11 +10,11 @@ KEY = os.getenv("WEATHER_API_KEY")
 CALL_URI = "http://api.weatherapi.com/v1/current.json?key=" + KEY + "&q=A1B 3P7&aqi=no"
 
 class Weather(AutomataPlugin):
-    """Pong"""
+    """A simple weather command to get the current weather cast."""
 
     @commands.command()
     async def weather(self, ctx: commands.Context):
-        """Replies with a Pong, or many!"""
+        """Replies an embed of current weather"""
 
         weather_data = requests.get(CALL_URI).json()
 
