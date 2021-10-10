@@ -189,11 +189,15 @@ class TodayAtMun(AutomataPlugin):
         course_num: str = "",
         sec_numb: str = "",
         crn: str = "",
-    ):
+    ) -> None:
         """Provides Exam Info for current semester
         Usage: !exam <subject> <course_number> <section_number> <crn>
         Example: !exam COMP 1003
         """
+        if ctx.invoked_subcommand is None:
+            await ctx.reply(content="Invalid command, check !help exam for more.")
+            return
+
         sched_heading, table_heading, exams_parsed = TodayAtMun.get_exams(
             subj, course_num, sec_numb, crn
         )
