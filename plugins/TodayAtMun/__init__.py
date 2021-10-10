@@ -203,10 +203,9 @@ class TodayAtMun(AutomataPlugin):
         await ctx.reply(error)
 
     @staticmethod
-    async def parse_diary() -> dict[str, str]:
+    def parse_diary() -> dict[str, str]:
         diary = {}
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(DIARY_DATA_SOURCE)
+        resp = httpx.get(DIARY_DATA_SOURCE)
         mun_request = resp.text
         soup = BeautifulSoup(mun_request, "html.parser")
         dates_in_diary = soup.find_all("td", attrs={"align": "left"})
