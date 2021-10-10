@@ -3,10 +3,10 @@ from discord import colour
 from discord.ext import commands
 import discord
 import requests
-import os
 from Plugin import AutomataPlugin
+from Globals import WEATHER_API_KEY
 
-KEY = os.getenv("WEATHER_API_KEY")
+KEY = WEATHER_API_KEY
 CALL_URI = f"http://api.weatherapi.com/v1/current.json?key={KEY}&q=A1B 3P7&aqi=no"
 
 class Weather(AutomataPlugin):
