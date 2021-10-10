@@ -7,7 +7,7 @@ import httpx
 import mechanicalsoup
 from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
-from Globals import DIARY_DAILY_CHANNEL, PRIMARY_GUILD, mongo_client
+from Globals import DIARY_DAILY_CHANNEL, PRIMARY_GUILD, mongo_client, GENERAL_CHANNEL
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
 
@@ -36,7 +36,8 @@ class TodayAtMun(AutomataPlugin):
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
         embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
-            text="TodayAtMun ● !help TodayAtMun", icon_url=MUN_CSS_LOGO,
+            text="TodayAtMun ● !help TodayAtMun",
+            icon_url=MUN_CSS_LOGO,
         )
         return embed
 
@@ -130,6 +131,11 @@ class TodayAtMun(AutomataPlugin):
         )
         await self.posted_events.insert_one({"date": event})
 
+    async def notify_new_event(self):
+        await self.bot.get_guild(PRIMARY_GUILD).get_channel(GENERAL_CHANNEL).send(
+            f"Next diary event posted in <#{DIARY_DAILY_CHANNEL}>"
+        )
+
     async def post_new_events(self):
         date = DiaryUtil.get_current_date()
         next_event_date = self.diary_util.find_event(date)
@@ -137,6 +143,7 @@ class TodayAtMun(AutomataPlugin):
 
         if retrieve_event is None:
             await self.post_next_event(next_event_date)
+            await self.notify_new_event()
         else:
             await self.update_event_msg(next_event_date)
         await asyncio.sleep(5)
