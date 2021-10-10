@@ -19,7 +19,6 @@ class Weather(AutomataPlugin):
         weather_data = requests.get(CALL_URI).json()
 
         icon = weather_data["current"]["condition"]["icon"]
-        print(icon[2: len(icon)])
 
         embed = discord.Embed(
             title="St. John's Weather",
