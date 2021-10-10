@@ -57,6 +57,7 @@ bot = commands.Bot(
     intents=intents,
 )
 
+bot = commands.Bot(command_prefix='!', help_command=None)
 
 @bot.event
 async def on_message(message):
@@ -159,7 +160,33 @@ async def plugins(ctx: commands.Context):
 
     await ctx.send(embed=embed)
 
+class CustomHelp(commands.MinimalHelpCommand):
+    """Custom help command"""
+    def command_sign(self,command):
+        return '%s%s %s' % (self.clean_prefix, command.qualified_name, command.signature)
+    
+    async def send_bot_help(self, mapping):
+        embed = discord.Embed(title="Commands Help")
+        embed.colour = discord.Colour.blurple()
+        for cog, commands in mapping.items():
+           command_signatures = [self.get_command_signature(c) for c in commands]
+           if command_signatures:
+                cog_name = getattr(cog, "qualified_name", "No Category")
+                embed.add_field(name=cog_name, value="\n".join(command_signatures), inline=False)
+        channel = self.get_destination()
+        await channel.send(embed=embed)
+        
+        
+    async def send_error_message(self, error):
+        embed_error = discord.Embed(title="Error", description=error)
+        embed_error.colour = discord.Colour.red()
+        channel = self.get_destination()
+        await channel.send(embed=embed_error)
+        
+    
+bot.help_command = CustomHelp()
 
+            
 plugins_dir = Path("./plugins")
 mounted_plugins_dir = Path("./mounted_plugins")
 mounted_plugins_dir.mkdir(exist_ok=True)
