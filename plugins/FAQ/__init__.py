@@ -17,8 +17,7 @@ class FAQ(AutomataPlugin):
     """Commands to answer some Frequently Asked Questions"""
 
     async def create_embed_science(self):
-        """Returns the embed.
-        """
+        """Returns the embed."""
         embed_science = discord.Embed(
             title="B.Sc Sample First Year",
             url="https://www.mun.ca/undergrad/first-year-information/sample-first-year---st-johns-campus/science/computer-science/",
@@ -47,8 +46,7 @@ class FAQ(AutomataPlugin):
         return embed_science
 
     async def create_embed_arts(self):
-        """Returns the embed.
-        """
+        """Returns the embed."""
         embed_arts = discord.Embed(
             title="B.A Sample First Year",
             url="https://www.mun.ca/undergrad/first-year-information/sample-first-year---st-johns-campus/science/computer-science/",
@@ -101,8 +99,7 @@ class FAQ(AutomataPlugin):
 
     @commands.command()
     async def admission(self, ctx: commands.Context):
-        """Replies with some FAQ about studying CS at MUN.
-        """
+        """Replies with some FAQ about studying CS at MUN."""
         embed_admission = discord.Embed(
             title="Frequently Asked Questions",
             url="https://www.mun.ca/computerscience/ugrad/FAQ.php",

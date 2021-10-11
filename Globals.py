@@ -27,7 +27,9 @@ DISCORD_AUTH_URI = os.getenv("DISCORD_AUTH_URI", "https://discord.muncompsci.ca"
 
 WEATHER_API_KEY = os.getenv("AUTOMATA_WEATHER_API_KEY")
 
-ANNOUNCEMENT_CHANNEL = int(os.getenv("AUTOMATA_ANNOUNCEMENT_CHANNEL", 752914074504790068))
+ANNOUNCEMENT_CHANNEL = int(
+    os.getenv("AUTOMATA_ANNOUNCEMENT_CHANNEL", 752914074504790068)
+)
 
 mongo_client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_ADDRESS)
 

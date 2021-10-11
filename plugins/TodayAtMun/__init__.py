@@ -7,8 +7,7 @@ import httpx
 import mechanicalsoup
 from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
-from Globals import (DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD,
-                     mongo_client)
+from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD, mongo_client
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
 

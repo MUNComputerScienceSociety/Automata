@@ -40,7 +40,7 @@ class MojangAPI:
 
         if cached is not None:
             return cached["data"]
-        
+
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"{MojangAPI.profile_base}/{uuid}")
 
