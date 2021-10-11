@@ -7,7 +7,8 @@ import httpx
 import mechanicalsoup
 from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
-from Globals import DIARY_DAILY_CHANNEL, PRIMARY_GUILD, mongo_client
+from Globals import (DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD,
+                     mongo_client)
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
 
@@ -36,7 +37,8 @@ class TodayAtMun(AutomataPlugin):
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
         embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
-            text="TodayAtMun ● !help TodayAtMun", icon_url=MUN_CSS_LOGO,
+            text="TodayAtMun ● !help TodayAtMun",
+            icon_url=MUN_CSS_LOGO,
         )
         return embed
 
@@ -122,21 +124,37 @@ class TodayAtMun(AutomataPlugin):
             await ctx.reply("Invalid use of bundle, Usage: !d bundle <1 - 10 : int>")
 
     async def post_next_event(self, event: str):
-        date = DiaryUtil.get_current_date()
+        date = DiaryUtil.get_current_time()
         self.diary_util.find_event(date)
         next_embed = self.today_embed_next_template(self.diary_util.key)
-        await self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL).send(
-            embed=next_embed
+        message_id = (
+            await self.bot.get_guild(PRIMARY_GUILD)
+            .get_channel(DIARY_DAILY_CHANNEL)
+            .send(embed=next_embed)
         )
         await self.posted_events.insert_one({"date": event})
 
+        return message_id
+
+    async def notify_new_event(self, message_link):
+        embed = self.today_embed_template()
+        embed.add_field(
+            name="**📅 New Upcoming MUN Calendar Event**",
+            value=f"[**Click to view**]({message_link})",
+            inline=False,
+        )
+        await self.bot.get_guild(PRIMARY_GUILD).get_channel(GENERAL_CHANNEL).send(
+            embed=embed
+        )
+
     async def post_new_events(self):
-        date = DiaryUtil.get_current_date()
+        date = DiaryUtil.get_current_time()
         next_event_date = self.diary_util.find_event(date)
         retrieve_event = await self.posted_events.find_one({"date": next_event_date})
 
         if retrieve_event is None:
-            await self.post_next_event(next_event_date)
+            posted_message_id = await self.post_next_event(next_event_date)
+            await self.notify_new_event(posted_message_id.jump_url)
         else:
             await self.update_event_msg(next_event_date)
         await asyncio.sleep(5)
@@ -167,7 +185,9 @@ class TodayAtMun(AutomataPlugin):
         message.embeds[0].set_author(
             name=self.diary_util.time_delta_emojify(next_event_date)
         )
-        edit_time = DiaryUtil.get_current_date().strftime("%Y-%m-%d-%H-%M-%S")
+        edit_time = DiaryUtil.get_current_time("Canada/Newfoundland").strftime(
+            "%-I:%M %p %Z %a %b %-d, %Y"
+        )
         message.embeds[0].set_footer(
             text=f"Last update: {edit_time}", icon_url=MUN_CSS_LOGO
         )
@@ -182,11 +202,15 @@ class TodayAtMun(AutomataPlugin):
         course_num: str = "",
         sec_numb: str = "",
         crn: str = "",
-    ):
+    ) -> None:
         """Provides Exam Info for current semester
         Usage: !exam <subject> <course_number> <section_number> <crn>
         Example: !exam COMP 1003
         """
+        if ctx.invoked_subcommand is None:
+            await ctx.reply(content="Invalid command, check !help exam for more.")
+            return
+
         sched_heading, table_heading, exams_parsed = TodayAtMun.get_exams(
             subj, course_num, sec_numb, crn
         )

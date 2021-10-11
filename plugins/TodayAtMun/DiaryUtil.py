@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import pytz
 
 
 class DiaryUtil:
@@ -6,11 +7,12 @@ class DiaryUtil:
 
     def __init__(self, diary: dict[str, str]):
         self.diary = diary
-        self.date = DiaryUtil.get_current_date()
+        self.date = DiaryUtil.get_current_time()
 
     @staticmethod
-    def get_current_date() -> datetime:
-        return datetime.now()
+    def get_current_time(timezone="Canada/Newfoundland") -> datetime:
+        tz = pytz.timezone(timezone)
+        return datetime.now(tz)
 
     @staticmethod
     def str_to_datetime(str_date: str) -> datetime:
@@ -38,7 +40,7 @@ class DiaryUtil:
             DiaryUtil.str_to_datetime(next_event_date), datetime.now()
         )
         if remaining_time > 1:
-            return f"⏳ {remaining_time} day(s)"
+            return f"⏳ {remaining_time} days"
         elif 0 < remaining_time <= 1:
             return f"⌛ {remaining_time} day"
         else:
@@ -67,7 +69,7 @@ class DiaryUtil:
 
     def find_event(self, date: datetime) -> str:
         """Searches for date/event pair in MUN calendar."""
-        if (date - DiaryUtil.get_current_date()).days == 365:
+        if (date - DiaryUtil.get_current_time()).days == 365:
             return ""
         formatted_date = self.format_date(date)
         for self.key in self.diary:
@@ -93,7 +95,7 @@ class DiaryUtil:
 
     def today_is_next(self, date: str) -> str:
         """Provides an emoji indicator if the next event occurs on current day."""
-        today_date = self.format_date(self.get_current_date())
+        today_date = self.format_date(self.get_current_time())
         if today_date == date:
             return "🔴"
         return ""
