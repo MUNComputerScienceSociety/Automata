@@ -10,9 +10,12 @@ class DiaryUtil:
         self.date = DiaryUtil.get_current_time()
 
     @staticmethod
-    def get_current_time(timezone="Canada/Newfoundland") -> datetime:
-        tz = pytz.timezone(timezone)
-        return datetime.now(tz)
+    def get_current_time(timezone=None) -> datetime:
+        if timezone != None:
+            tz = pytz.timezone(timezone)
+            return datetime.now(tz)
+        else:
+            return datetime.now()
 
     @staticmethod
     def str_to_datetime(str_date: str) -> datetime:
