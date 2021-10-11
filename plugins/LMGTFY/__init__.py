@@ -1,6 +1,6 @@
 import urllib
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 

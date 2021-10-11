@@ -4,8 +4,8 @@ from urllib.parse import urlencode
 from datetime import datetime
 
 import httpx
-import discord
-from discord.ext import commands, tasks
+import nextcord
+from nextcord.ext import commands, tasks
 
 from Plugin import AutomataPlugin
 from Globals import (
@@ -44,10 +44,10 @@ class Newsline(AutomataPlugin):
         if url is None:
             url = post["url"]
 
-        embed = discord.Embed(
+        embed = nextcord.Embed(
             title=f"{post_detail['subject']} - {post['date'].strftime('%r')}",
             description=desc,
-            colour=discord.Colour.dark_red(),
+            colour=nextcord.Colour.dark_red(),
             url=url,
             timestamp=post["date"],
         )

@@ -1,6 +1,6 @@
 from jigsaw import JigsawPlugin
 
-from discord.ext.commands import Cog
+from nextcord.ext.commands import Cog
 
 
 class AutomataPlugin(JigsawPlugin, Cog):

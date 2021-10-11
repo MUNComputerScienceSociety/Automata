@@ -1,7 +1,7 @@
 from typing import Optional, Union, Dict
 
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 import httpx
 
 from Plugin import AutomataPlugin
@@ -17,12 +17,12 @@ class MUNIdentity(AutomataPlugin):
         self.identities = mongo_client.automata.munidentity_identities
 
     async def get_identity(
-        self, *, member: Union[discord.User, int] = None, mun_username: str = None
+        self, *, member: Union[nextcord.User, int] = None, mun_username: str = None
     ) -> Optional[Dict[str, Union[str, int]]]:
         """Retrieve identity details for a given user.
 
         :param member: The Discord server member to retrieve details for, defaults to None
-        :param member: Union[discord.Member, int], optional
+        :param member: Union[nextcord.Member, int], optional
         :param mun_username: The MUN username to retrieve details for, defaults to None
         :param mun_username: str, optional
         :return: The data stored about the user's identity
@@ -41,7 +41,7 @@ class MUNIdentity(AutomataPlugin):
         return identity
 
     @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member):
+    async def on_member_join(self, member: nextcord.Member):
         await member.send(
             f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://discord.muncompsci.ca/auth to verify yourself.\nOtherwise, contact an executive to gain further access."
         )
@@ -52,8 +52,8 @@ class MUNIdentity(AutomataPlugin):
         if not ctx.invoked_subcommand:
             identity = await self.get_identity(member=ctx.author)
             if identity is not None:
-                embed = discord.Embed()
-                embed.colour = discord.Colour.green()
+                embed = nextcord.Embed()
+                embed.colour = nextcord.Colour.green()
                 embed.add_field(name="MUN Username", value=identity["mun_username"])
                 await ctx.send(embed=embed)
             else:
@@ -99,23 +99,23 @@ class MUNIdentity(AutomataPlugin):
 
     @identity.command(name="check")
     @commands.has_permissions(view_audit_log=True)
-    async def identity_check(self, ctx: commands.Context, user: discord.Member):
+    async def identity_check(self, ctx: commands.Context, user: nextcord.Member):
         """Check the identity verification status of a user."""
         identity = await self.identities.find_one({"discord_id": user.id})
         if identity is not None:
-            embed = discord.Embed()
-            embed.colour = discord.Colour.green()
+            embed = nextcord.Embed()
+            embed.colour = nextcord.Colour.green()
             embed.add_field(name="MUN Username", value=identity["mun_username"])
             await ctx.send(embed=embed)
         else:
-            embed = discord.Embed()
-            embed.colour = discord.Colour.red()
+            embed = nextcord.Embed()
+            embed.colour = nextcord.Colour.red()
             embed.add_field(name="MUN Username", value="No username verified.")
             await ctx.send(embed=embed)
 
     @identity.command(name="remove")
     @commands.has_permissions(manage_messages=True)
-    async def identity_remove(self, ctx: commands.Context, user: discord.Member):
+    async def identity_remove(self, ctx: commands.Context, user: nextcord.Member):
         """Remove the identity from a user."""
         identity = await self.get_identity(member=user)
         if identity is not None:
@@ -124,16 +124,16 @@ class MUNIdentity(AutomataPlugin):
                 self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
                 reason=f"Identity manually removed by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {identity['mun_username']}",
             )
-            embed = discord.Embed()
-            embed.colour = discord.Colour.green()
+            embed = nextcord.Embed()
+            embed.colour = nextcord.Colour.green()
             embed.add_field(
                 name="MUN Username",
                 value=f"User `{user.name}#{user.discriminator}` with username `{identity['mun_username']}` was removed.",
             )
             await ctx.send(embed=embed)
         else:
-            embed = discord.Embed()
-            embed.colour = discord.Colour.red()
+            embed = nextcord.Embed()
+            embed.colour = nextcord.Colour.red()
             embed.add_field(
                 name="MUN Username", value="No username verified for the given user."
             )
@@ -142,7 +142,7 @@ class MUNIdentity(AutomataPlugin):
     @identity.command(name="associate")
     @commands.has_permissions(manage_messages=True)
     async def identity_associate(
-        self, ctx: commands.Context, user: discord.Member, mun_username: str
+        self, ctx: commands.Context, user: nextcord.Member, mun_username: str
     ):
         """Manually associate a Discord account to a MUN username."""
         identity = await self.get_identity(member=user)
