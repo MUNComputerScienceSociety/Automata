@@ -1,4 +1,5 @@
-import requests, json, random
+import httpx
+import json, random
 from discord.ext import commands
 from Plugin import AutomataPlugin
 
@@ -10,7 +11,7 @@ class WiseQuote(AutomataPlugin):
 
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
-        self.quotes = json.loads(requests.get(QUOTES_ENDPOINT).text)
+        self.quotes = json.loads(httpx.get(QUOTES_ENDPOINT).text)
 
     @commands.command()
     async def wisequote(self, ctx):

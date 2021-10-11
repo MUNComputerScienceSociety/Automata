@@ -3,8 +3,8 @@ from datetime import datetime
 from random import choice
 
 import discord
+import httpx
 import mechanicalsoup
-import requests
 from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
 from Globals import DIARY_DAILY_CHANNEL, PRIMARY_GUILD, mongo_client
@@ -205,7 +205,8 @@ class TodayAtMun(AutomataPlugin):
     @staticmethod
     def parse_diary() -> dict[str, str]:
         diary = {}
-        mun_request = requests.get(DIARY_DATA_SOURCE).text
+        resp = httpx.get(DIARY_DATA_SOURCE)
+        mun_request = resp.text
         soup = BeautifulSoup(mun_request, "html.parser")
         dates_in_diary = soup.find_all("td", attrs={"align": "left"})
         description_of_date = soup.find_all("td", attrs={"align": "justify"})

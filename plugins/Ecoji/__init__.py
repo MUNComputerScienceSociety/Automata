@@ -1,4 +1,4 @@
-import requests
+import httpx
 from discord.ext import commands
 from Plugin import AutomataPlugin
 
@@ -19,4 +19,7 @@ class Ecoji(AutomataPlugin):
         elif amount > MAX:
             await ctx.send(f"Amount must be less than than {MAX + 1}")
         else:
-            await ctx.send(requests.get(f"{URANDOM_ECOJI_URI}{amount}").text)
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(f"{URANDOM_ECOJI_URI}{amount}")
+
+            await ctx.send(resp.text)
