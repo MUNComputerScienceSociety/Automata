@@ -56,13 +56,11 @@ class Announce(AutomataPlugin):
             await announcement_message.delete()
         else:
             if str(reaction.emoji) == PING_EMOTE:
-                print("ping")
                 await announcement_channel.send(
                 embed = embed,
                 content = "@everyone"
                 )
             else:
-                print("no ping")
                 await announcement_channel.send(
                 embed = embed
                 )         
