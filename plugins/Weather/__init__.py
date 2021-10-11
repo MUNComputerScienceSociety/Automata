@@ -20,12 +20,9 @@ class Weather(AutomataPlugin):
             resp = await client.get(CALL_URI)
         weather_data = resp.json()
 
-        icon = weather_data["current"]["condition"]["icon"]
-
         embed = nextcord.Embed(
             title="St. John's Weather",
             description=weather_data["current"]["condition"]["text"],
-            thumbnail=icon[2 : len(icon)],
             colour=nextcord.Colour.blue(),
         )
 
