@@ -44,11 +44,13 @@ class Announce(AutomataPlugin):
             reaction, user = await ctx.bot.wait_for('reaction_add', check=check)
         except:
             await ctx.send('Discarded')
+            await announcement_message.delete()
         else:
             await announcement_channel.send(
                 embed = embed,
                 content = "@everyone"
             )
             await ctx.send("Announcement Sent ✅")
+            await announcement_message.delete()
 
         
