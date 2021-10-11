@@ -10,7 +10,7 @@ class WhitelistHttpApi:
     async def whitelist(self):
         async with httpx.AsyncClient() as client:
             resp = await client.get(WHITELIST_HTTP_API_BASE, headers=HEADERS)
-        
+
         return resp.json()
 
     async def add(self, username):

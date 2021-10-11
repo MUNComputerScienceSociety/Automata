@@ -9,10 +9,10 @@ import discord
 
 PING_EMOTE = "<:ping:842732198444269568>"
 NOPING_EMOTE = "<:noping:842732251132854322>"
+
+
 class Announce(AutomataPlugin):
     """Announcement feature for a better announcements formatting"""
-
-    
 
     @commands.command()
     @commands.has_permissions(view_audit_log=True)
@@ -25,23 +25,27 @@ class Announce(AutomataPlugin):
 
         message = ctx.message
         announcement_channel = await ctx.bot.fetch_channel(ANNOUNCEMENT_CHANNEL)
-        announcement_message = " ".join(message.content.split(' ')[1: len(ctx.message.content)])
-
-        embed = discord.Embed(
-            colour = discord.Color.blue()
+        announcement_message = " ".join(
+            message.content.split(" ")[1 : len(ctx.message.content)]
         )
 
+        embed = discord.Embed(colour=discord.Color.blue())
+
         embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
-        embed.set_footer(text="MUN Computer Science Society", icon_url=message.guild.icon_url)
+        embed.set_footer(
+            text="MUN Computer Science Society", icon_url=message.guild.icon_url
+        )
 
         if len(announcement_message) > 1:
-            embed.add_field(name="Announcement", value=announcement_message, inline=False)
+            embed.add_field(
+                name="Announcement", value=announcement_message, inline=False
+            )
 
         if len(message.attachments) > 0:
             attachment = message.attachments[0]
             embed.set_image(url=attachment.url)
 
-        announcement_message = await ctx.send(embed = embed)
+        announcement_message = await ctx.send(embed=embed)
 
         await announcement_message.add_reaction(PING_EMOTE)
         await announcement_message.add_reaction(NOPING_EMOTE)
@@ -50,22 +54,15 @@ class Announce(AutomataPlugin):
             return user == message.author and reaction.message == announcement_message
 
         try:
-            reaction, user = await ctx.bot.wait_for('reaction_add', check=check)
+            reaction, user = await ctx.bot.wait_for("reaction_add", check=check)
         except:
-            await ctx.send('Discarded')
+            await ctx.send("Discarded")
             await announcement_message.delete()
         else:
             if str(reaction.emoji) == PING_EMOTE:
-                await announcement_channel.send(
-                embed = embed,
-                content = "@everyone"
-                )
+                await announcement_channel.send(embed=embed, content="@everyone")
             else:
-                await announcement_channel.send(
-                embed = embed
-                )         
-            
+                await announcement_channel.send(embed=embed)
+
             await ctx.send("Announcement Sent ✅")
             await announcement_message.delete()
-
-        

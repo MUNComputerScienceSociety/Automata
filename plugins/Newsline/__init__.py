@@ -63,9 +63,7 @@ class Newsline(AutomataPlugin):
 
     async def make_request_to_post_detail(self, post_id):
         async with httpx.AsyncClient() as client:
-            resp = await client.get(
-                f"{NEWSLINE_API_BASE_URI}/posts/{post_id}/detail"
-            )
+            resp = await client.get(f"{NEWSLINE_API_BASE_URI}/posts/{post_id}/detail")
         post_detail = resp.json()
         post_detail["text"] = re.sub(r"(\n\s*)+\n+", "\n\n", post_detail["text"])
         return post_detail

@@ -1,6 +1,6 @@
 {
-    "name": "Course",
-    "version": "1.0.1",
-    "author": "Cristopher Yates",
-    "main_class": "Course"
+  "name": "Course",
+  "version": "1.0.1",
+  "author": "Cristopher Yates",
+  "main_class": "Course"
 }
