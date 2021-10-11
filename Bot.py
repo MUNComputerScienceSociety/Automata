@@ -164,7 +164,7 @@ class CustomHelp(commands.DefaultHelpCommand): # ( ͡° ͜ʖ ͡°)
     """Custom help command"""
         
     async def send_bot_help(self, mapping):
-        "shows a list of commands"
+        """Shows a list of commands"""
         embed = discord.Embed(title="Commands Help")
         embed.colour = discord.Colour.blurple()
         for cog, commands in mapping.items():
@@ -176,18 +176,18 @@ class CustomHelp(commands.DefaultHelpCommand): # ( ͡° ͜ʖ ͡°)
         await channel.send(embed=embed)
         
     async def send_command_help(self, command):
-        "shows how to use each command"
+        """Shows how to use each command"""
         embed_command = discord.Embed(title=self.get_command_signature(command), description=command.help)
         embed_command.colour = discord.Colour.green()
         channel = self.get_destination()
         await channel.send(embed=embed_command)
 
     async def send_cog_help(self, cog):
-        "shows how to use each category"
+        """Shows how to use each category"""
         embed_cog = discord.Embed(title=cog.qualified_name, description=cog.description)
         comms = cog.get_commands()
-        for i in comms:
-            embed_cog.add_field(name=i, value=i.short_doc, inline = False)
+        for c in comms:
+            embed_cog.add_field(name=c, value=c.short_doc, inline=False)
         embed_cog.colour = discord.Colour.green()
         channel = self.get_destination()
         await channel.send(embed=embed_cog)
