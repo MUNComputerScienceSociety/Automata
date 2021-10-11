@@ -65,7 +65,7 @@ class ExecutiveDocs(AutomataPlugin):
 
             if potential_doc is None:
                 await self.post_new_doc(doc)
-                await asyncio.sleep(5)
+                await asyncio.sleep(5.0)
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
@@ -78,7 +78,7 @@ class ExecutiveDocs(AutomataPlugin):
     def cog_unload(self):
         self.check_for_new_docs.cancel()
 
-    @tasks.loop(seconds=60 * 10)
+    @tasks.loop(seconds=60.0 * 10.0)
     async def check_for_new_docs(self):
         await self.post_new_docs()
 
