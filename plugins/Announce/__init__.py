@@ -7,8 +7,12 @@ from Globals import ANNOUNCEMENT_CHANNEL
 from Plugin import AutomataPlugin
 import discord
 
+PING_EMOTE = "<:ping:842732198444269568>"
+NOPING_EMOTE = "<:noping:842732251132854322>"
 class Announce(AutomataPlugin):
     """Announcement feature for a better announcements formatting"""
+
+    
 
     @commands.command()
     @commands.has_permissions(view_audit_log=True)
@@ -39,10 +43,11 @@ class Announce(AutomataPlugin):
 
         announcement_message = await ctx.send(embed = embed)
 
-        await announcement_message.add_reaction("✅")
+        await announcement_message.add_reaction(PING_EMOTE)
+        await announcement_message.add_reaction(NOPING_EMOTE)
 
         def check(reaction, user):
-            return user == message.author and str(reaction.emoji) == "✅" and reaction.message == announcement_message
+            return user == message.author and reaction.message == announcement_message
 
         try:
             reaction, user = await ctx.bot.wait_for('reaction_add', check=check)
@@ -50,10 +55,18 @@ class Announce(AutomataPlugin):
             await ctx.send('Discarded')
             await announcement_message.delete()
         else:
-            await announcement_channel.send(
+            if str(reaction.emoji) == PING_EMOTE:
+                print("ping")
+                await announcement_channel.send(
                 embed = embed,
                 content = "@everyone"
-            )
+                )
+            else:
+                print("no ping")
+                await announcement_channel.send(
+                embed = embed
+                )         
+            
             await ctx.send("Announcement Sent ✅")
             await announcement_message.delete()
 
