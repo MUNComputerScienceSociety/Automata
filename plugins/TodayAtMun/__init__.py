@@ -176,8 +176,7 @@ class TodayAtMun(AutomataPlugin):
         message.embeds[0].set_author(
             name=self.diary_util.time_delta_emojify(next_event_date)
         )
-        tz_newfoundland = pytz.timezone('Canada/Newfoundland')
-        edit_time = DiaryUtil.get_current_time(tz_newfoundland).strftime("%-I:%M %p %Z %a %b %-d, %Y")
+        edit_time = DiaryUtil.get_current_time('Canada/Newfoundland').strftime("%-I:%M %p %Z %a %b %-d, %Y")
         message.embeds[0].set_footer(
             text=f"Last update: {edit_time}", icon_url=MUN_CSS_LOGO
         )

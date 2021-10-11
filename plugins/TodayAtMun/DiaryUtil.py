@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import pytz
 
 
 class DiaryUtil:
@@ -9,8 +10,9 @@ class DiaryUtil:
         self.date = DiaryUtil.get_current_time()
 
     @staticmethod
-    def get_current_time(timezone=None) -> datetime:
-        return datetime.now(timezone)
+    def get_current_time(timezone="Canada/Newfoundland") -> datetime:
+        tz = pytz.timezone(timezone)
+        return datetime.now(tz)
 
     @staticmethod
     def str_to_datetime(str_date: str) -> datetime:
