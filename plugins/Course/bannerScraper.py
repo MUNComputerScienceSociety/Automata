@@ -1,4 +1,4 @@
-import requests
+import httpx
 from bs4 import BeautifulSoup
 import asyncio
 from datetime import datetime
@@ -35,7 +35,7 @@ class BannerScraper:
 
     # --------------------------------------------------------------------------------------------------
 
-    def actually_fetch_banner(self, year, term, level):
+    async def actually_fetch_banner(self, year, term, level):
         data = {
             "p_term": f"{year}0{term}",
             "p_levl": f"0{level}*00",
@@ -45,11 +45,12 @@ class BannerScraper:
             "crn": "%",
         }
 
-        response = requests.post(
-            "https://www5.mun.ca/admit/hwswsltb.P_CourseResults",
-            headers=headers,
-            data=data,
-        )
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://www5.mun.ca/admit/hwswsltb.P_CourseResults",
+                headers=headers,
+                data=data,
+            )
 
         soup = BeautifulSoup(response.text, "html.parser")
 
@@ -80,7 +81,7 @@ class BannerScraper:
             search_HTML = cached["data"]
         else:
             # Otherwise get them through webscraping and add them to the cache
-            search_HTML = self.actually_fetch_banner(year, term, 1).text
+            search_HTML = await self.actually_fetch_banner(year, term, 1).text
             await self.banner_cache.insert_one(
                 {
                     "datetime": datetime.utcnow(),

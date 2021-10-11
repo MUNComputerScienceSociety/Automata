@@ -3,9 +3,9 @@ import re
 from urllib.parse import urlencode
 from datetime import datetime
 
-import requests
-import discord
-from discord.ext import commands, tasks
+import httpx
+import nextcord
+from nextcord.ext import commands, tasks
 
 from Plugin import AutomataPlugin
 from Globals import (
@@ -44,10 +44,10 @@ class Newsline(AutomataPlugin):
         if url is None:
             url = post["url"]
 
-        embed = discord.Embed(
+        embed = nextcord.Embed(
             title=f"{post_detail['subject']} - {post['date'].strftime('%r')}",
             description=desc,
-            colour=discord.Colour.dark_red(),
+            colour=nextcord.Colour.dark_red(),
             url=url,
             timestamp=post["date"],
         )
@@ -61,20 +61,22 @@ class Newsline(AutomataPlugin):
         )
         await self.posted_posts.insert_one({"id": post["id"]})
 
-    def make_request_to_post_detail(self, post_id):
-        post_detail = requests.get(
-            f"{NEWSLINE_API_BASE_URI}/posts/{post_id}/detail"
-        ).json()
+    async def make_request_to_post_detail(self, post_id):
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(f"{NEWSLINE_API_BASE_URI}/posts/{post_id}/detail")
+        post_detail = resp.json()
         post_detail["text"] = re.sub(r"(\n\s*)+\n+", "\n\n", post_detail["text"])
         return post_detail
 
-    def make_request_to_posts(self, page):
-        return requests.get(f"{NEWSLINE_API_POSTS}?{urlencode({'page': page})}").json()
+    async def make_request_to_posts(self, page):
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(f"{NEWSLINE_API_POSTS}?{urlencode({'page': page})}")
+        return resp.json()
 
     async def fetch_posts(self):
         page = 0
 
-        while len(posts := self.make_request_to_posts(page)) != 0:
+        while len(posts := await self.make_request_to_posts(page)) != 0:
             for post in posts:
                 post["date"] = post["date"].replace("Z", "-03:30")
                 post["date"] = datetime.fromisoformat(post["date"])

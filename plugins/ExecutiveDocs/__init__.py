@@ -1,9 +1,9 @@
 import asyncio
 from datetime import datetime
 
-import requests
-import discord
-from discord.ext import commands, tasks
+import httpx
+import nextcord
+from nextcord.ext import commands, tasks
 
 from Plugin import AutomataPlugin
 from Globals import (
@@ -18,8 +18,8 @@ CS_LOGO_COLOR_SQUARE_TRANSPARENT = (
     "https://www.cs.mun.ca/~csclub/assets/logos/color-square-trans.png"
 )
 DOC_TYPE_TO_COLOUR = {
-    "Minutes": discord.Colour.lighter_gray(),
-    "Agendas": discord.Colour.dark_gray(),
+    "Minutes": nextcord.Colour.lighter_gray(),
+    "Agendas": nextcord.Colour.dark_gray(),
 }
 
 
@@ -27,11 +27,11 @@ class ExecutiveDocs(AutomataPlugin):
     """Posts new executive documents"""
 
     def doc_embed(self, doc):
-        embed = discord.Embed(
+        embed = nextcord.Embed(
             title=f"Meeting {doc['type']} | {doc['time'].strftime('%A, %B %e, %Y')}",
             description=doc["url"],
             url=doc["url"],
-            colour=DOC_TYPE_TO_COLOUR.get(doc["type"], discord.Colour.dark_blue()),
+            colour=DOC_TYPE_TO_COLOUR.get(doc["type"], nextcord.Colour.dark_blue()),
             timestamp=doc["time"],
         )
         embed.set_footer(
@@ -46,11 +46,13 @@ class ExecutiveDocs(AutomataPlugin):
         ).send(embed=embed)
         await self.posted_documents.insert_one(doc)
 
-    def fetch_docs_json(self):
-        return requests.get(EXECUTIVE_DOCS_JSON_URI).json()
+    async def fetch_docs_json(self):
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(EXECUTIVE_DOCS_JSON_URI)
+        return resp.json()
 
     async def post_new_docs(self):
-        docs_json = self.fetch_docs_json()
+        docs_json = await self.fetch_docs_json()
 
         for doc in docs_json:
             doc["time"] = datetime.strptime(doc["time"], "%Y-%m-%d %H:%M:%S")

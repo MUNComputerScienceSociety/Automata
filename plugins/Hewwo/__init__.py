@@ -1,5 +1,5 @@
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 
@@ -10,7 +10,7 @@ class Hewwo(AutomataPlugin):
     @commands.command()
     async def hewwo(self, ctx: commands.Context, *, arg):
         transform = (
-            discord.utils.escape_mentions(arg)
+            nextcord.utils.escape_mentions(arg)
             .lower()
             .replace("r", "w")
             .replace("l", "w")

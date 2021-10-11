@@ -1,5 +1,5 @@
-from discord.ext import commands
-import discord
+from nextcord.ext import commands
+import nextcord
 
 from Plugin import AutomataPlugin
 from plugins.Course.calendarScraper import CalendarScraper
@@ -7,7 +7,7 @@ from plugins.Course.bannerScraper import BannerScraper
 from plugins.Course.peopleScraper import PeopleScraper
 from plugins.Course.rmpScraper import RMPScraper
 
-colors = [discord.Color.blue(), discord.Color.red(), discord.Color.green(), 0]
+colors = [nextcord.Colour.blue(), nextcord.Colour.red(), nextcord.Colour.green(), 0]
 
 
 class Course(AutomataPlugin):
@@ -42,8 +42,9 @@ class Course(AutomataPlugin):
         course_year = int(course_ID[0])
 
         # Set up the initial embed for the message
-        embed = discord.Embed(
-            title=(f"COMP {course_ID}: {course_name}"), color=colors[course_year - 1],
+        embed = nextcord.Embed(
+            title=(f"COMP {course_ID}: {course_name}"),
+            color=colors[course_year - 1],
         )
 
         # If nobody is teaching the course this semester tell the user
