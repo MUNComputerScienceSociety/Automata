@@ -192,6 +192,16 @@ class CustomHelp(commands.DefaultHelpCommand): # ( ͡° ͜ʖ ͡°)
         channel = self.get_destination()
         await channel.send(embed=embed_cog)
         
+    async def send_group_help(self, group):
+        """Shows how to use each group of commands"""
+        embed_group = discord.Embed(title=group.cog_name, description=group.short_doc)
+        comms = group.commands()
+        for c in comms:
+            embed_group.add_field(name=c, value=c.short_doc, inline=False)
+        embed_group.colour = discord.Colour.green()
+        channel = self.get_destination()
+        await channel.send(embed=embed_group)
+        
     async def send_error_message(self, error):
         "shows if command does not exist"
         embed_error = discord.Embed(title="Error", description=error)
