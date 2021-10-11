@@ -11,7 +11,6 @@ from Globals import (DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD,
                      mongo_client)
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
-import pytz
 
 MUN_CSS_LOGO = "https://www.cs.mun.ca/~csclub/assets/logos/color-square-trans.png"
 MUN_COLOUR_RED = 0x822433
@@ -128,14 +127,24 @@ class TodayAtMun(AutomataPlugin):
         date = DiaryUtil.get_current_time()
         self.diary_util.find_event(date)
         next_embed = self.today_embed_next_template(self.diary_util.key)
-        await self.bot.get_guild(PRIMARY_GUILD).get_channel(DIARY_DAILY_CHANNEL).send(
-            embed=next_embed
+        message_id = (
+            await self.bot.get_guild(PRIMARY_GUILD)
+            .get_channel(DIARY_DAILY_CHANNEL)
+            .send(embed=next_embed)
         )
         await self.posted_events.insert_one({"date": event})
 
-    async def notify_new_event(self):
+        return message_id
+
+    async def notify_new_event(self, message_link):
+        embed = self.today_embed_template()
+        embed.add_field(
+            name="**📅 New Upcoming MUN Calendar Event**",
+            value=f"[**Click to view**]({message_link})",
+            inline=False,
+        )
         await self.bot.get_guild(PRIMARY_GUILD).get_channel(GENERAL_CHANNEL).send(
-            f"Next diary event posted in <#{DIARY_DAILY_CHANNEL}>"
+            embed=embed
         )
 
     async def post_new_events(self):
@@ -144,8 +153,8 @@ class TodayAtMun(AutomataPlugin):
         retrieve_event = await self.posted_events.find_one({"date": next_event_date})
 
         if retrieve_event is None:
-            await self.post_next_event(next_event_date)
-            await self.notify_new_event()
+            posted_message_id = await self.post_next_event(next_event_date)
+            await self.notify_new_event(posted_message_id.jump_url)
         else:
             await self.update_event_msg(next_event_date)
         await asyncio.sleep(5)
@@ -176,7 +185,9 @@ class TodayAtMun(AutomataPlugin):
         message.embeds[0].set_author(
             name=self.diary_util.time_delta_emojify(next_event_date)
         )
-        edit_time = DiaryUtil.get_current_time('Canada/Newfoundland').strftime("%-I:%M %p %Z %a %b %-d, %Y")
+        edit_time = DiaryUtil.get_current_time("Canada/Newfoundland").strftime(
+            "%-I:%M %p %Z %a %b %-d, %Y"
+        )
         message.embeds[0].set_footer(
             text=f"Last update: {edit_time}", icon_url=MUN_CSS_LOGO
         )
