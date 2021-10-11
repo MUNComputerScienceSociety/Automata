@@ -81,7 +81,8 @@ class BannerScraper:
             search_HTML = cached["data"]
         else:
             # Otherwise get them through webscraping and add them to the cache
-            search_HTML = await self.actually_fetch_banner(year, term, 1).text
+            banner_resp = await self.actually_fetch_banner(year, term, 1)
+            search_HTML = banner_resp.text
             await self.banner_cache.insert_one(
                 {
                     "datetime": datetime.utcnow(),
