@@ -23,7 +23,7 @@ class Announce(AutomataPlugin):
             colour = discord.Color.blue()
         )
 
-        embed.set_author(name= message.author.name, icon_url=message.author.avatar_url)
+        embed.set_author(name=message.author.name, icon_url=message.author.avatar_url)
         embed.set_footer(text="MUN Computer Science Society", icon_url=message.guild.icon_url)
 
         if len(announcement_message) > 1:
