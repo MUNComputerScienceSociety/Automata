@@ -13,7 +13,11 @@ class Announce(AutomataPlugin):
     @commands.command()
     @commands.has_permissions(view_audit_log=True)
     async def announce(self, ctx: commands.Context):
-        """Send an embed with everyone ping of the current message content. You can add up to one image by uploading an image with the message."""
+        """
+        Send an embed in #announcements with an @-everyone ping with the current message content.
+        Before the message is posted it is previewed in the current channel, with a reaction the author can invoke for it to be posted properly.
+        You can add up to one image by uploading an image with the message.
+        """
 
         message = ctx.message
         announcement_channel = await ctx.bot.fetch_channel(ANNOUNCEMENT_CHANNEL)
