@@ -8,7 +8,7 @@ from Plugin import AutomataPlugin
 import discord
 
 class Announce(AutomataPlugin):
-    """Announcement feature for a better announcements formmating, hopefully.."""
+    """Announcement feature for a better announcements formatting"""
 
     @commands.command()
     @commands.has_permissions(view_audit_log=True)
