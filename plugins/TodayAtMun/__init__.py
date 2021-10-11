@@ -2,11 +2,11 @@ import asyncio
 from datetime import datetime
 from random import choice
 
-import discord
+import nextcord
 import httpx
 import mechanicalsoup
 from bs4 import BeautifulSoup
-from discord.ext import commands, tasks
+from nextcord.ext import commands, tasks
 from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD, mongo_client
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
@@ -32,16 +32,16 @@ class TodayAtMun(AutomataPlugin):
     @staticmethod
     def today_embed_template():
         """Provides initial embed attributes."""
-        embed = discord.Embed()
+        embed = nextcord.Embed()
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
-        embed.colour = discord.Colour(choice(mun_colours))
+        embed.colour = nextcord.Colour(choice(mun_colours))
         embed.set_footer(
             text="TodayAtMun ● !help TodayAtMun",
             icon_url=MUN_CSS_LOGO,
         )
         return embed
 
-    def today_embed_next_template(self, next_event_date: str) -> discord.Embed:
+    def today_embed_next_template(self, next_event_date: str) -> nextcord.Embed:
         embed = self.today_embed_template()
         embed.set_author(
             name=f"⏳ ~{self.diary_util.time_delta_event(self.diary_util.str_to_datetime(next_event_date), datetime.now())} day(s)"

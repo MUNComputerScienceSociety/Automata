@@ -1,7 +1,7 @@
 from datetime import datetime
 
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 from Globals import mongo_client
@@ -16,7 +16,7 @@ class Logger(AutomataPlugin):
         self.events = mongo_client.automata.logger_events
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: nextcord.Message):
         await self.events.insert_one(
             {
                 "author_id": message.author.id,
@@ -29,7 +29,7 @@ class Logger(AutomataPlugin):
         )
 
     @commands.Cog.listener()
-    async def on_message_delete(self, message: discord.Message):
+    async def on_message_delete(self, message: nextcord.Message):
         await self.events.insert_one(
             {
                 "author_id": message.author.id,
@@ -41,7 +41,7 @@ class Logger(AutomataPlugin):
         )
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+    async def on_message_edit(self, before: nextcord.Message, after: nextcord.Message):
         await self.events.insert_one(
             {
                 "author_id": after.author.id,

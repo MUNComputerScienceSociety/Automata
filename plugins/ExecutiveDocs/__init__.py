@@ -2,8 +2,8 @@ import asyncio
 from datetime import datetime
 
 import httpx
-import discord
-from discord.ext import commands, tasks
+import nextcord
+from nextcord.ext import commands, tasks
 
 from Plugin import AutomataPlugin
 from Globals import (
@@ -18,8 +18,8 @@ CS_LOGO_COLOR_SQUARE_TRANSPARENT = (
     "https://www.cs.mun.ca/~csclub/assets/logos/color-square-trans.png"
 )
 DOC_TYPE_TO_COLOUR = {
-    "Minutes": discord.Colour.lighter_gray(),
-    "Agendas": discord.Colour.dark_gray(),
+    "Minutes": nextcord.Colour.lighter_gray(),
+    "Agendas": nextcord.Colour.dark_gray(),
 }
 
 
@@ -27,11 +27,11 @@ class ExecutiveDocs(AutomataPlugin):
     """Posts new executive documents"""
 
     def doc_embed(self, doc):
-        embed = discord.Embed(
+        embed = nextcord.Embed(
             title=f"Meeting {doc['type']} | {doc['time'].strftime('%A, %B %e, %Y')}",
             description=doc["url"],
             url=doc["url"],
-            colour=DOC_TYPE_TO_COLOUR.get(doc["type"], discord.Colour.dark_blue()),
+            colour=DOC_TYPE_TO_COLOUR.get(doc["type"], nextcord.Colour.dark_blue()),
             timestamp=doc["time"],
         )
         embed.set_footer(

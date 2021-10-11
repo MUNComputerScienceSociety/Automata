@@ -1,5 +1,5 @@
-import discord
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 
@@ -18,7 +18,7 @@ class FAQ(AutomataPlugin):
 
     async def create_embed_science(self):
         """Returns the embed."""
-        embed_science = discord.Embed(
+        embed_science = nextcord.Embed(
             title="B.Sc Sample First Year",
             url="https://www.mun.ca/undergrad/first-year-information/sample-first-year---st-johns-campus/science/computer-science/",
             description="Students pursuing a bachelor of science with a major in computer science, visual computing and games or smart systems will normally take the following courses in their first year:",
@@ -47,7 +47,7 @@ class FAQ(AutomataPlugin):
 
     async def create_embed_arts(self):
         """Returns the embed."""
-        embed_arts = discord.Embed(
+        embed_arts = nextcord.Embed(
             title="B.A Sample First Year",
             url="https://www.mun.ca/undergrad/first-year-information/sample-first-year---st-johns-campus/science/computer-science/",
             description="Students pursuing a bachelor of arts with a major in computer science will normally take the following courses in their first year::",
@@ -100,7 +100,7 @@ class FAQ(AutomataPlugin):
     @commands.command()
     async def admission(self, ctx: commands.Context):
         """Replies with some FAQ about studying CS at MUN."""
-        embed_admission = discord.Embed(
+        embed_admission = nextcord.Embed(
             title="Frequently Asked Questions",
             url="https://www.mun.ca/computerscience/ugrad/FAQ.php",
             description="Some FAQ about studying Computer Science at MUN:",

@@ -1,7 +1,6 @@
 from os import name
-from discord import colour
-from discord.ext import commands
-import discord
+from nextcord.ext import commands
+import nextcord
 import httpx
 from Plugin import AutomataPlugin
 from Globals import WEATHER_API_KEY
@@ -23,11 +22,11 @@ class Weather(AutomataPlugin):
 
         icon = weather_data["current"]["condition"]["icon"]
 
-        embed = discord.Embed(
+        embed = nextcord.Embed(
             title="St. John's Weather",
             description=weather_data["current"]["condition"]["text"],
             thumbnail=icon[2 : len(icon)],
-            colour=discord.Color.blue(),
+            colour=nextcord.Colour.blue(),
         )
 
         embed.add_field(

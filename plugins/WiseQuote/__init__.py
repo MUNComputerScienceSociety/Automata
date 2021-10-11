@@ -1,6 +1,6 @@
 import httpx
 import json, random
-from discord.ext import commands
+from nextcord.ext import commands
 from Plugin import AutomataPlugin
 
 QUOTES_ENDPOINT = "https://type.fit/api/quotes"
