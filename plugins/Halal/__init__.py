@@ -1,8 +1,6 @@
 from nextcord.ext import commands
 import nextcord
-import httpx
 from Plugin import AutomataPlugin
-
 
 class Halal(AutomataPlugin):
     """Democratic version of asking Hking"""
