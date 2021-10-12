@@ -4,7 +4,7 @@ from Plugin import AutomataPlugin
 
 import random
 
-MAXIMUM_FLIPS = 5
+MAXIMUM_FLIPS = 30
 MINIMUM_FLIPS = 1
 
 
