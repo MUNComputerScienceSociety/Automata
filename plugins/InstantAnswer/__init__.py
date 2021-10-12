@@ -10,24 +10,25 @@ class InstantAnswer(AutomataPlugin):
 
     @commands.command()
     async def ia(self, ctx, *, argument):
-        """Replies with Instant Answer API from DuckDuckGo"""
+        """Replies with Instant Answer from DuckDuckGo"""
 
 
         output_template = "**{subject}**: *Brought to you by **DuckDuckGo** Instant Answer API*\n\n" \
-                          "{abstractText}\n" \
-                          "**URL:** {abstractUrl}\n" \
-                          "**Source:** {abstractSource}"
+                          "```{abstractText}```\n" \
+                          "**Source:** <{abstractUrl}> @ {abstractSource}"
 
+        subject = re.sub('[^ 0-9a-zA-Z]+', '', argument)
         url_template = "https://api.duckduckgo.com/?q={query}&format=json"
-        url = url_template.format(query=re.sub('[^ 0-9a-zA-Z]+', '', argument).replace(" ", "+"))
+        url = url_template.format(query=subject.replace(" ", "+"))
         data = httpx.get(url).json()
 
         output = "Sorry, no Instant Answer found." \
             if data["AbstractURL"] == "" \
             else output_template.format(
-                subject=argument,
+                subject=subject,
                 abstractText=data["AbstractText"],
                 abstractUrl=data["AbstractURL"],
-                abstractSource=data["AbstractSource"])
+                abstractSource=data["AbstractSource"]) \
+            .replace("``````", "")
 
         await ctx.send(output)
