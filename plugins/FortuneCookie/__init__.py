@@ -3,6 +3,7 @@ import nextcord
 import httpx
 from Plugin import AutomataPlugin
 
+
 class FortuneCookie(AutomataPlugin):
     """A fortune cookie"""
 
@@ -10,7 +11,9 @@ class FortuneCookie(AutomataPlugin):
     async def fortune(self, ctx: commands.Context):
         """Replies with a fortune cookie message"""
 
-        response = httpx.get("http://yerkee.com/api/fortune/computers").json()["fortune"]
+        response = httpx.get("http://yerkee.com/api/fortune/computers").json()[
+            "fortune"
+        ]
         if len(response) > 6000:
             response = "I am too long"
         embed = nextcord.Embed(colour=nextcord.Colour.blue())
