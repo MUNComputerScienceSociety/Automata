@@ -4,6 +4,8 @@ import nextcord
 import httpx
 from Plugin import AutomataPlugin
 from Globals import WEATHER_API_KEY
+import pytz
+from datetime import datetime
 
 KEY = WEATHER_API_KEY
 CALL_URI = f"http://api.weatherapi.com/v1/current.json?key={KEY}&q=A1B 3P7&aqi=no"
@@ -20,10 +22,14 @@ class Weather(AutomataPlugin):
             resp = await client.get(CALL_URI)
         weather_data = resp.json()
 
+
+        timezone = pytz.timezone("Canada/Newfoundland")
+
         embed = nextcord.Embed(
             title="St. John's Weather",
             description=weather_data["current"]["condition"]["text"],
             colour=nextcord.Colour.blue(),
+            timestamp=datetime.now(timezone),
         )
 
         embed.add_field(
