@@ -41,7 +41,7 @@ class FAQ(AutomataPlugin):
         )
         embed_science.add_field(
             name=f"What is an elective?",
-            value=f"_A elective is any course from any subject_",
+            value=f"_An elective is any course from any subject_",
             inline=False,
         )
         embed_science.add_field(
