@@ -35,8 +35,18 @@ class FAQ(AutomataPlugin):
             inline=False,
         )
         embed_science.add_field(
-            name=f"What science electives should I take?",
-            value=f"_A list of science electives can be found [here](https://www.mun.ca/science/students/majors.php)_",
+            name=f"What is a science elective?",
+            value=f"_A science elective is any course from the subjects listed [here](https://www.mun.ca/science/students/majors.php)_",
+            inline=False,
+        )
+        embed_science.add_field(
+            name=f"What is an elective?",
+            value=f"_A elective is any course from any subject_",
+            inline=False,
+        )
+        embed_science.add_field(
+            name=f"What is a CRW course?",
+            value=f"_A CRW course is any course from the list [here](https://www.mun.ca/hss/programs/undergraduate/crw_course_list.php)_",
             inline=False,
         )
         embed_science.set_footer(
@@ -64,8 +74,8 @@ class FAQ(AutomataPlugin):
             inline=False,
         )
         embed_arts.add_field(
-            name=f"What is a Breathe of Knowledge and Language Study elective?",
-            value=f'_"More information for about [Breathe of Knowledge](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8192) and [Language Study](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8196)_',
+            name=f"What is a Breadth of Knowledge and Language Study elective?",
+            value=f'_"More information about [Breadth of Knowledge](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8192) and [Language Study](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8196)_',
             inline=False,
         )
         embed_arts.set_footer(
