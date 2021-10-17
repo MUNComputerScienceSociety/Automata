@@ -92,7 +92,7 @@ class Starboard(AutomataPlugin):
         urls = []
 
         for a in message.attachments:
-            if "image" in a.content_type and embed.image is None:
+            if "image" in a.content_type and embed.image != nextcord.Embed.Empty:
                 embed.set_image(url=a.url)
             else:
                 urls.append(a.url)
