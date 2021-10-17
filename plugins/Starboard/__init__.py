@@ -17,10 +17,13 @@ class Starboard(AutomataPlugin):
         self.starboard = mongo_client.automata.starboard_starboard
 
     async def get_entry(
-        self, *, message: Union[nextcord.Message, int], channel: Union[nextcord.TextChannel, int]
+        self,
+        *,
+        message: Union[nextcord.Message, int],
+        channel: Union[nextcord.TextChannel, int]
     ) -> Optional[Dict[str, Union[str, int, datetime]]]:
         """Retrieve an entry from the starboard, if it exists.
-        
+
         :param message: The message of the starboard entry.
         :param message: Union[nextcord.Message, int]
         :param channel: The channel the starboard entry was sent in.
@@ -44,8 +47,12 @@ class Starboard(AutomataPlugin):
         return entry
 
     async def add_entry(
-        self, *, message: Union[nextcord.Message, int], channel: Union[nextcord.TextChannel, int],
-        user: Union[nextcord.User, int], timestamp: Optional[datetime] = datetime.now()
+        self,
+        *,
+        message: Union[nextcord.Message, int],
+        channel: Union[nextcord.TextChannel, int],
+        user: Union[nextcord.User, int],
+        timestamp: Optional[datetime] = datetime.now()
     ) -> bool:
         """Add an entry to the starboard, if it does not already exist.
         :param message: The message of the starboard entry.
@@ -78,14 +85,14 @@ class Starboard(AutomataPlugin):
                 "message_id": message_id,
                 "channel_id": channel_id,
                 "user_id": user_id,
-                "timestamp": timestamp
+                "timestamp": timestamp,
             }
         )
         return True
 
     def _format_starboard_embed(self, message: nextcord.Message) -> nextcord.Embed:
         """Generates a formatted embed for a given starboard message"""
-        embed = nextcord.Embed(title="Original Message", color = 0xFFFF00)
+        embed = nextcord.Embed(title="Original Message", color=0xFFFF00)
         embed.url = message.jump_url
         embed.description = message.content
 
@@ -100,14 +107,19 @@ class Starboard(AutomataPlugin):
         if len(urls) > 0:
             embed.description += "\n".join(urls)
 
-        embed.set_author(name=message.author.display_name, icon_url=message.author.display_avatar)
+        embed.set_author(
+            name=message.author.display_name, icon_url=message.author.display_avatar
+        )
 
         return embed
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: nextcord.Reaction, user: nextcord.Member):
-        if not user.bot and reaction.emoji == '⭐':
-            if reaction.count == STARBOARD_THRESHOLD and reaction.message.channel.id != STARBOARD_CHANNEL_ID:
+        if not user.bot and reaction.emoji == "⭐":
+            if (
+                reaction.count == STARBOARD_THRESHOLD
+                and reaction.message.channel.id != STARBOARD_CHANNEL_ID
+            ):
                 message = reaction.message
                 channel = message.channel
                 user = message.author
