@@ -4,14 +4,9 @@ from typing import Dict, Optional, Union
 import nextcord
 from discord.ext import commands
 
-
 from Plugin import AutomataPlugin
-from Globals import mongo_client
-    
-#from Globals import STARBOARD_CHANNEL, STARBOARD_THRESHOLD
+from Globals import mongo_client, STARBOARD_CHANNEL, STARBOARD_THRESHOLD
 
-STARBOARD_CHANNEL = 706658088995782677
-STARBOARD_THRESHOLD = 1
 
 class Starboard(AutomataPlugin):
     """React with ⭐'s on a message to add a message to the starboard."""
@@ -106,6 +101,7 @@ class Starboard(AutomataPlugin):
             embed.description += "\n".join(urls)
 
         embed.set_author(name=message.author.display_name, icon_url=message.author.display_avatar)
+        print(embed)
 
         return embed
 
