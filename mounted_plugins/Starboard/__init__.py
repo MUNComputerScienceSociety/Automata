@@ -5,7 +5,7 @@ import nextcord
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client, STARBOARD_CHANNEL, STARBOARD_THRESHOLD
+from Globals import mongo_client, STARBOARD_CHANNEL_ID, STARBOARD_THRESHOLD
 
 
 class Starboard(AutomataPlugin):
@@ -101,14 +101,13 @@ class Starboard(AutomataPlugin):
             embed.description += "\n".join(urls)
 
         embed.set_author(name=message.author.display_name, icon_url=message.author.display_avatar)
-        print(embed)
 
         return embed
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: nextcord.Reaction, user: nextcord.Member):
         if not user.bot and reaction.emoji == '⭐':
-            if reaction.count == STARBOARD_THRESHOLD:
+            if reaction.count == STARBOARD_THRESHOLD and reaction.message.channel.id != STARBOARD_CHANNEL_ID:
                 message = reaction.message
                 channel = message.channel
                 user = message.author
@@ -116,7 +115,7 @@ class Starboard(AutomataPlugin):
                 if (await self.get_entry(message=message, channel=channel)) is not None:
                     return
 
-                starboard_channel = message.guild.get_channel(STARBOARD_CHANNEL)
+                starboard_channel = message.guild.get_channel(STARBOARD_CHANNEL_ID)
                 embed = self._format_starboard_embed(message=message)
                 await starboard_channel.send(embed=embed)
                 await self.add_entry(message=message, channel=channel, user=user)
