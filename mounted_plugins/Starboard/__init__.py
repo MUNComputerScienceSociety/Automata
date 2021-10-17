@@ -76,8 +76,7 @@ class Starboard(AutomataPlugin):
             user_id = user
         elif user is not None:
             user_id = user.id
-        query = {}
-        if await self.get_entry(message_id, channel_id) is not None:
+        if await self.get_entry(message=message_id, channel=channel_id) is not None:
             return False
         await self.starboard.insert_one(
             {
@@ -89,12 +88,39 @@ class Starboard(AutomataPlugin):
         )
         return True
 
+    def _format_starboard_embed(self, message: nextcord.Message) -> nextcord.Embed:
+        """Generates a formatted embed for a given starboard message"""
+        embed = nextcord.Embed(title="Original Message", color = 0xFFFF00)
+        embed.url = message.jump_url
+        embed.description = message.content
+
+        urls = []
+
+        for a in message.attachments:
+            if "image" in a.content_type and embed.image is None:
+                embed.set_image(url=a.url)
+            else:
+                urls.append(a.url)
+
+        if len(urls) > 0:
+            embed.description += "\n".join(urls)
+
+        embed.set_author(name=message.author.display_name, icon_url=message.author.display_avatar)
+
+        return embed
 
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: nextcord.reaction, user: nextcord.user):
-        if reaction.emoji == '⭐':
-            if reaction.count == STARBOARD_THRESHOLD:        
-                channel1 = self.bot.get_channel(STARBOARD_CHANNEL)
-                embedVar = nextcord.Embed(title="Original Message",url = reaction.message.jump_url, description = reaction.message.content, color = 0xFFFF00)
-                embedVar.set_author(name=reaction.message.author.display_name,icon_url=reaction.message.author.avatar_url)
-                await channel1.send(embed=embedVar)
+    async def on_reaction_add(self, reaction: nextcord.Reaction, user: nextcord.Member):
+        if not user.bot and reaction.emoji == '⭐':
+            if reaction.count == STARBOARD_THRESHOLD:
+                message = reaction.message
+                channel = message.channel
+                user = message.author
+
+                if (await self.get_entry(message=message, channel=channel)) is not None:
+                    return
+
+                starboard_channel = message.guild.get_channel(STARBOARD_CHANNEL)
+                embed = self._format_starboard_embed(message=message)
+                await starboard_channel.send(embed=embed)
+                await self.add_entry(message=message, channel=channel, user=user)
