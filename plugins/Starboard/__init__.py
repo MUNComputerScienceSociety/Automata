@@ -20,7 +20,7 @@ class Starboard(AutomataPlugin):
         self,
         *,
         message: Union[nextcord.Message, int],
-        channel: Union[nextcord.TextChannel, int]
+        channel: Union[nextcord.TextChannel, int],
     ) -> Optional[Dict[str, Union[str, int, datetime]]]:
         """Retrieve an entry from the starboard, if it exists.
 
@@ -52,7 +52,7 @@ class Starboard(AutomataPlugin):
         message: Union[nextcord.Message, int],
         channel: Union[nextcord.TextChannel, int],
         user: Union[nextcord.User, int],
-        timestamp: Optional[datetime] = datetime.now()
+        timestamp: Optional[datetime] = datetime.now(),
     ) -> bool:
         """Add an entry to the starboard, if it does not already exist.
         :param message: The message of the starboard entry.
@@ -110,6 +110,8 @@ class Starboard(AutomataPlugin):
         embed.set_author(
             name=message.author.display_name, icon_url=message.author.display_avatar
         )
+        post_date = message.created_at.strftime("%B %m, %Y")
+        embed.set_footer(text=f"Posted on {post_date}")
 
         return embed
 
