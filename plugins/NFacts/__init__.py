@@ -5,11 +5,16 @@ import httpx
 import nextcord
 from Plugin import AutomataPlugin
 
-
+API_BASE = "http://numbersapi.com/"
 class NFacts(AutomataPlugin):
     """Numbers have a secert facts, check them out!"""
 
+    
 
+    @staticmethod
+    async def fetch(api_path):
+        async with httpx.AsyncClient() as client:
+            return await client.get(f"{API_BASE}{api_path}")
 
     @commands.command()
     async def nfact(self, ctx: commands.Context, number: str = "random"):
@@ -19,7 +24,9 @@ class NFacts(AutomataPlugin):
         !nfact 42 | a fact about number 42
         """
 
-        fact = httpx.get(f"http://numbersapi.com/{number}").text
+        res = await self.fetch(number)
+        fact = res.text
+        
 
         embed = nextcord.Embed(
             colour= nextcord.Colour.random()
@@ -40,7 +47,8 @@ class NFacts(AutomataPlugin):
         Replies with a fact about a random or specific year
         """
 
-        fact = httpx.get(f"http://numbersapi.com/{year}/year").text
+        res = await self.fetch(f"{year}/year").text
+        fact = res.text
 
         embed = nextcord.Embed(
             colour= nextcord.Colour.random()
@@ -63,10 +71,12 @@ class NFacts(AutomataPlugin):
         !datefact DD MM
         """
 
-        fact = httpx.get(f"http://numbersapi.com/{month}/{date}/date").text
+        res = await self.fetch(f"{month}/{date}/date")
 
         if (not date or not month):
-            fact = httpx.get(f"http://numbersapi.com/random/date").text
+            res = await self.fetch("random/date")
+
+        fact = res.text
         
 
         embed = nextcord.Embed(
@@ -87,7 +97,8 @@ class NFacts(AutomataPlugin):
         Numbers Trivia
         """
 
-        fact = httpx.get(f"http://numbersapi.com/{number}/math").text
+        res = await self.fetch(f"{number}/math").text
+        fact = res.text
         embed = nextcord.Embed(
             colour= nextcord.Colour.random()
         )
