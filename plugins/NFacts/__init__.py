@@ -19,8 +19,8 @@ class NFacts(AutomataPlugin):
 class NumberFacts(AutomataPlugin):
     """Numbers have a secret facts, check them out!"""
 
-    @commands.command()
-    async def nfact(self, ctx: commands.Context, number: str = "random"):
+    @commands.command(aliases=["nfact"])
+    async def numberfact(self, ctx: commands.Context, number: str = "random"):
         """Replies with a random fact of random or specified number
         EX.
         !nfact | a random number
