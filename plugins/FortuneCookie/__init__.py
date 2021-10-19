@@ -2,7 +2,6 @@ from nextcord.ext import commands
 import nextcord
 import httpx
 from Plugin import AutomataPlugin
-
 API_BASE="http://yerkee.com/api"
 
 class FortuneCookie(AutomataPlugin):
@@ -18,12 +17,13 @@ class FortuneCookie(AutomataPlugin):
     async def fortune(self, ctx: commands.Context):
         """Replies with a fortune cookie message"""
 
-        response = await self._fetch("/fortune/computers").json()[
+        response = await self._fetch("/fortune/computers")
+        text = response.json()[
             "fortune"
         ]
-        if len(response) > 4000:
-            response = "I am too long"
+        if len(text) > 4000:
+            text = "I am too long"
         embed = nextcord.Embed(colour=nextcord.Colour.blue())
-        embed.add_field(name="Your Fortune Cookie 🥠", value=response)
+        embed.add_field(name="Your Fortune Cookie 🥠", value=text)
         message = await ctx.send(embed=embed)
         await message.add_reaction("🥠")
