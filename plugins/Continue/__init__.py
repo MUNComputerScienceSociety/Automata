@@ -10,7 +10,8 @@ class Continue(AutomataPlugin):
     @commands.command(aliases=["continue"])
     async def gpt(self, ctx: commands.Context, *, prompt: str):
         """Continues your prompt with the default parameters"""
-        await ctx.send(f"{prompt}{str(gptj_query_simple(prompt))}...")
+        res = await gptj_query_simple(prompt)
+        await ctx.send(f"{prompt}{str(res)}...")
 
     @commands.command(aliases=["continueadv", "continueadvanced"])
     async def gpt_adv(
@@ -23,12 +24,10 @@ class Continue(AutomataPlugin):
         prompt: str,
     ):
         """Continues your prompt with custom creativity, randomness and length \n(Defaults are 0.8, 0.9 and 100 respectively)"""
-        response = str(
-            gptj_query(
-                prompt,
-                max_length=max_length,
-                temperature=temperature,
-                top_probability=top_probability,
-            )
+        res = await gptj_query(
+            prompt,
+            max_length=max_length,
+            temperature=temperature,
+            top_probability=top_probability,
         )
-        await ctx.send(f"{prompt}{response}...")
+        await ctx.send(f"{prompt}{str(res)}...")
