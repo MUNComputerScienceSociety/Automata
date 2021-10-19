@@ -21,7 +21,7 @@ class FortuneCookie(AutomataPlugin):
         text = response.json()[
             "fortune"
         ]
-        if len(text) > 4000:
+        if len(text) > 1024:
             text = "I am too long"
         embed = nextcord.Embed(colour=nextcord.Colour.blue())
         embed.add_field(name="Your Fortune Cookie 🥠", value=text)
