@@ -38,7 +38,7 @@ class NumberFacts(AutomataPlugin):
         nbr = fact.split(" ")[0]
 
         embed.add_field(name=f"A fact about number {nbr}", value=fact)
-        embed.set_author(name="NFact", url= ctx.message.guild.icon.url)
+        embed.set_author(name="NumberFact", url= ctx.message.guild.icon.url)
 
         await ctx.send(
             embed = embed
