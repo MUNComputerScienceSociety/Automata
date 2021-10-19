@@ -7,7 +7,7 @@ from Plugin import AutomataPlugin
 
 API_BASE = "http://numbersapi.com/"
 class NFacts(AutomataPlugin):
-    """Numbers have a secert facts, check them out!"""
+    """Numbers have a secret facts, check them out!"""
 
     
 
@@ -15,6 +15,9 @@ class NFacts(AutomataPlugin):
     async def fetch(api_path):
         async with httpx.AsyncClient() as client:
             return await client.get(f"{API_BASE}{api_path}")
+
+class NumberFacts(AutomataPlugin):
+    """Numbers have a secret facts, check them out!"""
 
     @commands.command()
     async def nfact(self, ctx: commands.Context, number: str = "random"):
