@@ -6,7 +6,7 @@ import nextcord
 from Plugin import AutomataPlugin
 
 
-class NFacts(AutomataPlugin):
+class NumberFacts(AutomataPlugin):
     """Numbers have a secret facts, check them out!"""
 
     @commands.command()
