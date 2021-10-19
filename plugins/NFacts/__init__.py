@@ -7,9 +7,7 @@ from Plugin import AutomataPlugin
 
 
 class NFacts(AutomataPlugin):
-    """Numbers have a secert facts, check them out!"""
-
-
+    """Numbers have a secret facts, check them out!"""
 
     @commands.command()
     async def nfact(self, ctx: commands.Context, number: str = "random"):
