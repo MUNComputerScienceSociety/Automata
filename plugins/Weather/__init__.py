@@ -22,6 +22,7 @@ class Weather(AutomataPlugin):
             resp = await client.get(CALL_URI)
         weather_data = resp.json()
 
+
         timezone = pytz.timezone("Canada/Newfoundland")
 
         embed = nextcord.Embed(
