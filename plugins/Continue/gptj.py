@@ -11,7 +11,6 @@ async def gptj_query_simple(prompt):
 
 
 async def gptj_query(prompt, max_length, temperature, top_probability):
-    print(temperature, top_probability, max_length, prompt)
     async with httpx.AsyncClient() as client:
         res = await client.post(
             GPTJ_API,
