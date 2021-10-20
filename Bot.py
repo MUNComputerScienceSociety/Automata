@@ -187,6 +187,17 @@ class CustomHelp(commands.DefaultHelpCommand):  # ( ͡° ͜ʖ ͡°)
         embed_command.colour = nextcord.Colour.green()
         channel = self.get_destination()
         await channel.send(embed=embed_command)
+        
+    async def send_group_help(self, group):
+        """Shows how to use each group of commands"""
+        embed_group = nextcord.Embed(
+            title=self.get_command_signature(group), description=group.short_doc
+        )
+        for c in group.walk_commands():
+            embed_group.add_field(name=c, value=c.short_doc, inline=False)
+        embed_group.colour = nextcord.Colour.yellow()
+        channel = self.get_destination()
+        await channel.send(embed=embed_group)
 
     async def send_cog_help(self, cog):
         """Shows how to use each category"""
