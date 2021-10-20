@@ -6,18 +6,25 @@ import nextcord
 from Plugin import AutomataPlugin
 
 API_BASE = "http://numbersapi.com/"
-class NFacts(AutomataPlugin):
-    """Numbers have a secret facts, check them out!"""
 
-    
+class NumberFacts(AutomataPlugin):
+    """Numbers have a secret facts, check them out!"""
 
     @staticmethod
     async def fetch(api_path):
         async with httpx.AsyncClient() as client:
             return await client.get(f"{API_BASE}{api_path}")
 
-class NumberFacts(AutomataPlugin):
-    """Numbers have a secret facts, check them out!"""
+    async def message_embed(self, fact, number):
+
+        embed = nextcord.Embed(
+            colour= nextcord.Colour.random()
+        )
+        embed.add_field(name=f"A fact about number {number}", value=fact)
+        embed.set_author(name="NFact")
+
+        return embed
+        
 
     @commands.command()
     async def nfact(self, ctx: commands.Context, number: str = "random"):
@@ -31,14 +38,9 @@ class NumberFacts(AutomataPlugin):
         fact = res.text
         
 
-        embed = nextcord.Embed(
-            colour= nextcord.Colour.random()
-        )
-
         nbr = fact.split(" ")[0]
 
-        embed.add_field(name=f"A fact about number {nbr}", value=fact)
-        embed.set_author(name="NFact", url= ctx.message.guild.icon.url)
+        embed = await self.message_embed(fact, nbr)
 
         await ctx.send(
             embed = embed
@@ -50,17 +52,12 @@ class NumberFacts(AutomataPlugin):
         Replies with a fact about a random or specific year
         """
 
-        res = await self.fetch(f"{year}/year").text
+        res = await self.fetch(f"{year}/year")
         fact = res.text
-
-        embed = nextcord.Embed(
-            colour= nextcord.Colour.random()
-        )
 
         nbr = fact.split(" ")[0]
 
-        embed.add_field(name=f"A fact about the year {nbr}", value=fact)
-        embed.set_author(name="NFact", url= ctx.message.guild.icon.url)
+        embed = await self.message_embed(fact, nbr)
 
         await ctx.send(
             embed = embed
@@ -82,13 +79,8 @@ class NumberFacts(AutomataPlugin):
         fact = res.text
         
 
-        embed = nextcord.Embed(
-            colour= nextcord.Colour.random()
-        )
-
         nbr = " ".join(fact.split(" ")[0: 2])
-        embed.add_field(name=f"A fact about the date {nbr}", value=fact)
-        embed.set_author(name="NFact", url= ctx.message.guild.icon.url)
+        embed = await self.message_embed(fact, nbr)
 
         await ctx.send(
             embed = embed
@@ -100,16 +92,12 @@ class NumberFacts(AutomataPlugin):
         Numbers Trivia
         """
 
-        res = await self.fetch(f"{number}/math").text
+        res = await self.fetch(f"{number}/math")
         fact = res.text
-        embed = nextcord.Embed(
-            colour= nextcord.Colour.random()
-        )
 
         nbr = fact.split(" ")[0]
 
-        embed.add_field(name=f"A math fact about the number {nbr}", value=fact)
-        embed.set_author(name="NFact", url= ctx.message.guild.icon.url)
+        embed = await self.message_embed(fact, nbr)
 
         await ctx.send(
             embed = embed
