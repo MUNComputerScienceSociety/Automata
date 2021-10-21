@@ -113,19 +113,23 @@ class Starboard(AutomataPlugin):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: nextcord.Reaction, user: nextcord.Member):
-        if not user.bot and reaction.emoji == "⭐":
-            if (
-                reaction.count == STARBOARD_THRESHOLD
-                and reaction.message.channel.id != STARBOARD_CHANNEL_ID
-            ):
-                message = reaction.message
-                channel = message.channel
-                user = message.author
+        if user.bot or not reaction.emoji == "⭐":
+            return
 
-                if (await self.get_entry(message=message, channel=channel)) is not None:
-                    return
+        if (
+            reaction.count != STARBOARD_THRESHOLD
+            or reaction.message.channel.id == STARBOARD_CHANNEL_ID
+        ):
+            return
 
-                starboard_channel = message.guild.get_channel(STARBOARD_CHANNEL_ID)
-                embed = self._format_starboard_embed(message=message)
-                await starboard_channel.send(embed=embed)
-                await self.add_entry(message=message, channel=channel, user=user)
+        message = reaction.message
+        channel = message.channel
+        user = message.author
+
+        if (await self.get_entry(message=message, channel=channel)) is not None:
+            return
+
+        starboard_channel = message.guild.get_channel(STARBOARD_CHANNEL_ID)
+        embed = self._format_starboard_embed(message=message)
+        await starboard_channel.send(embed=embed)
+        await self.add_entry(message=message, channel=channel, user=user)
