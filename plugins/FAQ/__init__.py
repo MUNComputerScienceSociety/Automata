@@ -46,7 +46,7 @@ class FAQ(AutomataPlugin):
         )
         embed_science.add_field(
             name=f"What is a CRW course?",
-            value=f"_A CRW course is any course from the list [here](https://www.mun.ca/hss/programs/undergraduate/crw_course_list.php)_",
+            value=f"_A CRW course is any course from the list [here](https://www.mun.ca/hss/programs/undergraduate/crw\_course\_list.php)_",
             inline=False,
         )
         embed_science.set_footer(
