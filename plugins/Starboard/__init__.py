@@ -1,4 +1,5 @@
 from datetime import datetime
+from logging import StreamHandler
 from typing import Dict, Optional, Union
 
 import nextcord
@@ -31,18 +32,12 @@ class Starboard(AutomataPlugin):
         :return: The starboard message, if it exists
         :rtype: Optional[Dict[str, Union[str, int, datetime]]]
         """
-        if isinstance(message, int):
-            message_id = message
-        elif message is not None:
-            message_id = message.id
-        if isinstance(channel, int):
-            channel_id = channel
-        elif channel is not None:
-            channel_id = channel.id
+
+        message_id = self._get_id(message)
+        channel_id = self._get_id(channel)
         query = {}
-        if message is not None and channel is not None:
-            query["message_id"] = message_id
-            query["channel_id"] = channel_id
+        query["message_id"] = message_id
+        query["channel_id"] = channel_id
         entry = await self.starboard.find_one(query)
         return entry
 
@@ -66,18 +61,9 @@ class Starboard(AutomataPlugin):
         :return: True or false, depending on if the operation was successful or not.
         :rtype: bool
         """
-        if isinstance(message, int):
-            message_id = message
-        elif message is not None:
-            message_id = message.id
-        if isinstance(channel, int):
-            channel_id = channel
-        elif channel is not None:
-            channel_id = channel.id
-        if isinstance(user, int):
-            user_id = user
-        elif user is not None:
-            user_id = user.id
+        message_id = self._get_id(message)
+        channel_id = self._get_id(channel)
+        user_id = self._get_id(user)
         if await self.get_entry(message=message_id, channel=channel_id) is not None:
             return False
         await self.starboard.insert_one(
@@ -114,6 +100,16 @@ class Starboard(AutomataPlugin):
         embed.set_footer(text=f"Posted on {post_date}")
 
         return embed
+
+    def _get_id(
+        self,
+        id_or_object: Union[nextcord.Message, nextcord.TextChannel, nextcord.User, int],
+    ) -> int:
+        """Returns the ID of a nextcord object/id union"""
+        if type(id_or_object) is int:
+            return id_or_object
+        else:
+            return id_or_object.id
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: nextcord.Reaction, user: nextcord.Member):
