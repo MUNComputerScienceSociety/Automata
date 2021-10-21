@@ -141,7 +141,6 @@ async def exec_code(ctx: commands.Context, code: str):
 
     await ctx.send(embed=embed)
 
-
 @bot.command()
 async def plugins(ctx: commands.Context):
     """Lists all enabled plugins."""
