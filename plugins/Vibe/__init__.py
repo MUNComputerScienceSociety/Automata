@@ -3,11 +3,10 @@ from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 
-VIBE_IMAGE = "https://s3.gifyu.com/images/catvibe.gif"
-VIBIER_IMAGE = "https://s3.gifyu.com/images/ezgif.com-gif-maker-174e18faa852a3028.gif"
-VIBIEST_IMAGE = "https://s3.gifyu.com/images/ezgif.com-gif-maker-2664260aedaea9638.gif"
-VIBE_CAR = "https://s9.gifyu.com/images/ezgif.com-gif-maker-28d39714362a6d155.gif"
-NO_VIBE = "https://s6.gifyu.com/images/ezgif.com-gif-maker682fded14a604d26.gif"
+VIBE_IMAGE = "https://hamzahap.github.io/VibeGIFS/Vibe.gif"
+VIBIER_IMAGE = "https://hamzahap.github.io/VibeGIFS/HyperVibe.gif"
+VIBE_CAR = "https://hamzahap.github.io/VibeGIFS/Vibey.gif"
+NO_VIBE = "https://hamzahap.github.io/VibeGIFS/Cry.gif"
 
 
 class Vibe(AutomataPlugin):
@@ -20,9 +19,7 @@ class Vibe(AutomataPlugin):
             await ctx.send(NO_VIBE)
         elif vibelevel == 1:
             await ctx.send(VIBE_IMAGE)
-        elif vibelevel == 2:
-            await ctx.send(VIBIER_IMAGE)
         elif vibelevel == 69 or vibelevel == 420:
             await ctx.send(VIBE_CAR)
         else:
-            await ctx.send(VIBIEST_IMAGE)
+            await ctx.send(VIBIER_IMAGE)
