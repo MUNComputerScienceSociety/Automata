@@ -24,9 +24,9 @@ class Poll(AutomataPlugin):
                     options.append(item) 
             embed = nextcord.Embed(colour=nextcord.Colour.blue())
             output = ""
-            for i in range(len(options)):
-                output += f"{i+1}) {options[i]}\n"
+            for num, option in enumerate(options):
+                output += f"{num+1}) {option}\n"
             embed.add_field(name="Options", value=output)
             message = await ctx.send(embed=embed)
-            for i in range(len(options)):
-                await message.add_reaction(reactions[i])
+            for reaction, option in zip(reactions, options):
+                await message.add_reaction(reaction)
