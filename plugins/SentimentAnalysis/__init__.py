@@ -25,15 +25,15 @@ class SentimentAnalysis(AutomataPlugin):
 
         if absolute_score == 0:
             sentiment_text = 'absolutely neutral '
-        elif absolute_score > 0.01 and absolute_score < 0.25:
+        elif 0.01 < absolute_score < 0.25:
             sentiment_text = 'slightly '
-        elif absolute_score >= 0.25 and absolute_score < 0.50:
+        elif 0.25 <= absolute_score < 0.50:
             sentiment_text = 'somewhat '
-        elif absolute_score >= 0.50 and absolute_score < 0.75:
+        elif 0.50 <= absolute_score < 0.75:
             sentiment_text = ''
-        elif absolute_score >= 0.75 and absolute_score < 0.90:
+        elif 0.75 <= absolute_score < 0.90:
             sentiment_text = 'mostly '
-        elif absolute_score >= 0.90 and absolute_score < 1.00:
+        elif 0.90 <= absolute_score < 1.00:
             sentiment_text = 'overwhelmingly '
         elif absolute_score == 1.00:
             sentiment_text = 'absolutely '
