@@ -96,7 +96,7 @@ class Starboard(AutomataPlugin):
         embed.set_author(
             name=message.author.display_name, icon_url=message.author.display_avatar
         )
-        post_date = message.created_at.strftime("%B %m, %Y")
+        post_date = message.created_at.strftime("%B %d, %Y")
         embed.set_footer(text=f"Posted on {post_date}")
 
         return embed
