@@ -43,4 +43,6 @@ class Generator(AutomataPlugin):
             "ce": chaotic_evil,
         }
 
-        await ctx.send(f"{API}?{urllib.parse.urlencode(params)}")
+        error_check = httpx.get(API, params=params).text
+        
+        await ctx.send(error_check if error_check[1:16] == "Malformed input" else f"{API}?{urllib.parse.urlencode(params)}")
