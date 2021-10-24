@@ -30,9 +30,6 @@ class Generator(AutomataPlugin):
         document_count = loop.run_until_complete(
             self.gen3x3_session_counter.count_documents({})
         )
-        print()
-        print(document_count)
-        print()
         if document_count == 0:
             self.gen3x3_session_counter.insert_one({"counter": 0})
 
@@ -149,9 +146,6 @@ class Generator(AutomataPlugin):
     def publish_check(self, alignments: dict):
         errors = []
         keys = alignments.keys()
-        print()
-        print(keys)
-        print()
         for key in keys:
             if alignments[key] == None:
                 errors.append(key)
@@ -179,6 +173,25 @@ class Generator(AutomataPlugin):
         await channel.send(f"Published image from Session {res['id']}:")
         await channel.send(image_url)
 
+    @commands.command()
+    async def gen3x3preview(self, ctx: commands.Context):
+        res = await self.gen3x3_sessions.find_one({"thread": ctx.message.channel.id})
+        if not res:
+            await ctx.send(
+                "This command can only be used in a thread created with the gen3x3start command (that is not yet archived)"
+            )
+            return
+        temp_grid = {}
+        keys = res['alignments'].keys()
+        for key in keys:
+            if res['alignments'][key] == None:
+                temp_grid[key] = "https://via.placeholder.com/200"
+            else:
+                temp_grid[key] = res['alignments'][key]
+        image_url = f"{API}/api?{urllib.parse.urlencode(temp_grid)}"
+        await ctx.send("Preview Image: ")
+        await ctx.send(image_url)
+
     # Admin only utility commands
     @commands.command()
     async def gen3x3count(self, ctx: commands.Context):
@@ -193,9 +206,6 @@ class Generator(AutomataPlugin):
         if ctx.message.author.guild_permissions.administrator:
             count = 0
             async for session in self.gen3x3_sessions.find():
-                print()
-                print(session["thread"])
-                print()
                 thread = ctx.channel.get_thread(session["thread"])
                 await thread.edit(archived=True)
                 count += 1
