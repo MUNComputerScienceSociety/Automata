@@ -101,7 +101,7 @@ class Generator(AutomataPlugin):
         await thread.trigger_typing()
         await asyncio.sleep(3)
         await thread.send(
-            "Once all alignments have been set use the gen3x3publish command to publish the image beck to the main channel."
+            "Once all alignments have been set use the gen3x3publish command to publish the image back to the main channel."
         )
         await thread.trigger_typing()
         await asyncio.sleep(1)
@@ -207,7 +207,8 @@ class Generator(AutomataPlugin):
             count = 0
             async for session in self.gen3x3_sessions.find():
                 thread = ctx.channel.get_thread(session["thread"])
-                await thread.edit(archived=True)
-                count += 1
+                if thread != None:
+                    await thread.edit(archived=True)
+                    count += 1
             await self.gen3x3_sessions.delete_many({})
             await ctx.send(f"{count} Sessions archived and deleted")
