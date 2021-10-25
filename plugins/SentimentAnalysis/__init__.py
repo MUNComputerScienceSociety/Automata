@@ -16,7 +16,9 @@ class SentimentAnalysis(AutomataPlugin):
     async def sentiment(self, ctx, *, argument=None):
         """Replies with the sentiment of the sentence"""
 
-        message_to_be_scored = ''
+        message_to_reply_to = ctx.message
+        message_to_be_scored = argument
+
         if argument is None and ctx.message.reference is None:
             historical_messages = await ctx.channel.history(limit=2).flatten()
             message_to_reply_to = historical_messages[1]
@@ -26,14 +28,10 @@ class SentimentAnalysis(AutomataPlugin):
             message_to_reply_to = await ctx.fetch_message(ctx.message.reference.message_id)
             message_to_be_scored =  message_to_reply_to.content
 
-        if argument is not None and ctx.message.reference is None:
-            message_to_reply_to = ctx.message
-            message_to_be_scored = argument
-
+        sentiment_text = ''
+        output_template = "<@{author}>: This text is **{sentiment_text}**."
         compound_score = self.sia.polarity_scores(message_to_be_scored)['compound']
         absolute_score = abs(compound_score)
-        output_template = "<@{author}>: This text is **{sentiment_text}**."
-        sentiment_text = ''
 
         if absolute_score == 0:
             sentiment_text = 'absolutely neutral'
