@@ -1,8 +1,10 @@
-#Leigh Trinity
-#Oct 12th 2021
+from nextcord.ext import commands
+from Plugin import AutomataPlugin
 
 
-class deadly (AutomataPlugin):
+# Leigh Trinity
+# Oct 12th 2021
+class Deadly(AutomataPlugin):
     """deadly"""
 
     def __init__(self, manifest, bot: commands.Bot):
@@ -10,7 +12,6 @@ class deadly (AutomataPlugin):
 
     @commands.command()
     async def deadly(self, ctx: commands.Context, number_of_times: int = 0):
-
 
         if number_of_times == 0:
             await ctx.send("yes by!")
