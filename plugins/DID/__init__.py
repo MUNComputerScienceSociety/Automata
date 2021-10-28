@@ -4,7 +4,7 @@ from Plugin import AutomataPlugin
 
 
 class DID(AutomataPlugin):
-    """IDK what goes here -Kanen"""
+    """Informative command regarding DID"""
 
     @commands.command()
     async def DID(self, ctx: commands.Context, number_of_times: int = 0):
