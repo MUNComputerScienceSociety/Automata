@@ -11,6 +11,6 @@ class Ping(AutomataPlugin):
         """Replies with a Pong, or many!"""
 
         if number_of_times == 0:
-            await ctx.send("Pong!")
+            await ctx.send("EVIL JACK BE LIKE PONG")
         else:
             await ctx.send(f"Pong! x{number_of_times}")
