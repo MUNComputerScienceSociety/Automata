@@ -4,7 +4,7 @@ from Plugin import AutomataPlugin
 
 
 class BadFox(AutomataPlugin):
-    """Pong"""
+    """Asks if I'm really a bad fox"""
 
     @commands.command()
     async def BadFox(self, ctx: commands.Context, number_of_times: int = 0):
