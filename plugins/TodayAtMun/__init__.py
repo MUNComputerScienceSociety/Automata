@@ -156,9 +156,9 @@ class TodayAtMun(AutomataPlugin):
             await self.notify_new_event(posted_message_id.jump_url)
         else:
             await self.update_event_msg(next_event_date)
-        await asyncio.sleep(5)
+        await asyncio.sleep(5.0)
 
-    @tasks.loop(hours=3)
+    @tasks.loop(hours=2.0)
     async def check_for_new_event(self):
         await self.post_new_events()
 
@@ -193,7 +193,7 @@ class TodayAtMun(AutomataPlugin):
         await message.edit(embed=message.embeds[0])
 
     @commands.group(aliases=["e"])
-    @commands.cooldown(3, 60)
+    @commands.cooldown(3, 60.0)
     async def exam(
         self,
         ctx: commands.Context,
