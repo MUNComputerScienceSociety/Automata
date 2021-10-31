@@ -14,7 +14,7 @@ class Uptime(AutomataPlugin):
     async def uptime(self, ctx):
         """Replies with the current uptime for this bot"""
 
-        await ctx.message.reply(f'This bot has been running for {self.time_since(self.startup_time)}.')
+        await ctx.message.reply(f'I have been awake for {self.time_since(self.startup_time)}.')
 
     def time_since(self, comparison_time):
         """
