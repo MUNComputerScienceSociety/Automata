@@ -4,7 +4,7 @@ from Plugin import AutomataPlugin
 
 
 class FRSTT(AutomataPlugin):
-    """Pong"""
+    """Yoo"""
 
     @commands.command()
     async def FRSTT(self, ctx: commands.Context, number_of_times: int = 0):
