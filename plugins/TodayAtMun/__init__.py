@@ -16,7 +16,7 @@ MUN_COLOUR_RED = 0x822433
 MUN_COLOUR_WHITE = 0xFFFFFF
 MUN_COLOUR_GREY = 0x838486
 DIARY_DATA_SOURCE = "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
-EXAMS_DATA_SOURCE = "https://www3.mun.ca/admit/swkgexm.P_Query_Exam?p_term_code=202003&p_internal_campus_code=CAMP_STJ&p_title=STJ_SPRG"
+EXAMS_DATA_SOURCE = "https://www3.mun.ca/admit/swkgexm.P_Query_Exam?p_term_code=202101&p_internal_campus_code=CAMP_STJ&p_title=STJ_FALL"
 
 
 class TodayAtMun(AutomataPlugin):
@@ -206,10 +206,6 @@ class TodayAtMun(AutomataPlugin):
         Usage: !exam <subject> <course_number> <section_number> <crn>
         Example: !exam COMP 1003
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.reply(content="Invalid command, check !help exam for more.")
-            return
-
         sched_heading, table_heading, exams_parsed = TodayAtMun.get_exams(
             subj, course_num, sec_numb, crn
         )
