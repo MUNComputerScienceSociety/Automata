@@ -15,39 +15,50 @@ LOCATIONS = {
     1673: "Reid Community Centre (Location C) (Ages 30+)"
 }
 
+## The starting page for the vaccine booking system. Used to get a valid session cookie.
+START_URL = "https://portal.healthmyself.net/nleasternhealth/forms/P2E"
+
+## The first page for the vaccine booking process. Used to get a valid session cookie.
+BOOKING_URL = "https://portal.healthmyself.net/nleasternhealth/guest/booking/form/abec68ea-5a99-421b-b137-6e83cf7a3231"
+
 ## The endpoint for accessing available appointment data.
-URL = "https://portal.healthmyself.net/nleasternhealth/guest/booking/type/5892/locations"
+LOCATION_URL = "https://portal.healthmyself.net/nleasternhealth/guest/booking/type/5892/locations"
 
 class Appointments(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-        self._code = ""
         self._binded_channels = []
         self._previous_openings = []
-        self.vaccineupdate.start()
     
     def cog_unload(self):
         self.vaccineupdate.cancel()
+    
+    ## Retrieve appointment data from the booking system endpoint.
+    def get_appointment_data(self):
+        session = requests.Session()
+        session.headers.update({'referer': START_URL})
+        session.get(BOOKING_URL)
+
+        r = session.get(LOCATION_URL)
+        if (r.status_code != 200):
+            return None
+        else:
+            return r.json()
 
     """Return the 1st shot/2nd shot/Booster COVID-19 vaccine locations with available appointments."""
     @commands.command()
     async def appointments(self, ctx: commands.Context):
-        ## Accessing appointment data requires a valid hm_session cookie. We must artificially create
-        ## this cookie to gain access to this information.
-        ## (there is probably a much easier way to do this)
-        session = requests.Session()
-        session.cookies.set('hm_session', self._code)
+        app_data = self.get_appointment_data()
+        message = ""
 
-        r = session.get(URL)
-        if (r.status_code != 200):
-            message = "Request Failed! Set the hm_session code first with !setvaccinecode"
+        if (not app_data):
+            message = "Request Failed!"
         else:
-            available = []
-            raw_json = r.json()
-            
             ## the retreived data is a collection of (location) id, hasUnavailableAppointment pairs.
-            for row in raw_json['data']:
+
+            available = []
+            for row in app_data['data']:
                 if (row['id'] in LOCATIONS and not row['hasUnavailableAppointments']):
                     available.append(LOCATIONS[row['id']])
             
@@ -58,45 +69,37 @@ class Appointments(AutomataPlugin):
 
         await ctx.send(message)
     
-    """Set the hm_session cookie code for accessing vaccine information."""
-    @commands.command()
-    async def setvaccinecode(self, ctx: commands.Context, message: str):
-        self._code = message
-
-        await ctx.send("hm_session vaccine code has been set!")
-    
     """Add the vaccine tracker to this channel, which messages the channel upon a new appointment."""
     @commands.command()
     async def startvaccinetracker(self, ctx: commands.Context):
         self._binded_channels.append(ctx.channel)
+        if (len(self._binded_channels) == 1):
+            self.vaccineupdate.start()
+
         await ctx.send("Vaccine Tracker has been added to this channel.")
     
     """Remove the vaccine tracker from this channel."""
     @commands.command()
     async def stopvaccinetracker(self, ctx: commands.Context):
         self._binded_channels.remove(ctx.channel)
+        if (len(self._binded_channels) == 0):
+            self._previous_openings = []
+            self.vaccineupdate.cancel()
+
         await ctx.send("Vaccine Tracker has been removed from this channel.")
     
     @tasks.loop(minutes=2.0)
     async def vaccineupdate(self):
-        if (not self._binded_channels):
-            self._previous_openings = []
-            return
-
-        session = requests.Session()
-        session.cookies.set('hm_session', self._code)
+        app_data = self.get_appointment_data()
         message = ""
 
-        r = session.get(URL)
-        if (r.status_code != 200):
-            message = "Request Failed! Set the hm_session code first with !setvaccinecode"
+        if (not app_data):
+            message = "Request Failed!"
         else:
+            ## as opposed to appointments(), the tracker loop only outputs differences in appointment status
             additions = []
             removals = []
-            raw_json = r.json()
-
-            ## as opposed to appointments(), the tracker loop only prints differences in appointment status
-            for row in raw_json['data']:
+            for row in app_data['data']:
                 if (row['id'] in LOCATIONS and not row['hasUnavailableAppointments'] and not row['id'] in self._previous_openings):
                     self._previous_openings.append(row['id'])
                     additions.append(LOCATIONS[row['id']])
@@ -107,7 +110,7 @@ class Appointments(AutomataPlugin):
             if (additions):
                 message = "Appointments now available at: \n" + "\n".join(additions)
             if (additions and removals):
-                message += "\n"
+                message += "\n\n" ## put a line between additions & removals if both are present.
             if (removals):
                 message += "No more appointments available at: \n" + "\n".join(removals)
 
