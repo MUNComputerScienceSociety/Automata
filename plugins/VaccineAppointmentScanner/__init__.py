@@ -25,6 +25,7 @@ BOOKING_URL = "https://portal.healthmyself.net/nleasternhealth/guest/booking/for
 LOCATION_URL = "https://portal.healthmyself.net/nleasternhealth/guest/booking/type/5892/locations"
 
 class Appointments(AutomataPlugin):
+    """Provides a utility for gathering information about COVID-19 vaccine appointments in the St. John's area."""
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
@@ -48,9 +49,9 @@ class Appointments(AutomataPlugin):
         return None
         
 
-    """Return the 1st shot/2nd shot/Booster COVID-19 vaccine locations with available appointments."""
     @commands.command()
     async def appointments(self, ctx: commands.Context):
+        """Return the 1st shot/2nd shot/Booster COVID-19 vaccine locations with available appointments."""
         app_data = self.get_appointment_data()
         message = ""
 
@@ -71,18 +72,19 @@ class Appointments(AutomataPlugin):
 
         await ctx.send(message)
     
-    """Add the vaccine tracker to this channel, which messages the channel upon a new appointment."""
     @commands.command()
     async def startvaccinetracker(self, ctx: commands.Context):
+        """Add the vaccine tracker to this channel, which messages the channel upon a new appointment."""
         self._binded_channels.append(ctx.channel)
         if (len(self._binded_channels) == 1):
             self.vaccineupdate.start()
 
         await ctx.send("Vaccine Tracker has been added to this channel.")
     
-    """Remove the vaccine tracker from this channel."""
     @commands.command()
     async def stopvaccinetracker(self, ctx: commands.Context):
+        """Remove the vaccine tracker from this channel."""
+
         self._binded_channels.remove(ctx.channel)
         if (len(self._binded_channels) == 0):
             self._previous_openings = []
