@@ -1,7 +1,7 @@
 from nextcord.ext import commands, tasks
 from Plugin import AutomataPlugin
 
-import requests
+import httpx
 
 ## Mapping of major St. John's vaccine location IDs to location names
 LOCATIONS = {
@@ -36,15 +36,17 @@ class Appointments(AutomataPlugin):
     
     ## Retrieve appointment data from the booking system endpoint.
     def get_appointment_data(self):
-        session = requests.Session()
-        session.headers.update({'referer': START_URL})
-        session.get(BOOKING_URL)
+        with httpx.Client() as client:
+            client.headers.update({'referer': START_URL})
+            client.get(BOOKING_URL)
+            r = client.get(LOCATION_URL)
 
-        r = session.get(LOCATION_URL)
-        if (r.status_code != 200):
-            return None
-        else:
-            return r.json()
+            if (r.status_code != 200):
+                return None
+            else:
+                return r.json()
+        return None
+        
 
     """Return the 1st shot/2nd shot/Booster COVID-19 vaccine locations with available appointments."""
     @commands.command()
