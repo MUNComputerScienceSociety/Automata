@@ -54,5 +54,6 @@ class Man(AutomataPlugin):
                 s = s[:-1]
                 self.cached[search] = s
                 await ctx.send(s)
-        except:
-            ctx.send(f"There was an error finding the man page for {search}")
+        except Exception as e:
+            await ctx.send(f"There was an error finding the man page for {search}")
+            raise e
