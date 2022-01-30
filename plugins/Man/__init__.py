@@ -12,7 +12,7 @@ class Man(AutomataPlugin):
     cached = {}
 
     @commands.command()
-    async def man(self, ctx: commands.Context, search: string = ""):
+    async def man(self, ctx: commands.Context, search: str = ""):
         """Searches man7.org for the requested man page"""
         try:
             if search == "":
