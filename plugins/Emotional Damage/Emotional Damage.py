@@ -12,7 +12,7 @@ class Damage(AutomataPlugin):
         gifint = random.randint(1,3)
         if gifint == 1:
             await ctx.send(file = discord.File('1.gif'))
-        elif gifint == 1:
+        elif gifint == 2:
             await ctx.send(file = discord.File('2.gif'))
-        elif gifint == 1:
+        elif gifint == 3:
             await ctx.send(file = discord.File('3.gif'))
