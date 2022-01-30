@@ -47,7 +47,7 @@ class Man(AutomataPlugin):
                 )
             else:
                 s = "There were multiple results:\n"
-                for x in num:
+                for x in res:
                     s += "https://man7.org/linux/man-pages/man{x}/{search}.{x}.html\n".format(
                         x=x, search=search
                     )
