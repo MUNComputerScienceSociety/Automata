@@ -8,12 +8,16 @@ from Plugin import AutomataPlugin
 class Man(AutomataPlugin):
     """Linux man command via man7.org"""
 
+    cached = {}
+
     @commands.command()
     async def man(self, ctx: commands.Context, search: string = ""):
         """Searches man7.org for the requested man page"""
         try:
             if search == "":
                 await ctx.send("No search request given :(")
+            elif search in cached:
+                await ctx.send(cached[search])
             else:
                 res = []
                 for i in range(1,9):
@@ -23,9 +27,11 @@ class Man(AutomataPlugin):
                         res.append(i)
         
             if len(res) == 0:
+                cached[search] = f"No manual entry for {search}"
                 await ctx.send("No manual entry for",search)
             elif len(res) == 1:
                 x = res[0]
+                cached[search] = "https://man7.org/linux/man-pages/man{x}/{search}.{x}.html".format(x=x,search=search)
                 await ctx.send("https://man7.org/linux/man-pages/man{x}/{search}.{x}.html".format(x=x,search=search))
             else:
                 s = "There were multiple results:\n"
@@ -33,6 +39,7 @@ class Man(AutomataPlugin):
                     s += "https://man7.org/linux/man-pages/man{x}/{search}.{x}.html\n".format(x=x,search=search))
             
                 s = s[:-1]
+                cached[search] = s
                 await ctx.send(s)
         except:
             ctx.send("There was an error finding the man page for",search)
