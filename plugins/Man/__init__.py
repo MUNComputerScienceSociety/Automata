@@ -15,12 +15,14 @@ class Man(AutomataPlugin):
     async def man(self, ctx: commands.Context, search: str = ""):
         """Searches man7.org for the requested man page"""
         try:
+            res = []
             if search == "":
                 await ctx.send("No search request given :(")
+                return
             elif search in self.cached:
                 await ctx.send(self.cached[search])
+                return
             else:
-                res = []
                 for i in range(1, 9):
                     r = requests.get(
                         url=f"https://man7.org/linux/man-pages/man{i}/{search}.{i}.html"
@@ -30,7 +32,7 @@ class Man(AutomataPlugin):
                         res.append(i)
             if len(res) == 0:
                 self.cached[search] = f"No manual entry for {search}"
-                await ctx.send("No manual entry for", search)
+                await ctx.send(f"No manual entry for {search}")
             elif len(res) == 1:
                 x = res[0]
                 self.cached[
