@@ -6,10 +6,6 @@ from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 
-# For some reason things like stdarg.h can't be found in the cache list
-# Need to diagnose that and hopefully solve it
-# Also need a slightly better way to sort through the links cause I definitely have some extra crap
-
 class Man(AutomataPlugin):
     """Linux man command via man7.org"""
 
@@ -40,7 +36,7 @@ class Man(AutomataPlugin):
                         ]
 
     def urlfy(s: str = ""):
-        if s[0] in [0,1,2,3,4,5,6,7,8]:
+        if s[0] in ["0","1","2","3","4","5","6","7","8"]:
             return "https://man7.org/linux/man-pages/man" + s + ".html"
         else:
             return s
@@ -51,12 +47,12 @@ class Man(AutomataPlugin):
         try:
             if search == "":
                 await ctx.send("No search request given :(")
-            elif search in cached:
-                if len(cached[search]) == 1:
-                    await ctx.send("LMAO " + urlfy(cached[search][0]))
+            elif search in self.cached:
+                if len(self.cached[search]) == 1:
+                    await ctx.send(Pan.urlfy(self.cached[search][0]))
                 else:
-                    s = "\n".join(map(urlfy,cached[search]))
-                    await ctx.send("LMAO " + s)
+                    s = "\n".join(map(Pan.urlfy,self.cached[search]))
+                    await ctx.send(s)
             else:
                 res = []
                 for i in range(1, 9):
@@ -79,7 +75,7 @@ class Man(AutomataPlugin):
                 else:
                     s = ["There were multiple results:"]
                     for x in res:
-                        s.append(f"{x}/{search}.{x}"
+                        s.append(f"{x}/{search}.{x}")
                     self.cached[search] = s
                     await ctx.send("\n".join(s))
         except Exception as e:
