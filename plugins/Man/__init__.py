@@ -26,13 +26,21 @@ class Man(AutomataPlugin):
             for j, y in enumerate(links):
                 if f"man{i}" in y["href"]:
                     if y.string.split("(")[0] in self.cached:
+                        if self.cached[y.string.split("(")[0]][0] != "There were multiple results:":
+                            self.cached[y.string.split("(")[0]].insert(0, "There were multiple results:")
                         self.cached[y.string.split("(")[0]].append(
-                            "https://man7.org/linux/man-pages" + y["href"][1:]
+                            y["href"][5:-5]
                         )
                     else:
                         self.cached[y.string.split("(")[0]] = [
-                            "https://man7.org/linux/man-pages" + y["href"][1:]
+                            y["href"][5:-5]
                         ]
+
+    def urlfy(s: str = ""):
+        if s[0] in [0,1,2,3,4,5,6,7,8]:
+            return "https://man7.org/linux/man-pages/man" + s + ".html"
+        else:
+            return s
 
     @commands.command()
     async def man(self, ctx: commands.Context, search: str = ""):
@@ -42,10 +50,9 @@ class Man(AutomataPlugin):
                 await ctx.send("No search request given :(")
             elif search in cached:
                 if len(cached[search]) == 1:
-                    await ctx.send(cached[search])
+                    await ctx.send(urlfy(cached[search][0]))
                 else:
-                    s = "There were multiple results:\n"
-                    s += "\n".join(cached[search])
+                    s = "\n".join(map(urlfy,cached[search]))
                     await ctx.send(s)
             else:
                 self.cached[search] = f"No manual entry for {search}"
@@ -64,17 +71,16 @@ class Man(AutomataPlugin):
                 elif len(res) == 1:
                     self.cached[
                         search
-                    ] = f"https://man7.org/linux/man-pages/man{res[0]}/{search}.{res[0]}.html"
+                    ] = f"{res[0]}/{search}.{res[0]}"
                     await ctx.send(
                         f"https://man7.org/linux/man-pages/man{res[0]}/{search}.{res[0]}.html"
                     )
                 else:
-                    s = "There were multiple results:\n"
+                    s = ["There were multiple results:"]
                     for x in res:
-                        s += f"https://man7.org/linux/man-pages/man{x}/{search}.{x}.html\n"
-                    s = s[:-1]
+                        s.append(f"{x}/{search}.{x}"
                     self.cached[search] = s
-                    await ctx.send(s)
+                    await ctx.send("\n".join(s))
         except Exception as e:
             await ctx.send(f"There was an error finding the man page for {search}")
             raise e
