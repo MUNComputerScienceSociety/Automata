@@ -15,7 +15,7 @@ class Man(AutomataPlugin):
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
         pages = []
-        for i in range(8):
+        for i in range(9):
             r = requests.get(
                 url=f"https://man7.org/linux/man-pages/dir_section_{i}.html"
             )
