@@ -55,8 +55,7 @@ class Man(AutomataPlugin):
                     s = "\n".join(map(urlfy,cached[search]))
                     await ctx.send(s)
             else:
-                self.cached[search] = f"No manual entry for {search}"
-                await ctx.send(f"No manual entry for {search}")
+                raise TypeError
                 res = []
                 for i in range(1, 9):
                     r = requests.get(
