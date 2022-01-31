@@ -2,6 +2,10 @@ from nextcord.ext import commands
 from Plugin import AutomataPlugin
 import random
 
+GIF_ONE = "https://leahhynes.github.io/EmotionalDamage/1.gif"
+GIF_TWO = "https://leahhynes.github.io/EmotionalDamage/2.gif"
+GIF_THREE = "https://leahhynes.github.io/EmotionalDamage/3.gif"
+
 class Damage(AutomataPlugin):
     """Emotional Damage"""
     
@@ -11,8 +15,8 @@ class Damage(AutomataPlugin):
 
         gifint = random.randint(1,3)
         if gifint == 1:
-            await ctx.send(file = discord.File('1.gif'))
+            await ctx.send(GIF_ONE)
         elif gifint == 2:
-            await ctx.send(file = discord.File('2.gif'))
+            await ctx.send(GIF_TWO)
         elif gifint == 3:
-            await ctx.send(file = discord.File('3.gif'))
+            await ctx.send(GIF_THREE)
