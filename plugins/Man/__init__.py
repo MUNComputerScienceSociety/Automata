@@ -6,6 +6,9 @@ from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 
+# For some reason things like stdarg.h can't be found in the cache list
+# Need to diagnose that and hopefully solve it
+# Also need a slightly better way to sort through the links cause I definitely have some extra crap
 
 class Man(AutomataPlugin):
     """Linux man command via man7.org"""
@@ -50,12 +53,11 @@ class Man(AutomataPlugin):
                 await ctx.send("No search request given :(")
             elif search in cached:
                 if len(cached[search]) == 1:
-                    await ctx.send(urlfy(cached[search][0]))
+                    await ctx.send("LMAO " + urlfy(cached[search][0]))
                 else:
                     s = "\n".join(map(urlfy,cached[search]))
-                    await ctx.send(s)
+                    await ctx.send("LMAO " + s)
             else:
-                raise TypeError
                 res = []
                 for i in range(1, 9):
                     r = requests.get(
