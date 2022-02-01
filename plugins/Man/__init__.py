@@ -24,19 +24,20 @@ class Man(AutomataPlugin):
             links = x.find_all("a")
             for j, y in enumerate(links):
                 if f"man{i}" in y["href"]:
-                    if y.string.split("(")[0] in self.cached:
-                        if self.cached[y.string.split("(")[0]][0] != "There were multiple results:":
-                            self.cached[y.string.split("(")[0]].insert(0, "There were multiple results:")
-                        self.cached[y.string.split("(")[0]].append(
-                            y["href"][5:-5]
-                        )
-                    else:
-                        self.cached[y.string.split("(")[0]] = [
-                            y["href"][5:-5]
-                        ]
+                    if y["href"][5:-5][0] in "012345678":
+                        if y.string.split("(")[0] in self.cached:
+                            if self.cached[y.string.split("(")[0]][0] != "There were multiple results:":
+                                self.cached[y.string.split("(")[0]].insert(0, "There were multiple results:")
+                            self.cached[y.string.split("(")[0]].append(
+                                y["href"][5:-5]
+                            )
+                        else:
+                            self.cached[y.string.split("(")[0]] = [
+                                y["href"][5:-5]
+                            ]
 
     def urlfy(s: str = ""):
-        if s[0] in ["0","1","2","3","4","5","6","7","8"]:
+        if s[0] in "012345678":
             return "https://man7.org/linux/man-pages/man" + s + ".html"
         else:
             return s
