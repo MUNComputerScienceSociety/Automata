@@ -50,9 +50,9 @@ class Man(AutomataPlugin):
                 await ctx.send("No search request given :(")
             elif search in self.cached:
                 if len(self.cached[search]) == 1:
-                    await ctx.send(Pan.urlfy(self.cached[search][0]))
+                    await ctx.send(Man.urlfy(self.cached[search][0]))
                 else:
-                    s = "\n".join(map(Pan.urlfy,self.cached[search]))
+                    s = "\n".join(map(Man.urlfy,self.cached[search]))
                     await ctx.send(s)
             else:
                 res = []
