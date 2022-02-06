@@ -17,6 +17,14 @@ For feature requests / help getting the bot running, don't fret to ask questions
 3. Fill out the required information in the `.env`
    - At the moment, the only required environment variable required is `AUTOMATA_TOKEN`, which is a Discord token, which you can see how to get [here](https://discordpy.readthedocs.io/en/latest/discord.html)
 
+> Note about running locally and avoiding spam:
+>
+> When this bot was smaller, it wasn't so bad to run all the plugins; but since we have 40+, and some of them do some data fetching / loading on startup, so the logs can get a bit loud.
+>
+> If you're working on a plugin, you can add its name to the `AUTOMATA_ENABLED_PLUGINS` env. var (like AUTOMATA_ENABLED_PLUGINS=PluginName), and it will be the _only_ plugin that will be loaded.
+>
+> This is a comma-delimited list as well, so you can enable multiple plugins at once.
+
 ### Using Docker
 
 1. Create the directory `mounted_plugins` within the project by running `mkdir ./mounted_plugins`
