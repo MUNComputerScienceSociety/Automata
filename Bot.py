@@ -17,7 +17,10 @@ from prometheus_async.aio.web import start_http_server
 
 from Plugin import AutomataPlugin
 
-from Globals import DISABLED_PLUGINS
+from Globals import (
+    DISABLED_PLUGINS,
+    ENABLED_PLUGINS,
+)
 
 IGNORED_LOGGERS = [
     "discord.client",
@@ -231,12 +234,23 @@ loader = PluginLoader(
 )
 loader.load_manifests()
 
+num_of_disabled = 0
+
 for plugin in loader.get_all_plugins():
     manifest = plugin["manifest"]
-    if manifest["main_class"] not in DISABLED_PLUGINS:
-        loader.load_plugin(manifest, bot)
+    if len(ENABLED_PLUGINS) > 0:
+        if manifest["main_class"] in ENABLED_PLUGINS:
+            loader.load_plugin(manifest, bot)
+        else:
+            num_of_disabled += 1
     else:
-        logger.info(f"{manifest['name']} disabled.")
+        if manifest["main_class"] not in DISABLED_PLUGINS:
+            loader.load_plugin(manifest, bot)
+        else:
+            logger.info(f"{manifest['name']} disabled.")
+            num_of_disabled += 1
+
+logger.info(f"{num_of_disabled} plugins disabled.")
 
 for plugin in loader.get_all_plugins():
     if plugin["plugin"]:
