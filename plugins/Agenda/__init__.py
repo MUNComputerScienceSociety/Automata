@@ -1,7 +1,9 @@
 from datetime import datetime
+import io
 import logging
 import uuid
 
+import nextcord
 from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
@@ -12,7 +14,7 @@ logger = logging.getLogger("Agenda")
 class Agenda(AutomataPlugin):
     """Handles tracking agenda items, and exporting them as markdown"""
 
-    async def agenda_text(self, variant):
+    async def send_agenda_text(self, ctx, variant):
         items = self.agenda_items.find({})
 
         text = "```% MUN Computer Science Society\n% Meeting Agenda\n"
@@ -30,7 +32,17 @@ class Agenda(AutomataPlugin):
 
         text += "```"
 
-        return text
+        if len(text) > 2000:
+            text = text.strip("```")
+
+            file = io.StringIO()
+            file.writelines(text)
+            file.seek(0)
+
+            await ctx.send(file=nextcord.File(file, filename="agenda.md"))
+        else:
+            await ctx.send(text)
+
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
@@ -63,15 +75,13 @@ class Agenda(AutomataPlugin):
     @agenda.command()
     async def view(self, ctx, variant: str = None):
         """Views all agenda items"""
-        text = await self.agenda_text(variant)
-
-        await ctx.send(text)
+        await self.send_agenda_text(ctx, variant)
 
     @agenda.command()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx):
         """Clears all agenda items"""
-        text = await self.agenda_text("clean")
+        await self.send_agenda_text(ctx, "clean")
 
         self.agenda_items.delete_many({})
 
