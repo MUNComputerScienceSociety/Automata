@@ -1,13 +1,12 @@
 from datetime import datetime
-import io
 import logging
 import uuid
 
-import nextcord
 from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 from Globals import mongo_client
+from Utils import send_code_block_maybe_as_file
 
 logger = logging.getLogger("Agenda")
 
@@ -17,7 +16,7 @@ class Agenda(AutomataPlugin):
     async def send_agenda_text(self, ctx, variant):
         items = self.agenda_items.find({})
 
-        text = "```% MUN Computer Science Society\n% Meeting Agenda\n"
+        text = "% MUN Computer Science Society\n% Meeting Agenda\n"
         text += f"% {datetime.now().strftime('%B%e, %Y')}\n"
 
         while await items.fetch_next:
@@ -29,19 +28,8 @@ class Agenda(AutomataPlugin):
                 author_postfix = f" ({item['id']})"
 
             text += f'\n## {item["title"]} - {item["author"]}{author_postfix}\n{item["description"]}\n'
-
-        text += "```"
-
-        if len(text) > 2000:
-            text = text.strip("```")
-
-            file = io.StringIO()
-            file.writelines(text)
-            file.seek(0)
-
-            await ctx.send(file=nextcord.File(file, filename="agenda.md"))
-        else:
-            await ctx.send(text)
+        
+        await send_code_block_maybe_as_file(ctx, text)
 
 
     def __init__(self, manifest, bot: commands.Bot):
