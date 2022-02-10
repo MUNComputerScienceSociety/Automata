@@ -182,12 +182,12 @@ class Generator(AutomataPlugin):
             )
             return
         temp_grid = {}
-        keys = res['alignments'].keys()
+        keys = res["alignments"].keys()
         for key in keys:
-            if res['alignments'][key] == None:
+            if res["alignments"][key] == None:
                 temp_grid[key] = "https://via.placeholder.com/200"
             else:
-                temp_grid[key] = res['alignments'][key]
+                temp_grid[key] = res["alignments"][key]
         image_url = f"{API}/api?{urllib.parse.urlencode(temp_grid)}"
         await ctx.send("Preview Image: ")
         await ctx.send(image_url)

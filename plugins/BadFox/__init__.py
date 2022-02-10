@@ -14,5 +14,3 @@ class BadFox(AutomataPlugin):
             await ctx.send("Am_I_really_a_BadFox? :confused:")
         else:
             await ctx.send(f"Am_I_really_a_BadFox? :confused: x{number_of_times}")
-
-        

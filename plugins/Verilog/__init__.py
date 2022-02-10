@@ -11,6 +11,7 @@ HEADERS = {"Content-Type": "text/plain"}
 
 code_block = re.compile(CODE_BLOCK_REGEX)
 
+
 class Verilog(AutomataPlugin):
     """
     Verilog
@@ -25,10 +26,7 @@ class Verilog(AutomataPlugin):
 
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                BARAB_API,
-                headers=HEADERS,
-                content=code.encode(),
-                timeout=15.0
+                BARAB_API, headers=HEADERS, content=code.encode(), timeout=15.0
             )
 
         text = response.text.replace("````", "\`\`\`")

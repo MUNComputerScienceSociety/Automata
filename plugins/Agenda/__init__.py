@@ -10,6 +10,7 @@ from Utils import send_code_block_maybe_as_file
 
 logger = logging.getLogger("Agenda")
 
+
 class Agenda(AutomataPlugin):
     """Handles tracking agenda items, and exporting them as markdown"""
 
@@ -28,9 +29,8 @@ class Agenda(AutomataPlugin):
                 author_postfix = f" ({item['id']})"
 
             text += f'\n## {item["title"]} - {item["author"]}{author_postfix}\n{item["description"]}\n'
-        
-        await send_code_block_maybe_as_file(ctx, text)
 
+        await send_code_block_maybe_as_file(ctx, text)
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
@@ -79,7 +79,7 @@ class Agenda(AutomataPlugin):
     @commands.has_permissions(manage_messages=True)
     async def remove(self, ctx, id: str):
         """Removes an agenda item by id"""
-            
+
         await self.agenda_items.delete_one({"id": id})
 
         await ctx.send(f"Removed agenda item `{id}`.")
