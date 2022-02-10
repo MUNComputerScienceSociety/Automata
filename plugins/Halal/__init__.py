@@ -2,6 +2,7 @@ from nextcord.ext import commands
 import nextcord
 from Plugin import AutomataPlugin
 
+
 class Halal(AutomataPlugin):
     """Democratic version of asking Hking"""
 
@@ -15,4 +16,3 @@ class Halal(AutomataPlugin):
         msg = await ctx.send(f"Is {item} halal?")
         await msg.add_reaction("✅")
         await msg.add_reaction("❌")
-        

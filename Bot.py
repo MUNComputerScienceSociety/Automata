@@ -144,6 +144,7 @@ async def exec_code(ctx: commands.Context, code: str):
 
     await ctx.send(embed=embed)
 
+
 @bot.command()
 async def plugins(ctx: commands.Context):
     """Lists all enabled plugins."""
@@ -189,7 +190,7 @@ class CustomHelp(commands.DefaultHelpCommand):  # ( ͡° ͜ʖ ͡°)
         embed_command.colour = nextcord.Colour.green()
         channel = self.get_destination()
         await channel.send(embed=embed_command)
-        
+
     async def send_group_help(self, group):
         """Shows how to use each group of commands"""
         embed_group = nextcord.Embed(
@@ -212,7 +213,7 @@ class CustomHelp(commands.DefaultHelpCommand):  # ( ͡° ͜ʖ ͡°)
         embed_cog.colour = nextcord.Colour.green()
         channel = self.get_destination()
         await channel.send(embed=embed_cog)
-        
+
     async def send_error_message(self, error):
         "shows if command does not exist"
         embed_error = nextcord.Embed(title="Error", description=error)
