@@ -64,12 +64,12 @@ class Man(AutomataPlugin):
                     if r.status_code == 200:
                         res.append(i)
                 if len(res) == 0:
-                    self.cached[search] = f"No manual entry for {search}"
+                    self.cached[search] = [f"No manual entry for {search}"]
                     await ctx.send(f"No manual entry for {search}")
                 elif len(res) == 1:
                     self.cached[
                         search
-                    ] = f"{res[0]}/{search}.{res[0]}"
+                    ] = [f"{res[0]}/{search}.{res[0]}"]
                     await ctx.send(
                         f"https://man7.org/linux/man-pages/man{res[0]}/{search}.{res[0]}.html"
                     )
