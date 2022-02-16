@@ -2,6 +2,7 @@ from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 
+
 class Binary(AutomataPlugin):
     """Binary"""
 
@@ -10,6 +11,6 @@ class Binary(AutomataPlugin):
         binaryString = ""
 
         for char in message:
-            binaryString += format(ord(char), 'b') + " "
+            binaryString += format(ord(char), "b") + " "
 
         await ctx.send(binaryString)

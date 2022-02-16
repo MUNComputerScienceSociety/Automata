@@ -6,6 +6,7 @@ from nextcord.ext import commands
 
 from Plugin import AutomataPlugin
 
+
 class Man(AutomataPlugin):
     """Linux man command via man7.org"""
 
@@ -26,15 +27,16 @@ class Man(AutomataPlugin):
                 if f"man{i}" in y["href"]:
                     if y["href"][5:-5][0] in "012345678":
                         if y.string.split("(")[0] in self.cached:
-                            if self.cached[y.string.split("(")[0]][0] != "There were multiple results:":
-                                self.cached[y.string.split("(")[0]].insert(0, "There were multiple results:")
-                            self.cached[y.string.split("(")[0]].append(
-                                y["href"][5:-5]
-                            )
+                            if (
+                                self.cached[y.string.split("(")[0]][0]
+                                != "There were multiple results:"
+                            ):
+                                self.cached[y.string.split("(")[0]].insert(
+                                    0, "There were multiple results:"
+                                )
+                            self.cached[y.string.split("(")[0]].append(y["href"][5:-5])
                         else:
-                            self.cached[y.string.split("(")[0]] = [
-                                y["href"][5:-5]
-                            ]
+                            self.cached[y.string.split("(")[0]] = [y["href"][5:-5]]
 
     def urlfy(s: str = ""):
         if s[0] in "012345678":
@@ -52,7 +54,7 @@ class Man(AutomataPlugin):
                 if len(self.cached[search]) == 1:
                     await ctx.send(Man.urlfy(self.cached[search][0]))
                 else:
-                    s = "\n".join(map(Man.urlfy,self.cached[search]))
+                    s = "\n".join(map(Man.urlfy, self.cached[search]))
                     await ctx.send(s)
             else:
                 res = []
@@ -67,9 +69,11 @@ class Man(AutomataPlugin):
                     self.cached[search] = [f"No manual entry for {search}"]
                     await ctx.send(f"No manual entry for {search}")
                 elif len(res) == 1:
+
                     self.cached[
                         search
                     ] = [f"{res[0]}/{search}.{res[0]}"]
+
                     await ctx.send(
                         f"https://man7.org/linux/man-pages/man{res[0]}/{search}.{res[0]}.html"
                     )

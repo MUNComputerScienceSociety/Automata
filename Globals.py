@@ -3,6 +3,7 @@ import os
 import motor.motor_asyncio
 import sentry_sdk
 
+ENABLED_PLUGINS = [x for x in os.getenv("AUTOMATA_ENABLED_PLUGINS", "").split(",") if x]
 DISABLED_PLUGINS = os.getenv("AUTOMATA_DISABLED_PLUGINS", "").split(",")
 
 PRIMARY_GUILD = int(os.getenv("AUTOMATA_PRIMARY_GUILD", 514110851016556567))

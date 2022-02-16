@@ -7,6 +7,7 @@ from Plugin import AutomataPlugin
 
 API_BASE = "http://numbersapi.com/"
 
+
 class NumberFacts(AutomataPlugin):
     """Numbers have a secret facts, check them out!"""
 
@@ -17,14 +18,11 @@ class NumberFacts(AutomataPlugin):
 
     async def message_embed(self, fact, number):
 
-        embed = nextcord.Embed(
-            colour= nextcord.Colour.random()
-        )
+        embed = nextcord.Embed(colour=nextcord.Colour.random())
         embed.add_field(name=f"A fact about number {number}", value=fact)
         embed.set_author(name="NFact")
 
         return embed
-        
 
     @commands.command(aliases=["nfact"])
     async def numberfact(self, ctx: commands.Context, number: str = "random"):
@@ -36,15 +34,12 @@ class NumberFacts(AutomataPlugin):
 
         res = await self.fetch(number)
         fact = res.text
-        
 
         nbr = fact.split(" ")[0]
 
         embed = await self.message_embed(fact, nbr)
 
-        await ctx.send(
-            embed = embed
-        )
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def yearfact(self, ctx: commands.Context, year: str = "random"):
@@ -59,10 +54,7 @@ class NumberFacts(AutomataPlugin):
 
         embed = await self.message_embed(fact, nbr)
 
-        await ctx.send(
-            embed = embed
-        )
-
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def datefact(self, ctx: commands.Context, date: str = "", month: str = ""):
@@ -73,18 +65,15 @@ class NumberFacts(AutomataPlugin):
 
         res = await self.fetch(f"{month}/{date}/date")
 
-        if (not date or not month):
+        if not date or not month:
             res = await self.fetch("random/date")
 
         fact = res.text
-        
 
-        nbr = " ".join(fact.split(" ")[0: 2])
+        nbr = " ".join(fact.split(" ")[0:2])
         embed = await self.message_embed(fact, nbr)
 
-        await ctx.send(
-            embed = embed
-        )
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def mathfact(self, ctx: commands.Context, number: str = "random"):
@@ -99,10 +88,4 @@ class NumberFacts(AutomataPlugin):
 
         embed = await self.message_embed(fact, nbr)
 
-        await ctx.send(
-            embed = embed
-        )
-
-
-
-
+        await ctx.send(embed=embed)
