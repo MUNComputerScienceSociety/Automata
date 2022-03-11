@@ -1,7 +1,6 @@
 # **Automata**
 
 ![Deploy to Docker Hub](https://github.com/MUNComputerScienceSociety/Automata/workflows/Deploy%20to%20Docker%20Hub/badge.svg)
-[![Build Size](https://images.microbadger.com/badges/image/muncs/automata.svg)](https://microbadger.com/images/muncs/automata)
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 Discord bot handling the management of the MUN Computer Science Society Discord server
