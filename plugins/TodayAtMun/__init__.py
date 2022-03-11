@@ -16,7 +16,7 @@ MUN_COLOUR_RED = 0x822433
 MUN_COLOUR_WHITE = 0xFFFFFF
 MUN_COLOUR_GREY = 0x838486
 DIARY_DATA_SOURCE = "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
-EXAMS_DATA_SOURCE = "https://www3.mun.ca/admit/swkgexm.P_Query_Exam?p_term_code=202101&p_internal_campus_code=CAMP_STJ&p_title=STJ_FALL"
+EXAMS_DATA_SOURCE = "https://selfservice.mun.ca/direct/swkgexm.P_Query_Exam?p_term_code=202102&p_internal_campus_code=CAMP_STJ&p_title=STJ_WINT"
 
 
 class TodayAtMun(AutomataPlugin):
