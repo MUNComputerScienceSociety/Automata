@@ -70,9 +70,7 @@ class Man(AutomataPlugin):
                     await ctx.send(f"No manual entry for {search}")
                 elif len(res) == 1:
 
-                    self.cached[
-                        search
-                    ] = [f"{res[0]}/{search}.{res[0]}"]
+                    self.cached[search] = [f"{res[0]}/{search}.{res[0]}"]
 
                     await ctx.send(
                         f"https://man7.org/linux/man-pages/man{res[0]}/{search}.{res[0]}.html"
