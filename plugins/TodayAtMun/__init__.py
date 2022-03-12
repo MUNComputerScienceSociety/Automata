@@ -288,7 +288,7 @@ class TodayAtMun(AutomataPlugin):
     def get_exams(
         subj: str = "", course_num: str = "", sec_numb: str = "", crn: str = ""
     ) -> tuple[str, str, list[str]]:
-        """Provides exam info - schedule brief, table heading and exam details"""
+        """Provides exam info - schedule brief, table heading and exam details."""
         page = TodayAtMun.submit_form(subj, course_num, sec_numb, crn)
         sched_heading = TodayAtMun.parse_sched_heading(page)
         headings = TodayAtMun.parse_headings(page)
