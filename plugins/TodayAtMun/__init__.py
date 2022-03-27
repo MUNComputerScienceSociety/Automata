@@ -44,7 +44,7 @@ class TodayAtMun(AutomataPlugin):
     def today_embed_next_template(self, next_event_date: str) -> nextcord.Embed:
         embed = self.today_embed_template()
         embed.set_author(
-            name=f"⏳ ~{self.diary_util.time_delta_event(self.diary_util.str_to_datetime(next_event_date), datetime.now())} day(s)"
+            name=f"⏳ ~{self.diary_util.delta_event_time(self.diary_util.str_to_datetime(next_event_date))} day(s)"
         )
         embed.add_field(
             name=f"{self.diary_util.today_is_next(next_event_date)} {next_event_date}",
