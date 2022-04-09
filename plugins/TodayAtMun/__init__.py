@@ -122,7 +122,7 @@ class TodayAtMun(AutomataPlugin):
         if isinstance(error, commands.BadArgument):
             await ctx.reply("Invalid use of bundle, Usage: !d bundle <1 - 10 : int>")
 
-    async def post_next_event(self, event: str):
+    async def post_next_event(self, event: str) -> str:
         date = DiaryUtil.get_current_time()
         self.diary_util.find_event(date)
         next_embed = self.today_embed_next_template(self.diary_util.key)
@@ -138,7 +138,7 @@ class TodayAtMun(AutomataPlugin):
     async def notify_new_event(self, message_link):
         embed = self.today_embed_template()
         embed.add_field(
-            name="**📅 New Upcoming MUN Calendar Event**",
+            name="**📅 New MUN Calendar Event**",
             value=f"[**Click to view**]({message_link})",
             inline=False,
         )
@@ -158,7 +158,7 @@ class TodayAtMun(AutomataPlugin):
             await self.update_event_msg(next_event_date)
         await asyncio.sleep(5.0)
 
-    @tasks.loop(hours=2.0)
+    @tasks.loop(hours=1.0)
     async def check_for_new_event(self):
         await self.post_new_events()
 
@@ -173,6 +173,14 @@ class TodayAtMun(AutomataPlugin):
         await mongo_client.automata.drop_collection("mun_diary")
         await mongo_client.automata.mun_diary.insert_one({"date": "init"})
         self.check_for_new_event.restart()
+    
+    @diary.command("refresh")
+    @commands.has_permissions(view_audit_log=True)
+    async def refresh_diary(self, ctx):
+        """Executive Use Only: Refreshes the MUN calendar data."""
+        self.parse = TodayAtMun.parse_diary()
+        self.diary_util = DiaryUtil(self.parse)
+        await ctx.reply("MUN calendar refreshed.")
 
     async def update_event_msg(self, next_event_date: str):
         diary_daily_channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(
