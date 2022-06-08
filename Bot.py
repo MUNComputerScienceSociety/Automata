@@ -55,7 +55,12 @@ intents = nextcord.Intents.default()
 intents.members = os.getenv("AUTOMATA_MEMBER_INTENTS_ENABLED", "True") == "True"
 
 
-bot = commands.Bot(command_prefix="!", help_command=None, intents=intents, description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.")
+bot = commands.Bot(
+    command_prefix="!",
+    help_command=None,
+    intents=intents,
+    description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.",
+)
 
 
 @bot.event
