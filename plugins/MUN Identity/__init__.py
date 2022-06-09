@@ -200,8 +200,8 @@ class MUNIdentity(AutomataPlugin):
         )
         await ctx.reply(embed=embed)
 
-
-    async def get_confirmation(self, ctx: commands.Context, message: nextcord.Message) -> bool:
+    @staticmethod
+    async def get_confirmation(ctx: commands.Context, message: nextcord.Message) -> bool:
         """Get confirmation from user executing the command by reactions."""
         await message.add_reaction("✅")
         await message.add_reaction("❌")
