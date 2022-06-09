@@ -201,20 +201,20 @@ class MUNIdentity(AutomataPlugin):
         await ctx.reply(embed=embed)
 
 
-async def get_confirmation(ctx: commands.Context, message: nextcord.Message) -> bool:
-    """Get confirmation from user executing the command by reactions."""
-    message.add_reaction("✅")
-    message.add_reaction("❌")
+    async def get_confirmation(self, ctx: commands.Context, message: nextcord.Message) -> bool:
+        """Get confirmation from user executing the command by reactions."""
+        await message.add_reaction("✅")
+        await message.add_reaction("❌")
 
-    def check(reaction, user):
-        return user == ctx.author and str(reaction.emoji) in ["✅", "❌"]
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) in ["✅", "❌"]
 
-    try:
-        reaction, _ = await ctx.bot.wait_for("reaction_add", check=check, timeout=30)
-    except asyncio.TimeoutError:
-        return False
-    else:
-        if reaction.emoji == "✅":
-            return True
-        elif reaction.emoji == "❌":
+        try:
+            reaction, _ = await ctx.bot.wait_for("reaction_add", check=check, timeout=30)
+        except asyncio.TimeoutError:
             return False
+        else:
+            if reaction.emoji == "✅":
+                return True
+            elif reaction.emoji == "❌":
+                return False
