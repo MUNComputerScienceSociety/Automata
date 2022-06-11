@@ -237,13 +237,14 @@ class MUNIdentity(AutomataPlugin):
                     identity["discord_id"]
                 )
                 if member is None or VERIFIED_ROLE in member.roles:
+                    await asyncio.sleep(3)
                     continue
                 await member.add_roles(
                     self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
                     reason=f"Identity restored by {ctx.author.name}#{ctx.author.discriminator}.",
                 )
                 members_restored.append(member)
-                await asyncio.sleep(1)
+                await asyncio.sleep(3)
             embed = nextcord.Embed()
             embed.colour = nextcord.Colour.green()
             embed.add_field(
