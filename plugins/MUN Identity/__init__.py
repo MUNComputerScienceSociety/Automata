@@ -229,7 +229,7 @@ class MUNIdentity(AutomataPlugin):
         """Restores VERIFIED_ROLE to users with a registered identity who were not granted it."""
         members_restored: List[nextcord.Member] = []
         async with ctx.typing():
-            for identity in self.identities.find():
+            for identity in self.identities.find({}):
                 member: nextcord.Member = self.bot.get_guild(PRIMARY_GUILD).get_member(
                     identity["discord_id"]
                 )
