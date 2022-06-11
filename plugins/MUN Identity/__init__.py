@@ -249,6 +249,6 @@ class MUNIdentity(AutomataPlugin):
             embed.colour = nextcord.Colour.green()
             embed.add_field(
                 name="Restore Roles",
-                value=f"{len(members_restored)} roles restored to verified users:\n{[{member.name, member.joined_at, member.nick} for member in members_restored]}",
+                value=f"{len(members_restored)} roles restored to verified users.",
             )
             await ctx.send(embed=embed)
