@@ -201,7 +201,9 @@ class MUNIdentity(AutomataPlugin):
         await ctx.reply(embed=embed)
 
     @staticmethod
-    async def get_confirmation(ctx: commands.Context, message: nextcord.Message) -> bool:
+    async def get_confirmation(
+        ctx: commands.Context, message: nextcord.Message
+    ) -> bool:
         """Get confirmation from user executing the command by reactions."""
         await message.add_reaction("✅")
         await message.add_reaction("❌")
@@ -210,7 +212,9 @@ class MUNIdentity(AutomataPlugin):
             return user == ctx.author and str(reaction.emoji) in ["✅", "❌"]
 
         try:
-            reaction, _ = await ctx.bot.wait_for("reaction_add", check=check, timeout=30)
+            reaction, _ = await ctx.bot.wait_for(
+                "reaction_add", check=check, timeout=30
+            )
         except asyncio.TimeoutError:
             return False
         else:
@@ -218,3 +222,30 @@ class MUNIdentity(AutomataPlugin):
                 return True
             elif reaction.emoji == "❌":
                 return False
+
+    @identity.command(name="restore_roles")
+    @commands.has_permissions(view_audit_log=True)
+    async def identity_restore_roles(self, ctx: commands.Context):
+        """Restore roles to all users on record."""
+        restored_roles = 0
+        for identity in self.identities.find():
+            member = self.bot.get_guild(PRIMARY_GUILD).get_member(
+                identity["discord_id"]
+            )
+            if member is None:
+                continue
+            member_role = await member.get_role(VERIFIED_ROLE)
+            if member_role is None:
+                await member.add_roles(
+                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    reason=f"Identity restored by {ctx.author.name}#{ctx.author.discriminator}.",
+                )
+                restored_roles += 1
+            await asyncio.sleep(0.1)
+        embed = nextcord.Embed()
+        embed.colour = nextcord.Colour.green()
+        embed.add_field(
+            name="Restore Roles",
+            value=f"{restored_roles} roles restored to verified users.",
+        )
+        await ctx.send(embed=embed)
