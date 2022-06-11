@@ -1,12 +1,13 @@
 import asyncio
 from datetime import datetime
-from typing import Dict, List, Optional, Set, Union
+from typing import Dict, List, Optional, Union
 
 import httpx
 import nextcord
 from Globals import DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE, mongo_client
 from nextcord.ext import commands
 from Plugin import AutomataPlugin
+from pymongo import CursorType
 
 
 class MUNIdentity(AutomataPlugin):
@@ -228,8 +229,10 @@ class MUNIdentity(AutomataPlugin):
     async def identity_restore_roles(self, ctx: commands.Context):
         """Restores VERIFIED_ROLE to users with a registered identity who were not granted it."""
         members_restored: List[nextcord.Member] = []
+        identities = self.identities.find({})
         async with ctx.typing():
-            for identity in self.identities.find({}):
+            while await identities.fetch_next:
+                identity = identities.next_object()
                 member: nextcord.Member = self.bot.get_guild(PRIMARY_GUILD).get_member(
                     identity["discord_id"]
                 )
