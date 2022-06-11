@@ -240,7 +240,7 @@ class MUNIdentity(AutomataPlugin):
                     reason=f"Identity restored by {ctx.author.name}#{ctx.author.discriminator}.",
                 )
                 members_restored.append(member)
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(1)
             embed = nextcord.Embed()
             embed.colour = nextcord.Colour.green()
             embed.add_field(
