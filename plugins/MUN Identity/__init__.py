@@ -226,22 +226,20 @@ class MUNIdentity(AutomataPlugin):
     @identity.command(name="restore_roles")
     @commands.has_permissions(view_audit_log=True)
     async def identity_restore_roles(self, ctx: commands.Context):
-        """Restore VERIFIED_ROLE to all users registered with an identity."""
+        """Restores VERIFIED_ROLE to users with a registered identity who were not granted it."""
         members_restored: List[nextcord.Member] = []
         async with ctx.typing():
             for identity in self.identities.find():
-                member = self.bot.get_guild(PRIMARY_GUILD).get_member(
+                member: nextcord.Member = self.bot.get_guild(PRIMARY_GUILD).get_member(
                     identity["discord_id"]
                 )
-                if member is None:
+                if member is None or VERIFIED_ROLE in member.roles:
                     continue
-                member_role = await member.get_role(VERIFIED_ROLE)
-                if member_role is None:
-                    await member.add_roles(
-                        self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
-                        reason=f"Identity restored by {ctx.author.name}#{ctx.author.discriminator}.",
-                    )
-                    members_restored.append(member)
+                await member.add_roles(
+                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    reason=f"Identity restored by {ctx.author.name}#{ctx.author.discriminator}.",
+                )
+                members_restored.append(member)
                 await asyncio.sleep(0.1)
             embed = nextcord.Embed()
             embed.colour = nextcord.Colour.green()
