@@ -236,7 +236,10 @@ class MUNIdentity(AutomataPlugin):
                 member: nextcord.Member = self.bot.get_guild(PRIMARY_GUILD).get_member(
                     identity["discord_id"]
                 )
-                if member is None or VERIFIED_ROLE in member.roles:
+                has_role = any(
+                    role.id == VERIFIED_ROLE for role in member.roles
+                )
+                if member is None or has_role:
                     await asyncio.sleep(3)
                     continue
                 await member.add_roles(
