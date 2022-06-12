@@ -1,11 +1,12 @@
-from typing import Optional, Union, Dict
+import asyncio
+from typing import Dict, List, Optional, Union
 
-import nextcord
-from nextcord.ext import commands
 import httpx
-
+import nextcord
+from Globals import (DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE,
+                     mongo_client)
+from nextcord.ext import commands
 from Plugin import AutomataPlugin
-from Globals import mongo_client, PRIMARY_GUILD, VERIFIED_ROLE, DISCORD_AUTH_URI
 
 
 class MUNIdentity(AutomataPlugin):
@@ -167,3 +168,90 @@ class MUNIdentity(AutomataPlugin):
             reason=f"Identity manually associated by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {mun_username}",
         )
         await ctx.send("Identity associated.")
+
+    @identity.command(name="disassociate")
+    async def identity_disassociate(self, ctx: commands.Context):
+        """Disassociate your own identity from your discord account."""
+        current_identity = await self.get_identity(member=ctx.author)
+        if current_identity is None:
+            await ctx.reply("You don't have an identity associated with your account.")
+            return
+        embed = nextcord.Embed()
+        embed.colour = nextcord.Colour.red()
+        embed.add_field(
+            name="Identity Disassociation",
+            value=f"Are you sure you want to disassociate your identity from your account?",
+        )
+        message = await ctx.reply(embed=embed)
+        confirmed = await self.get_confirmation(ctx, message)
+        if not confirmed:
+            await ctx.reply("Disassociation cancelled.")
+            return
+        await self.identities.delete_one({"discord_id": ctx.author.id})
+        await self.bot.get_guild(PRIMARY_GUILD).get_member(ctx.author.id).remove_roles(
+            self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+            reason=f"Identity manually disassociated by {ctx.author.name}#{ctx.author.discriminator}.",
+        )
+        embed = nextcord.Embed()
+        embed.colour = nextcord.Colour.green()
+        embed.add_field(
+            name="Disassociation",
+            value=f"Your identity has been disassociated from your account.",
+        )
+        await ctx.reply(embed=embed)
+
+    @staticmethod
+    async def get_confirmation(
+        ctx: commands.Context, message: nextcord.Message
+    ) -> bool:
+        """Get confirmation from user executing the command by reactions."""
+        await message.add_reaction("✅")
+        await message.add_reaction("❌")
+
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) in ["✅", "❌"]
+
+        try:
+            reaction, _ = await ctx.bot.wait_for(
+                "reaction_add", check=check, timeout=30
+            )
+        except asyncio.TimeoutError:
+            return False
+        else:
+            if reaction.emoji == "✅":
+                return True
+            elif reaction.emoji == "❌":
+                return False
+
+    @identity.command(name="restore_roles")
+    @commands.has_permissions(view_audit_log=True)
+    async def identity_restore_roles(self, ctx: commands.Context):
+        """Restores VERIFIED_ROLE to users with a registered identity who were not granted it."""
+        members_restored: List[nextcord.Member] = []
+        identities = self.identities.find({})
+        async with ctx.typing():
+            while await identities.fetch_next:
+                identity = identities.next_object()
+                member: nextcord.Member = self.bot.get_guild(PRIMARY_GUILD).get_member(
+                    identity["discord_id"]
+                )
+                if member is None:
+                    await asyncio.sleep(1)
+                    continue
+                has_role = any(role.id == VERIFIED_ROLE for role in member.roles)
+                if has_role:
+                    await asyncio.sleep(1)
+                    continue
+                await member.add_roles(
+                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    reason=f"Identity restored by {ctx.author.name}#{ctx.author.discriminator}.",
+                )
+                members_restored.append(member)
+                await asyncio.sleep(1)
+            embed = nextcord.Embed()
+            embed.colour = nextcord.Colour.green()
+            embed.add_field(
+                name="Restore Roles",
+                value=f"{len(members_restored)} roles restored to verified users.",
+            )
+            await ctx.send(embed=embed)
