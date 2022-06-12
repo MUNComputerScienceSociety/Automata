@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 from random import choice
 
 import nextcord
@@ -28,6 +27,7 @@ class TodayAtMun(AutomataPlugin):
         self.diary_util = DiaryUtil(self.parse)
         self.posted_events = mongo_client.automata.mun_diary
         self.check_for_new_event.start()
+        self.days_till_next_event = -1
 
     @staticmethod
     def today_embed_template():
@@ -122,16 +122,15 @@ class TodayAtMun(AutomataPlugin):
         if isinstance(error, commands.BadArgument):
             await ctx.reply("Invalid use of bundle, Usage: !d bundle <1 - 10 : int>")
 
-    async def post_next_event(self, event: str) -> str:
+    async def post_next_event(self, channel: int):
         date = DiaryUtil.get_current_time()
         self.diary_util.find_event(date)
         next_embed = self.today_embed_next_template(self.diary_util.key)
         message_id = (
             await self.bot.get_guild(PRIMARY_GUILD)
-            .get_channel(DIARY_DAILY_CHANNEL)
+            .get_channel(channel)
             .send(embed=next_embed)
         )
-        await self.posted_events.insert_one({"date": event})
 
         return message_id
 
@@ -152,7 +151,8 @@ class TodayAtMun(AutomataPlugin):
         retrieve_event = await self.posted_events.find_one({"date": next_event_date})
 
         if retrieve_event is None:
-            posted_message_id = await self.post_next_event(next_event_date)
+            posted_message_id = await self.post_next_event(DIARY_DAILY_CHANNEL)
+            await self.posted_events.insert_one({"date": next_event_date})
             await self.notify_new_event(posted_message_id.jump_url)
         else:
             await self.update_event_msg(next_event_date)
@@ -189,6 +189,9 @@ class TodayAtMun(AutomataPlugin):
         message = await diary_daily_channel.fetch_message(
             diary_daily_channel.last_message_id
         )
+        if (next_date_delta := self.diary_util.time_delta_event(next_event_date, self.diary_util.get_current_time())) != self.days_till_next_event:
+            self.days_till_next_event = next_date_delta
+            self.post_next_event(GENERAL_CHANNEL)
         message.embeds[0].set_author(
             name=self.diary_util.time_delta_emojify(next_event_date)
         )
