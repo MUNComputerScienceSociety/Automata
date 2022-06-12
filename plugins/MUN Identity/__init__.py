@@ -1,13 +1,12 @@
 import asyncio
-from datetime import datetime
 from typing import Dict, List, Optional, Union
 
 import httpx
 import nextcord
-from Globals import DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE, mongo_client
+from Globals import (DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE,
+                     mongo_client)
 from nextcord.ext import commands
 from Plugin import AutomataPlugin
-from pymongo import CursorType
 
 
 class MUNIdentity(AutomataPlugin):
