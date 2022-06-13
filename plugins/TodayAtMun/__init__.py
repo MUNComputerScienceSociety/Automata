@@ -58,9 +58,9 @@ class TodayAtMun(AutomataPlugin):
         """Provides brief info of significant dates on the MUN calendar.
         Examples: !d next, !d later, !d bundle 10
         """
-        await ctx.trigger_typing()
-        if ctx.invoked_subcommand is None:
-            await ctx.reply(content="Invalid command, check !help diary for more.")
+        async with ctx.typing():
+            if ctx.invoked_subcommand is None:
+                await ctx.reply(content="Invalid command, check !help diary for more.")
 
     @diary.command(name="next", aliases=["n"])
     async def today_next(self, ctx: commands.Context):
