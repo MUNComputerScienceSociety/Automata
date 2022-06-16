@@ -92,7 +92,8 @@ class MUNIdentity(AutomataPlugin):
                 self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
                 reason=f"Identity verified. MUN username: {username}",
             )
-            await ctx.send("Identity verified!")
+            await ctx.send("Identity verified!", delete_after=15)
+            await ctx.message.delete(delay=15)
         else:
             await ctx.send(
                 "It appears that code is invalid. Please double-check that you copied all characters from the site, and try again."
