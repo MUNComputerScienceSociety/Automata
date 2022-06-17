@@ -4,19 +4,20 @@ on:
   push:
   pull_request:
   schedule:
+    # Runs at 19:00 UTC on Wed. 
     - cron: '0 19 * * 3'
 
 jobs:
   CodeQL-Build:
 
     runs-on: ubuntu-latest
+    
+    permissions:
+      security-events: write
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
     - name: Autobuild
