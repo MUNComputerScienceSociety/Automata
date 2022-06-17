@@ -92,7 +92,10 @@ class MUNIdentity(AutomataPlugin):
                 self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
                 reason=f"Identity verified. MUN username: {username}",
             )
-            await ctx.send("Identity verified!", delete_after=15)
+            is_verified_message = await ctx.send("Identity verified!")
+            if type(is_verified_message.channel) is nextcord.DMChannel:
+                return
+            await is_verified_message.delete(delay=15)
             await ctx.message.delete(delay=15)
         else:
             await ctx.send(
