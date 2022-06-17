@@ -116,3 +116,5 @@ data/mongo/
 #ignore Pycharm Idea Folder
 .idea
 
+pyenv/
+
