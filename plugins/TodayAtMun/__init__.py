@@ -1,12 +1,14 @@
 import asyncio
 from random import choice
+from typing import Optional
 
-import nextcord
 import httpx
 import mechanicalsoup
+from nextcord import Embed, SlashOption, Interaction, Colour, ApplicationError
+from Bot import bot
 from bs4 import BeautifulSoup
-from nextcord.ext import commands, tasks
 from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD, mongo_client
+from nextcord.ext import commands, tasks
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
 
@@ -30,19 +32,19 @@ class TodayAtMun(AutomataPlugin):
         self.days_till_next_event = -1
 
     @staticmethod
-    def today_embed_template():
+    def diary_embed_template():
         """Provides initial embed attributes."""
-        embed = nextcord.Embed()
+        embed = Embed()
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
-        embed.colour = nextcord.Colour(choice(mun_colours))
+        embed.colour = Colour(choice(mun_colours))
         embed.set_footer(
             text="TodayAtMun ● !help TodayAtMun",
             icon_url=MUN_CSS_LOGO,
         )
         return embed
 
-    def today_embed_next_template(self, next_event_date: str) -> nextcord.Embed:
-        embed = self.today_embed_template()
+    def diary_embed_next_template(self, next_event_date: str) -> Embed:
+        embed = self.diary_embed_template()
         embed.set_author(
             name=f"⏳ ~{self.diary_util.delta_event_time(self.diary_util.str_to_datetime(next_event_date))} day(s)"
         )
@@ -53,47 +55,51 @@ class TodayAtMun(AutomataPlugin):
         )
         return embed
 
-    @commands.group(aliases=["d", "today"])
-    async def diary(self, ctx: commands.Context):
-        """Provides brief info of significant dates on the MUN calendar.
-        Examples: !d next, !d later, !d bundle 10
-        """
-        async with ctx.typing():
-            if ctx.invoked_subcommand is None:
-                await ctx.reply(content="Invalid command, check !help diary for more.")
+    @bot.slash_command(guild_ids=[PRIMARY_GUILD])
+    async def diary(self):
+        """Provides brief info of significant dates on the MUN calendar."""
+        pass
 
-    @diary.command(name="next", aliases=["n"])
-    async def today_next(self, ctx: commands.Context):
+    @diary.subcommand(name="next")
+    async def diary_next(self, interaction: Interaction):
         """Sends next upcoming date on the MUN calendar."""
         self.diary_util.set_current_date()
         self.diary_util.find_event(self.diary_util.date)
-        embed = self.today_embed_next_template(self.diary_util.key)
-        await ctx.reply(embed=embed)
+        embed = self.diary_embed_next_template(self.diary_util.key)
+        await interaction.response.send_message(embed=embed)
 
-    @diary.command(name="later", aliases=["l"])
-    async def today_after(self, ctx: commands.Context):
+    @diary.subcommand(name="after")
+    async def diary_after(self, interaction: Interaction):
         """Sends the event after the 'next' event."""
         self.diary_util.find_following_event()
-        embed = self.today_embed_template()
+        embed = self.diary_embed_template()
         embed.add_field(
             name=f"{self.diary_util.key}, ⌛ ~`{DiaryUtil.time_to_dt_delta(self.diary_util.key)}` days away.",
             value=f"{self.diary_util.event_desc}",
             inline=False,
         )
-        await ctx.reply(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
-    @diary.command(name="date")
-    async def today_date(self, ctx: commands.Context):
+    @diary.subcommand(name="date")
+    async def diary_date(self, interaction: Interaction):
         """Sends the current date at that instance."""
         self.diary_util.set_current_date()
-        await ctx.reply(self.diary_util.format_date(self.diary_util.date))
+        await interaction.response.send_message(
+            self.diary_util.format_date(self.diary_util.date)
+        )
 
-    @diary.command(name="bundle", aliases=["b", "nextfive"])
-    async def today_bundle(self, ctx: commands.Context, events: int = 5):
-        """Sends the next n number of events coming up in MUN diary.
-        Usage: !diary bundle <size>
-        Example: !diary bundle 10
-        """
+    @diary.subcommand(name="bundle")
+    async def diary_bundle(
+        self,
+        interaction: Interaction,
+        events: Optional[int] = SlashOption(
+            name="picker",
+            choices={"one": 1, "two": 2, "three": 3, "four": 4, "five": 5},
+            required=False,
+            description="How many diary events to bundle."
+        ),
+    ):
+        """Sends the next n number of events coming up in MUN diary."""
         self.diary_util.set_current_date()
         packaged_events = self.diary_util.package_of_events(
             self.diary_util.date, events
@@ -102,7 +108,7 @@ class TodayAtMun(AutomataPlugin):
         first_event_date = packaged_keys[0]
         last_event_data = packaged_keys[-1]
         bundle_size = len(packaged_events)
-        embed = self.today_embed_template()
+        embed = self.diary_embed_template()
         embed.add_field(
             name=f"__**Showing next {bundle_size} upcoming events in MUN diary**__",
             value=f"*{first_event_date}* **-** *{last_event_data}*",
@@ -114,18 +120,12 @@ class TodayAtMun(AutomataPlugin):
                 value=f"{context}",
                 inline=False,
             )
-        await ctx.send(embed=embed)
-
-    @today_bundle.error
-    async def today_next_bundle_handler(self, ctx, error):
-        error = getattr(error, "original", error)
-        if isinstance(error, commands.BadArgument):
-            await ctx.reply("Invalid use of bundle, Usage: !d bundle <1 - 10 : int>")
+        await interaction.response.send_message(embed=embed)
 
     async def post_next_event(self, channel: int):
         date = DiaryUtil.get_current_time()
         self.diary_util.find_event(date)
-        next_embed = self.today_embed_next_template(self.diary_util.key)
+        next_embed = self.diary_embed_next_template(self.diary_util.key)
         message_id = (
             await self.bot.get_guild(PRIMARY_GUILD)
             .get_channel(channel)
@@ -135,7 +135,7 @@ class TodayAtMun(AutomataPlugin):
         return message_id
 
     async def notify_new_event(self, message_link):
-        embed = self.today_embed_template()
+        embed = self.diary_embed_template()
         embed.add_field(
             name="**📅 New MUN Calendar Event**",
             value=f"[**Click to view**]({message_link})",
@@ -166,21 +166,24 @@ class TodayAtMun(AutomataPlugin):
     async def before_check_test(self):
         await self.bot.wait_until_ready()
 
-    @diary.command("restart")
+    @diary.subcommand(name="restart")
     @commands.has_permissions(view_audit_log=True)
-    async def reset_recurrent_events(self, ctx):
+    async def reset_recurrent_events(self, interaction: Interaction):
         """Executive Use Only: Resets automated event posting."""
         await mongo_client.automata.drop_collection("mun_diary")
         await mongo_client.automata.mun_diary.insert_one({"date": "init"})
         self.check_for_new_event.restart()
-    
-    @diary.command("refresh")
+        await interaction.response.send_message(
+            "Restarted Mun Calendar event loop, cleared records from DB."
+        )
+
+    @diary.subcommand(name="refresh")
     @commands.has_permissions(view_audit_log=True)
-    async def refresh_diary(self, ctx):
+    async def refresh_diary(self, interaction: Interaction):
         """Executive Use Only: Refreshes the MUN calendar data."""
         self.parse = TodayAtMun.parse_diary()
         self.diary_util = DiaryUtil(self.parse)
-        await ctx.reply("MUN calendar refreshed.")
+        await interaction.response.send_message("MUN calendar refreshed.")
 
     async def update_event_msg(self, next_event_date: str):
         diary_daily_channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(
@@ -189,7 +192,9 @@ class TodayAtMun(AutomataPlugin):
         message = await diary_daily_channel.fetch_message(
             diary_daily_channel.last_message_id
         )
-        if (next_date_delta := self.diary_util.time_to_dt_delta(next_event_date)) != self.days_till_next_event:
+        if (
+            next_date_delta := self.diary_util.time_to_dt_delta(next_event_date)
+        ) != self.days_till_next_event:
             self.days_till_next_event = next_date_delta
             await self.post_next_event(GENERAL_CHANNEL)
         message.embeds[0].set_author(
@@ -203,15 +208,23 @@ class TodayAtMun(AutomataPlugin):
         )
         await message.edit(embed=message.embeds[0])
 
-    @commands.group(aliases=["e"])
+    @bot.slash_command(guild_ids=[PRIMARY_GUILD])
     @commands.cooldown(3, 60.0)
     async def exam(
         self,
-        ctx: commands.Context,
-        subj: str = "",
-        course_num: str = "",
-        sec_numb: str = "",
-        crn: str = "",
+        interaction: Interaction,
+        subj: str = SlashOption(
+            description="Subject to look up, such as 'COMP'", required=True
+        ),
+        course_num: str = SlashOption(
+            description="Course Number to look for, such as 1001", required=False
+        ),
+        sec_numb: str = SlashOption(
+            description="Section Number to look for, such as 003", required=False
+        ),
+        crn: str = SlashOption(
+            description="Crn Number to look for.", required=False
+        ),
     ) -> None:
         """Provides Exam Info for current semester
         Usage: !exam <subject> <course_number> <section_number> <crn>
@@ -220,17 +233,17 @@ class TodayAtMun(AutomataPlugin):
         sched_heading, table_heading, exams_parsed = TodayAtMun.get_exams(
             subj, course_num, sec_numb, crn
         )
-        embed = self.today_embed_template()
+        embed = self.diary_embed_template()
         embed.title = sched_heading
         embed.add_field(name=table_heading, value="\u200b", inline=False)
         for exam in exams_parsed:
             embed.add_field(name=" | ".join(exam), value="\u200b", inline=False)
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
     @exam.error
-    async def exam_handler(self, ctx, error):
+    async def exam_handler(self, interaction: Interaction, error: ApplicationError):
         error = getattr(error, "original", error)
-        await ctx.reply(error)
+        await interaction.response.send_message(error)
 
     @staticmethod
     def parse_diary() -> dict[str, str]:
@@ -297,7 +310,10 @@ class TodayAtMun(AutomataPlugin):
 
     @staticmethod
     def get_exams(
-        subj: str = "", course_num: str = "", sec_numb: str = "", crn: str = ""
+        subj: str = "",
+        course_num: str = "",
+        sec_numb: str = "",
+        crn: str = "",
     ) -> tuple[str, str, list[str]]:
         """Provides exam info - schedule brief, table heading and exam details."""
         page = TodayAtMun.submit_form(subj, course_num, sec_numb, crn)
