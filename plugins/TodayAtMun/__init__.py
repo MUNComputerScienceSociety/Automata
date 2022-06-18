@@ -210,7 +210,7 @@ class TodayAtMun(AutomataPlugin):
         )
         if (
             next_date_delta := self.diary_util.time_to_dt_delta(next_event_date)
-        ) != self.days_till_next_event:
+        ) != self.days_till_next_event and next_date_delta <= 7:
             self.days_till_next_event = next_date_delta
             await self.post_next_event(GENERAL_CHANNEL)
         message.embeds[0].set_author(
