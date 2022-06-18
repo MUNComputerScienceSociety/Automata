@@ -4,8 +4,7 @@ from typing import Optional
 
 import httpx
 import mechanicalsoup
-from nextcord import Embed, SlashOption, Interaction, Colour, ApplicationError
-from Bot import bot
+from nextcord import Embed, SlashOption, Interaction, Colour, ApplicationError, slash_command
 from bs4 import BeautifulSoup
 from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD, mongo_client
 from nextcord.ext import commands, tasks
@@ -55,8 +54,8 @@ class TodayAtMun(AutomataPlugin):
         )
         return embed
 
-    @bot.slash_command(guild_ids=[PRIMARY_GUILD])
-    async def diary(self):
+    @slash_command(guild_ids=[PRIMARY_GUILD])
+    async def diary(self, interaction: Interaction):
         """Provides brief info of significant dates on the MUN calendar."""
         pass
 
@@ -208,7 +207,7 @@ class TodayAtMun(AutomataPlugin):
         )
         await message.edit(embed=message.embeds[0])
 
-    @bot.slash_command(guild_ids=[PRIMARY_GUILD])
+    @slash_command(guild_ids=[PRIMARY_GUILD])
     @commands.cooldown(3, 60.0)
     async def exam(
         self,
