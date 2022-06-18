@@ -2,7 +2,8 @@ name: "Code scanning - action"
 
 on:
   push:
-  pull_request:
+    branches:
+      - master
   schedule:
     # Runs at 19:00 UTC on Wed. 
     - cron: '0 19 * * 3'
