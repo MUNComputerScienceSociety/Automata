@@ -14,7 +14,7 @@ from nextcord import (
     Interaction,
     SlashOption,
     slash_command,
-    Message
+    Message,
 )
 from nextcord.ext import application_checks, commands, tasks
 from Plugin import AutomataPlugin
@@ -208,10 +208,14 @@ class TodayAtMun(AutomataPlugin):
         message = await diary_daily_channel.fetch_message(
             diary_daily_channel.last_message_id
         )
-        if (
-            next_date_delta := self.diary_util.time_to_dt_delta(next_event_date)
-        ) != self.days_till_next_event and 0 <= next_date_delta <= 7:
-            self.days_till_next_event = next_date_delta
+        next_event_date_delta = self.diary_util.time_to_dt_delta(next_event_date)
+        can_post_to_general = (
+            next_event_date_delta != self.days_till_next_event
+            and self.days_till_next_event != -1
+            and next_event_date_delta <= 7
+        )
+        if can_post_to_general:
+            self.days_till_next_event = next_event_date_delta
             await self.post_next_event(GENERAL_CHANNEL)
         message.embeds[0].set_author(
             name=self.diary_util.time_delta_emojify(next_event_date)
