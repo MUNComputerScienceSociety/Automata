@@ -1,11 +1,11 @@
 import asyncio
 from random import choice
 from typing import Optional
-from discord import Permissions
 
 import httpx
 import mechanicalsoup
 from bs4 import BeautifulSoup
+from discord import ApplicationCheckFailure
 from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD, mongo_client
 from nextcord import (
     ApplicationError,
@@ -15,7 +15,7 @@ from nextcord import (
     SlashOption,
     slash_command,
 )
-from nextcord.ext import commands, tasks, application_checks
+from nextcord.ext import application_checks, commands, tasks
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
 
@@ -27,14 +27,6 @@ DIARY_DATA_SOURCE = "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
 EXAMS_DATA_SOURCE = "https://selfservice.mun.ca/direct/swkgexm.P_Query_Exam?p_term_code=202102&p_internal_campus_code=CAMP_STJ&p_title=STJ_WINT"
 
 
-class DiaryPermissionChecks:
-
-    @staticmethod
-    async def can_view_audit_log(interaction: Interaction):
-        if interaction.permissions.view_audit_log:
-            return True
-        await interaction.response.send_message("You are missing required permissions to execute this command.", ephemeral=True)
-        return False
 class TodayAtMun(AutomataPlugin):
     """Provides a utility for MUN diary lookup specifically significant dates."""
 
@@ -182,7 +174,7 @@ class TodayAtMun(AutomataPlugin):
         await self.bot.wait_until_ready()
 
     @diary.subcommand(name="restart")
-    @application_checks.check(DiaryPermissionChecks.can_view_audit_log)
+    @application_checks.has_permissions(view_audit_log=True)
     async def reset_recurrent_events(self, interaction: Interaction):
         """Executive Use Only: Resets automated event posting."""
         await mongo_client.automata.drop_collection("mun_diary")
@@ -193,12 +185,22 @@ class TodayAtMun(AutomataPlugin):
         )
 
     @diary.subcommand(name="refresh")
-    @application_checks.check(DiaryPermissionChecks.can_view_audit_log)
+    @application_checks.has_permissions(view_audit_log=True)
     async def refresh_diary(self, interaction: Interaction):
         """Executive Use Only: Refreshes the MUN calendar data."""
         self.parse = TodayAtMun.parse_diary()
         self.diary_util = DiaryUtil(self.parse)
         await interaction.response.send_message("MUN calendar refreshed.")
+
+    @refresh_diary.error
+    @reset_recurrent_events.error
+    async def command_invocation_error(
+        self, interaction: Interaction, error: ApplicationCheckFailure
+    ):
+        if isinstance(error, application_checks.ApplicationMissingPermissions):
+            await interaction.response.send_message(
+                "Invalid permissions to invoke this command."
+            )
 
     async def update_event_msg(self, next_event_date: str):
         diary_daily_channel = self.bot.get_guild(PRIMARY_GUILD).get_channel(
@@ -333,5 +335,3 @@ class TodayAtMun(AutomataPlugin):
         headings = TodayAtMun.parse_headings(page)
         exams = TodayAtMun.parse_form(page)
         return sched_heading, headings, exams
-
-
