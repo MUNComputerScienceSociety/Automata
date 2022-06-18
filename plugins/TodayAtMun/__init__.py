@@ -1,13 +1,21 @@
 import asyncio
 from random import choice
 from typing import Optional
+from discord import Permissions
 
 import httpx
 import mechanicalsoup
-from nextcord import Embed, SlashOption, Interaction, Colour, ApplicationError, slash_command
 from bs4 import BeautifulSoup
 from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD, mongo_client
-from nextcord.ext import commands, tasks
+from nextcord import (
+    ApplicationError,
+    Colour,
+    Embed,
+    Interaction,
+    SlashOption,
+    slash_command,
+)
+from nextcord.ext import commands, tasks, application_checks
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
 
@@ -19,6 +27,14 @@ DIARY_DATA_SOURCE = "https://www.mun.ca/regoff/calendar/sectionNo=GENINFO-0086"
 EXAMS_DATA_SOURCE = "https://selfservice.mun.ca/direct/swkgexm.P_Query_Exam?p_term_code=202102&p_internal_campus_code=CAMP_STJ&p_title=STJ_WINT"
 
 
+class DiaryPermissionChecks:
+
+    @staticmethod
+    async def can_view_audit_log(interaction: Interaction):
+        if interaction.permissions.view_audit_log:
+            return True
+        await interaction.response.send_message("You are missing required permissions to execute this command.", ephemeral=True)
+        return False
 class TodayAtMun(AutomataPlugin):
     """Provides a utility for MUN diary lookup specifically significant dates."""
 
@@ -95,7 +111,7 @@ class TodayAtMun(AutomataPlugin):
             name="picker",
             choices={"one": 1, "two": 2, "three": 3, "four": 4, "five": 5},
             required=False,
-            description="How many diary events to bundle."
+            description="How many diary events to bundle.",
         ),
     ):
         """Sends the next n number of events coming up in MUN diary."""
@@ -166,7 +182,7 @@ class TodayAtMun(AutomataPlugin):
         await self.bot.wait_until_ready()
 
     @diary.subcommand(name="restart")
-    @commands.has_permissions(view_audit_log=True)
+    @application_checks.check(DiaryPermissionChecks.can_view_audit_log)
     async def reset_recurrent_events(self, interaction: Interaction):
         """Executive Use Only: Resets automated event posting."""
         await mongo_client.automata.drop_collection("mun_diary")
@@ -177,7 +193,7 @@ class TodayAtMun(AutomataPlugin):
         )
 
     @diary.subcommand(name="refresh")
-    @commands.has_permissions(view_audit_log=True)
+    @application_checks.check(DiaryPermissionChecks.can_view_audit_log)
     async def refresh_diary(self, interaction: Interaction):
         """Executive Use Only: Refreshes the MUN calendar data."""
         self.parse = TodayAtMun.parse_diary()
@@ -208,22 +224,19 @@ class TodayAtMun(AutomataPlugin):
         await message.edit(embed=message.embeds[0])
 
     @slash_command(guild_ids=[PRIMARY_GUILD])
-    @commands.cooldown(3, 60.0)
     async def exam(
         self,
         interaction: Interaction,
         subj: str = SlashOption(
-            description="Subject to look up, such as 'COMP'", required=True
+            description="Subject to filter by, such as 'COMP'", required=True
         ),
         course_num: str = SlashOption(
-            description="Course Number to look for, such as 1001", required=False
+            description="Course Number to filter by, such as 1001", required=False
         ),
         sec_numb: str = SlashOption(
-            description="Section Number to look for, such as 003", required=False
+            description="Section Number to filter, such as 003", required=False
         ),
-        crn: str = SlashOption(
-            description="Crn Number to look for.", required=False
-        ),
+        crn: str = SlashOption(description="Crn Number to filter by.", required=False),
     ) -> None:
         """Provides Exam Info for current semester
         Usage: !exam <subject> <course_number> <section_number> <crn>
@@ -320,3 +333,5 @@ class TodayAtMun(AutomataPlugin):
         headings = TodayAtMun.parse_headings(page)
         exams = TodayAtMun.parse_form(page)
         return sched_heading, headings, exams
+
+
