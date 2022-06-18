@@ -14,6 +14,7 @@ from nextcord import (
     Interaction,
     SlashOption,
     slash_command,
+    Message
 )
 from nextcord.ext import application_checks, commands, tasks
 from Plugin import AutomataPlugin
@@ -129,19 +130,17 @@ class TodayAtMun(AutomataPlugin):
             )
         await interaction.response.send_message(embed=embed)
 
-    async def post_next_event(self, channel: int):
+    async def post_next_event(self, channel: int) -> Message:
         date = DiaryUtil.get_current_time()
         self.diary_util.find_event(date)
         next_embed = self.diary_embed_next_template(self.diary_util.key)
-        message_id = (
+        return (
             await self.bot.get_guild(PRIMARY_GUILD)
             .get_channel(channel)
             .send(embed=next_embed)
         )
 
-        return message_id
-
-    async def notify_new_event(self, message_link):
+    async def notify_new_event(self, message_link: Message):
         embed = self.diary_embed_template()
         embed.add_field(
             name="**📅 New MUN Calendar Event**",
