@@ -4,8 +4,8 @@ from urllib.parse import urlencode
 from datetime import datetime
 
 import httpx
-import nextcord
-from nextcord.ext import commands, tasks
+import discord
+from discord.ext import commands, tasks
 
 from Plugin import AutomataPlugin
 from Globals import (
@@ -30,9 +30,9 @@ class Newsline(AutomataPlugin):
         self.posted_posts = mongo_client.automata.newsline_posts
         self.posted_posts.drop()
         self.posting = False
-
-        loop = asyncio.get_event_loop()
-        self.check_for_new_posts.start()
+    
+    async def cog_load(self):
+        await self.check_for_new_posts.start()
 
     def post_embed(self, post, post_detail):
         desc = post_detail["text"]
@@ -44,10 +44,10 @@ class Newsline(AutomataPlugin):
         if url is None:
             url = post["url"]
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title=f"{post_detail['subject']} - {post['date'].strftime('%r')}",
             description=desc,
-            colour=nextcord.Colour.dark_red(),
+            colour=discord.Colour.dark_red(),
             url=url,
             timestamp=post["date"],
         )

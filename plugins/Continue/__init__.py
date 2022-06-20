@@ -1,5 +1,5 @@
 import httpx
-from nextcord.ext import commands
+from discord.ext import commands
 from Plugin import AutomataPlugin
 from plugins.Continue.gptj import gptj_query, gptj_query_simple
 

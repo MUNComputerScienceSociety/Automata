@@ -1,8 +1,8 @@
 from os import name
-from nextcord.ext import commands
+from discord.ext import commands
 
 import httpx
-import nextcord
+import discord
 from Plugin import AutomataPlugin
 
 API_BASE = "http://numbersapi.com/"
@@ -18,7 +18,7 @@ class NumberFacts(AutomataPlugin):
 
     async def message_embed(self, fact, number):
 
-        embed = nextcord.Embed(colour=nextcord.Colour.random())
+        embed = discord.Embed(colour=discord.Colour.random())
         embed.add_field(name=f"A fact about number {number}", value=fact)
         embed.set_author(name="NFact")
 

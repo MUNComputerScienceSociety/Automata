@@ -1,10 +1,10 @@
 from os import name
-from nextcord.ext import commands
-from nextcord.ext.commands import context
+from discord.ext import commands
+from discord.ext.commands import context
 from Globals import ANNOUNCEMENT_CHANNEL
 
 from Plugin import AutomataPlugin
-import nextcord
+import discord
 
 PING_EMOTE = "<:ping:842732198444269568>"
 NOPING_EMOTE = "<:noping:842732251132854322>"
@@ -28,7 +28,7 @@ class Announce(AutomataPlugin):
             message.content.split(" ")[1 : len(ctx.message.content)]
         )
 
-        embed = nextcord.Embed(colour=nextcord.Colour.blue())
+        embed = discord.Embed(colour=discord.Colour.blue())
 
         embed.set_author(name=message.author.name, icon_url=message.author.avatar.url)
         embed.set_footer(

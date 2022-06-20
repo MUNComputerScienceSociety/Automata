@@ -1,4 +1,5 @@
-from nextcord.ext import commands
+from discord.ext import commands
+from Globals import PRIMARY_GUILD
 
 from Plugin import AutomataPlugin
 

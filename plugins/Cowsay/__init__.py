@@ -1,7 +1,7 @@
 import urllib.parse
 
-from nextcord.ext import commands
-import nextcord
+from discord.ext import commands
+import discord
 import httpx
 
 from Plugin import AutomataPlugin

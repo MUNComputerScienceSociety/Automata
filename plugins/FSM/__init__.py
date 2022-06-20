@@ -1,4 +1,4 @@
-from nextcord.ext import commands
+from discord.ext import commands
 
 from Plugin import AutomataPlugin
 from Utils import send_code_block_maybe_as_file

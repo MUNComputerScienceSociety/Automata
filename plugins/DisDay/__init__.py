@@ -1,5 +1,5 @@
 from unicodedata import category
-from nextcord.ext import commands
+from discord.ext import commands
 
 from Plugin import AutomataPlugin
 

@@ -2,10 +2,10 @@ import asyncio
 from typing import Dict, List, Optional, Union
 
 import httpx
-import nextcord
+import discord
 from Globals import (DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE,
                      mongo_client)
-from nextcord.ext import commands
+from discord.ext import commands
 from Plugin import AutomataPlugin
 
 
@@ -18,12 +18,12 @@ class MUNIdentity(AutomataPlugin):
         self.identities = mongo_client.automata.munidentity_identities
 
     async def get_identity(
-        self, *, member: Union[nextcord.User, int] = None, mun_username: str = None
+        self, *, member: Union[discord.User, int] = None, mun_username: str = None
     ) -> Optional[Dict[str, Union[str, int]]]:
         """Retrieve identity details for a given user.
 
         :param member: The Discord server member to retrieve details for, defaults to None
-        :param member: Union[nextcord.Member, int], optional
+        :param member: Union[discord.Member, int], optional
         :param mun_username: The MUN username to retrieve details for, defaults to None
         :param mun_username: str, optional
         :return: The data stored about the user's identity
@@ -42,7 +42,7 @@ class MUNIdentity(AutomataPlugin):
         return identity
 
     @commands.Cog.listener()
-    async def on_member_join(self, member: nextcord.Member):
+    async def on_member_join(self, member: discord.Member):
         await member.send(
             f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://discord.muncompsci.ca/auth to verify yourself.\nOtherwise, contact an executive to gain further access."
         )
@@ -53,8 +53,8 @@ class MUNIdentity(AutomataPlugin):
         if not ctx.invoked_subcommand:
             identity = await self.get_identity(member=ctx.author)
             if identity is not None:
-                embed = nextcord.Embed()
-                embed.colour = nextcord.Colour.green()
+                embed = discord.Embed()
+                embed.colour = discord.Colour.green()
                 embed.add_field(name="MUN Username", value=identity["mun_username"])
                 await ctx.send(embed=embed)
             else:
@@ -93,7 +93,7 @@ class MUNIdentity(AutomataPlugin):
                 reason=f"Identity verified. MUN username: {username}",
             )
             is_verified_message = await ctx.send("Identity verified!")
-            if type(is_verified_message.channel) is nextcord.DMChannel:
+            if type(is_verified_message.channel) is discord.DMChannel:
                 return
             await is_verified_message.delete(delay=15)
             await ctx.message.delete(delay=15)
@@ -104,23 +104,23 @@ class MUNIdentity(AutomataPlugin):
 
     @identity.command(name="check")
     @commands.has_permissions(view_audit_log=True)
-    async def identity_check(self, ctx: commands.Context, user: nextcord.Member):
+    async def identity_check(self, ctx: commands.Context, user: discord.Member):
         """Check the identity verification status of a user."""
         identity = await self.identities.find_one({"discord_id": user.id})
         if identity is not None:
-            embed = nextcord.Embed()
-            embed.colour = nextcord.Colour.green()
+            embed = discord.Embed()
+            embed.colour = discord.Colour.green()
             embed.add_field(name="MUN Username", value=identity["mun_username"])
             await ctx.send(embed=embed)
         else:
-            embed = nextcord.Embed()
-            embed.colour = nextcord.Colour.red()
+            embed = discord.Embed()
+            embed.colour = discord.Colour.red()
             embed.add_field(name="MUN Username", value="No username verified.")
             await ctx.send(embed=embed)
 
     @identity.command(name="remove")
     @commands.has_permissions(manage_messages=True)
-    async def identity_remove(self, ctx: commands.Context, user: nextcord.Member):
+    async def identity_remove(self, ctx: commands.Context, user: discord.Member):
         """Remove the identity from a user."""
         identity = await self.get_identity(member=user)
         if identity is not None:
@@ -129,16 +129,16 @@ class MUNIdentity(AutomataPlugin):
                 self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
                 reason=f"Identity manually removed by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {identity['mun_username']}",
             )
-            embed = nextcord.Embed()
-            embed.colour = nextcord.Colour.green()
+            embed = discord.Embed()
+            embed.colour = discord.Colour.green()
             embed.add_field(
                 name="MUN Username",
                 value=f"User `{user.name}#{user.discriminator}` with username `{identity['mun_username']}` was removed.",
             )
             await ctx.send(embed=embed)
         else:
-            embed = nextcord.Embed()
-            embed.colour = nextcord.Colour.red()
+            embed = discord.Embed()
+            embed.colour = discord.Colour.red()
             embed.add_field(
                 name="MUN Username", value="No username verified for the given user."
             )
@@ -147,7 +147,7 @@ class MUNIdentity(AutomataPlugin):
     @identity.command(name="associate")
     @commands.has_permissions(manage_messages=True)
     async def identity_associate(
-        self, ctx: commands.Context, user: nextcord.Member, mun_username: str
+        self, ctx: commands.Context, user: discord.Member, mun_username: str
     ):
         """Manually associate a Discord account to a MUN username."""
         identity = await self.get_identity(member=user)
@@ -180,8 +180,8 @@ class MUNIdentity(AutomataPlugin):
         if current_identity is None:
             await ctx.reply("You don't have an identity associated with your account.")
             return
-        embed = nextcord.Embed()
-        embed.colour = nextcord.Colour.red()
+        embed = discord.Embed()
+        embed.colour = discord.Colour.red()
         embed.add_field(
             name="Identity Disassociation",
             value=f"Are you sure you want to disassociate your identity from your account?",
@@ -196,8 +196,8 @@ class MUNIdentity(AutomataPlugin):
             self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
             reason=f"Identity manually disassociated by {ctx.author.name}#{ctx.author.discriminator}.",
         )
-        embed = nextcord.Embed()
-        embed.colour = nextcord.Colour.green()
+        embed = discord.Embed()
+        embed.colour = discord.Colour.green()
         embed.add_field(
             name="Disassociation",
             value=f"Your identity has been disassociated from your account.",
@@ -206,7 +206,7 @@ class MUNIdentity(AutomataPlugin):
 
     @staticmethod
     async def get_confirmation(
-        ctx: commands.Context, message: nextcord.Message
+        ctx: commands.Context, message: discord.Message
     ) -> bool:
         """Get confirmation from user executing the command by reactions."""
         await message.add_reaction("✅")
@@ -231,12 +231,12 @@ class MUNIdentity(AutomataPlugin):
     @commands.has_permissions(view_audit_log=True)
     async def identity_restore_roles(self, ctx: commands.Context):
         """Restores VERIFIED_ROLE to users with a registered identity who were not granted it."""
-        members_restored: List[nextcord.Member] = []
+        members_restored: List[discord.Member] = []
         identities = self.identities.find({})
         async with ctx.typing():
             while await identities.fetch_next:
                 identity = identities.next_object()
-                member: nextcord.Member = self.bot.get_guild(PRIMARY_GUILD).get_member(
+                member: discord.Member = self.bot.get_guild(PRIMARY_GUILD).get_member(
                     identity["discord_id"]
                 )
                 if member is None:
@@ -252,8 +252,8 @@ class MUNIdentity(AutomataPlugin):
                 )
                 members_restored.append(member)
                 await asyncio.sleep(1)
-            embed = nextcord.Embed()
-            embed.colour = nextcord.Colour.green()
+            embed = discord.Embed()
+            embed.colour = discord.Colour.green()
             embed.add_field(
                 name="Restore Roles",
                 value=f"{len(members_restored)} roles restored to verified users.",

@@ -1,4 +1,7 @@
+import asyncio
 from dotenv import load_dotenv
+
+from Utils import CustomHelp
 
 load_dotenv()
 
@@ -11,8 +14,8 @@ from pathlib import Path
 from io import StringIO
 
 from jigsaw.PluginLoader import PluginLoader
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 from prometheus_async.aio.web import start_http_server
 
 from Plugin import AutomataPlugin
@@ -51,14 +54,22 @@ if not AUTOMATA_TOKEN:
     )
     exit(1)
 
-intents = nextcord.Intents.default()
+intents = discord.Intents.default()
+intents.message_content = True
 intents.members = os.getenv("AUTOMATA_MEMBER_INTENTS_ENABLED", "True") == "True"
 
 
-bot = commands.Bot(
+class Automata(commands.Bot):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, intents=intents, **kwargs)
+    async def setup_hook(self) -> None:
+        for plugin in loader.get_all_plugins():
+            if plugin["plugin"]:
+                await plugin["plugin"].enable()
+
+bot = Automata(
     command_prefix="!",
-    help_command=None,
-    intents=intents,
+    help_command=CustomHelp(),
     description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.",
 )
 
@@ -66,7 +77,7 @@ bot = commands.Bot(
 @bot.event
 async def on_message(message):
     # Log messages
-    if isinstance(message.channel, nextcord.DMChannel):
+    if isinstance(message.channel, discord.DMChannel):
         name = message.author.name
     else:
         name = message.channel.name
@@ -109,14 +120,14 @@ async def eval_code(ctx: commands.Context, code: str):
     """Evaluates code for debugging purposes."""
     try:
         result = f"```\n{eval(code)}\n```"
-        colour = nextcord.Colour.green()
+        colour = discord.Colour.green()
     except:
         result = f"```py\n{traceback.format_exc(1)}```"
-        colour = nextcord.Colour.red()
+        colour = discord.Colour.red()
 
     result.replace("\\", "\\\\")
 
-    embed = nextcord.Embed()
+    embed = discord.Embed()
     embed.add_field(name=code, value=result)
     embed.colour = colour
 
@@ -131,14 +142,14 @@ async def exec_code(ctx: commands.Context, code: str):
         try:
             exec(code)
             result = f"```\n{out.getvalue()}\n```"
-            colour = nextcord.Colour.green()
+            colour = discord.Colour.green()
         except:
             result = f"```py\n{traceback.format_exc(1)}```"
-            colour = nextcord.Colour.red()
+            colour = discord.Colour.red()
 
     result.replace("\\", "\\\\")
 
-    embed = nextcord.Embed()
+    embed = discord.Embed()
     embed.add_field(name=code, value=result)
     embed.colour = colour
 
@@ -148,8 +159,8 @@ async def exec_code(ctx: commands.Context, code: str):
 @bot.command()
 async def plugins(ctx: commands.Context):
     """Lists all enabled plugins."""
-    embed = nextcord.Embed()
-    embed.colour = nextcord.Colour.blurple()
+    embed = discord.Embed()
+    embed.colour = discord.Colour.blurple()
 
     for plugin in loader.get_all_plugins():
         if plugin["plugin"]:
@@ -163,67 +174,6 @@ async def plugins(ctx: commands.Context):
             )
 
     await ctx.send(embed=embed)
-
-
-class CustomHelp(commands.DefaultHelpCommand):  # ( ͡° ͜ʖ ͡°)
-    """Custom help command"""
-
-    async def send_bot_help(self, mapping):
-        """Shows a list of commands"""
-        embed = nextcord.Embed(title="Commands Help")
-        embed.colour = nextcord.Colour.blurple()
-        for cog, commands in mapping.items():
-            command_signatures = [self.get_command_signature(c) for c in commands]
-            if command_signatures:
-                cog_name = getattr(cog, "qualified_name", "No Category")
-                embed.add_field(
-                    name=cog_name, value="\n".join(command_signatures), inline=False
-                )
-        channel = self.get_destination()
-        await channel.send(embed=embed)
-
-    async def send_command_help(self, command):
-        """Shows how to use each command"""
-        embed_command = nextcord.Embed(
-            title=self.get_command_signature(command), description=command.help
-        )
-        embed_command.colour = nextcord.Colour.green()
-        channel = self.get_destination()
-        await channel.send(embed=embed_command)
-
-    async def send_group_help(self, group):
-        """Shows how to use each group of commands"""
-        embed_group = nextcord.Embed(
-            title=self.get_command_signature(group), description=group.short_doc
-        )
-        for c in group.walk_commands():
-            embed_group.add_field(name=c, value=c.short_doc, inline=False)
-        embed_group.colour = nextcord.Colour.yellow()
-        channel = self.get_destination()
-        await channel.send(embed=embed_group)
-
-    async def send_cog_help(self, cog):
-        """Shows how to use each category"""
-        embed_cog = nextcord.Embed(
-            title=cog.qualified_name, description=cog.description
-        )
-        comms = cog.get_commands()
-        for c in comms:
-            embed_cog.add_field(name=c, value=c.short_doc, inline=False)
-        embed_cog.colour = nextcord.Colour.green()
-        channel = self.get_destination()
-        await channel.send(embed=embed_cog)
-
-    async def send_error_message(self, error):
-        "shows if command does not exist"
-        embed_error = nextcord.Embed(title="Error", description=error)
-        embed_error.colour = nextcord.Colour.red()
-        channel = self.get_destination()
-        await channel.send(embed=embed_error)
-
-
-bot.help_command = CustomHelp()
-
 
 plugins_dir = Path("./plugins")
 mounted_plugins_dir = Path("./mounted_plugins")
@@ -252,9 +202,5 @@ for plugin in loader.get_all_plugins():
             num_of_disabled += 1
 
 logger.info(f"{num_of_disabled} plugins disabled.")
-
-for plugin in loader.get_all_plugins():
-    if plugin["plugin"]:
-        plugin["plugin"].enable()
 
 bot.run(AUTOMATA_TOKEN)
