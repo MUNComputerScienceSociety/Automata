@@ -28,9 +28,8 @@ class TodayAtMun(AutomataPlugin):
         self.posted_events = mongo_client.automata.mun_diary
         self.days_till_next_event = -1
     
-    async def cog_load(self):
-        """Called when the plugin is loaded."""
-        await self.check_for_new_event.start()
+    def cog_load(self):
+        self.check_for_new_event.start()
 
     @staticmethod
     def today_embed_template():

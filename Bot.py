@@ -62,10 +62,15 @@ intents.members = os.getenv("AUTOMATA_MEMBER_INTENTS_ENABLED", "True") == "True"
 class Automata(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, intents=intents, **kwargs)
+
     async def setup_hook(self) -> None:
+        await self.enable_plugins()
+
+    async def enable_plugins(self) -> None:
         for plugin in loader.get_all_plugins():
             if plugin["plugin"]:
                 await plugin["plugin"].enable()
+
 
 bot = Automata(
     command_prefix="!",
@@ -174,6 +179,7 @@ async def plugins(ctx: commands.Context):
             )
 
     await ctx.send(embed=embed)
+
 
 plugins_dir = Path("./plugins")
 mounted_plugins_dir = Path("./mounted_plugins")
