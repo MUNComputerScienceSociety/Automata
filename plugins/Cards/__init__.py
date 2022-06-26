@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-from .deck import Deck
+from plugins.Cards.deck import Deck
 
 
 class Cards(AutomataPlugin):
