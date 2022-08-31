@@ -16,7 +16,7 @@ httpx==0.23.0
 idna==3.3
 Jigsaw==3.2.1
 joblib==1.1.0
-lxml==4.9.0
+lxml==4.9.1
 MechanicalSoup==1.1.0
 motor==3.0.0
 multidict==6.0.2
