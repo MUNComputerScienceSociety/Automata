@@ -1,6 +1,5 @@
 import asyncio
 from datetime import datetime
-
 import httpx
 import discord
 from discord.ext import commands, tasks
@@ -72,8 +71,6 @@ class ExecutiveDocs(AutomataPlugin):
 
         self.posted_documents = mongo_client.automata.executivedocs_posted_documents
 
-        loop = asyncio.get_event_loop()
-    
     async def cog_load(self):
         await self.check_for_new_docs.start()
 

@@ -1,14 +1,9 @@
 import discord
 from discord.ext import commands
-
+from Globals import PRIMARY_GUILD, VERIFIED_ROLE, mongo_client
 from Plugin import AutomataPlugin
-from Globals import (
-    mongo_client,
-    PRIMARY_GUILD,
-    VERIFIED_ROLE,
-)
-from .mojang_api import MojangAPI
-from .whitelist_http_api import WhitelistHttpApi
+from plugins.MCWhitelist.mojang_api import MOJANG_API_BASE, MojangAPI
+from plugins.MCWhitelist.whitelist_http_api import WhitelistHttpApi
 
 
 class MCWhitelist(AutomataPlugin):
