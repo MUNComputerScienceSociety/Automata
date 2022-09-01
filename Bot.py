@@ -23,6 +23,7 @@ from Plugin import AutomataPlugin
 from Globals import (
     DISABLED_PLUGINS,
     ENABLED_PLUGINS,
+    PRIMARY_GUILD,
 )
 
 IGNORED_LOGGERS = [
@@ -65,6 +66,9 @@ class Automata(commands.Bot):
 
     async def setup_hook(self) -> None:
         await self.enable_plugins()
+        primary_guild = bot.get_guild(PRIMARY_GUILD)
+        if primary_guild: 
+            await bot.tree.sync(guild=primary_guild)
 
     async def enable_plugins(self) -> None:
         for plugin in loader.get_all_plugins():

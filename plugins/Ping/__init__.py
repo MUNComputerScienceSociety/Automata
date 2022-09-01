@@ -1,17 +1,20 @@
 from discord.ext import commands
-from Globals import PRIMARY_GUILD
 
 from Plugin import AutomataPlugin
 
 
+class PingFlags(commands.FlagConverter):
+    number_of_times: int = commands.flag(default=0, description='The number of Pong replies!')
+
 class Ping(AutomataPlugin):
     """Pong"""
 
-    @commands.command()
-    async def ping(self, ctx: commands.Context, number_of_times: int = 0):
+    @commands.hybrid_command()
+    async def ping(self, ctx: commands.Context, flags: PingFlags):
         """Replies with a Pong, or many!"""
 
-        if number_of_times == 0:
+        if flags.number_of_times == 0:
             await ctx.send("Pong!")
         else:
-            await ctx.send(f"Pong! x{number_of_times}")
+            await ctx.send(f"Pong! x{flags.number_of_times}")
+
