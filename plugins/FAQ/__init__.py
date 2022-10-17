@@ -21,32 +21,27 @@ class FAQ(AutomataPlugin):
         embed_science = nextcord.Embed(
             title="B.Sc Sample First Year",
             url="https://www.mun.ca/undergrad/first-year-information/sample-first-year---st-johns-campus/science/computer-science/",
-            description="Students pursuing a bachelor of science with a major in computer science, visual computing and games or smart systems will normally take the following courses in their first year:",
+            description="Students pursuing a bachelor of science with a major in computer science will normally take the following courses in their first year:",
             color=COLOR_SCIENCE,
         )
         embed_science.add_field(
             name=f"**Fall Semester**",
-            value=f"> Mathematics 1090 or 1000\n> Computer Science 1001\n> science elective\n> English 1090\n> elective\n",
+            value=f"> Mathematics 1090 or 1000\n> Computer Science 1001\n> elective\n> English 1090\n> elective\n",
             inline=False,
         )
         embed_science.add_field(
             name=f"**Winter Semester**",
-            value=f"> Mathematics 1000 or 1001\n> Computer Science 1002\n> Computer Science 1003\n> CRW Course\n> science elective\n",
-            inline=False,
-        )
-        embed_science.add_field(
-            name=f"What is a science elective?",
-            value=f"_A science elective is any course from the subjects listed [here](https://www.mun.ca/science/students/majors.php)_",
+            value=f"> Mathematics 1000 or 1001\n> Computer Science 1002\n> Computer Science 1003 or elective\n> CRW Course\n> elective\n",
             inline=False,
         )
         embed_science.add_field(
             name=f"What is an elective?",
-            value=f"_An elective is any course from any subject_",
+            value=f"_Electives can be in any subject, including science courses._",
             inline=False,
         )
         embed_science.add_field(
             name=f"What is a CRW course?",
-            value=f"_A CRW course is any course from the list [here](https://www.mun.ca/hss/programs/undergraduate/crw\_course\_list.php)_",
+            value=f"_CRW courses are Critical Reading and Writing courses_",
             inline=False,
         )
         embed_science.set_footer(
@@ -65,12 +60,12 @@ class FAQ(AutomataPlugin):
         )
         embed_arts.add_field(
             name=f"**Fall Semester**",
-            value=f"> English 1090\n> Mathematics 1090 or 1000\n> Computer Science 1001\n> Language Study (LS) course\n> elective (Breathe of Knowledge encouraged)\n",
+            value=f"> English 1090\n> Mathematics 1090 or 1000\n> Computer Science 1001\n> Language Study (LS) course\n> elective (Breathe of Knowledge encouraged) or [minor program](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-4701) course\n",
             inline=False,
         )
         embed_arts.add_field(
             name=f"**Winter Semester**",
-            value=f"> CRW course\n> Mathematics 1000 or 1001\n> Computer Science 1002\n> Computer Science 1003\n> LS course\n",
+            value=f"> CRW course\n> Mathematics 1000 or 1001\n> Computer Science 1002\n> Computer Science 1003 or elective\n> LS course\n",
             inline=False,
         )
         embed_arts.add_field(
@@ -118,12 +113,12 @@ class FAQ(AutomataPlugin):
         )
         embed_admission.add_field(
             name=f"**How do I get to study CS at MUN?**",
-            value=f"After admission to the university you need to complete the required courses\n> 1. COMP 1001 and COMP 1002\n> 2. 6 credit hours in a [CRW](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8194) course, including 3 credit hours in English\n> 3. MATH 1000 and 1001 (or 1090 and 1000)\n> 3. 6 credit hours in other courses",
+            value=f"After admission to the university you need to complete the required courses\n> 1. COMP 1001 and COMP 1002\n> 2. 6 credit hours in a [CRW](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8194) course, including 3 credit hours in English\n> 3. MATH 1000 and 1001 (or 1090 and 1000)\n> 3. 6 credit hours in other courses\nYou must also have a mean grade of at least 65% in Computer Science 1001 and 1002.",
             inline=False,
         )
         embed_admission.add_field(
             name=f"**How do I apply to the major?**",
-            value=f"In February of each year an online application form will be available on the [Admissions](https://www.mun.ca/computerscience/ugrad/UGProgram/admissions.php) page. This form must be submitted prior to June 1.",
+            value=f"Students who wish to major in computer science must submit a completed [online application form](https://www.mun.ca/computerscience/undergraduates/programs/applying-for-admission/) on the [Department of Computer Science](https://www.mun.ca/computerscience/) website. The application form is available from Feb. 1 to June 1 for students applying for fall admission, and from Aug. 1 to Oct. 1 for students applying for winter admission",
             inline=False,
         )
         embed_admission.add_field(
