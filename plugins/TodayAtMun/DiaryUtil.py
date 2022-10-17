@@ -22,12 +22,20 @@ class DiaryUtil:
         return datetime.strptime(str_date, "%B %d, %Y, %A")
 
     @staticmethod
-    def time_delta_event(event_date: datetime, curr_date: datetime) -> int:
-        """Provides time delta of days remaining for a given date to current date."""
+    def delta_time(delta_date_one: datetime, delta_date_two: datetime) -> int:
+        """
+        Provides delta time of two dates.
+        e.g delta_date_two - delta_date_one
+        """
         return (
-            DiaryUtil.truncate_date_time(event_date)
-            - DiaryUtil.truncate_date_time(curr_date)
+            DiaryUtil.truncate_date_time(delta_date_two)
+            - DiaryUtil.truncate_date_time(delta_date_one)
         ).days
+
+    @staticmethod
+    def delta_event_time(event_date: datetime) -> int:
+        """Provides delta time of days remaining for a given date to current date."""
+        return DiaryUtil.delta_time(datetime.now(), event_date)
 
     @staticmethod
     def truncate_date_time(date: datetime) -> datetime:
@@ -36,11 +44,11 @@ class DiaryUtil:
     @staticmethod
     def time_to_dt_delta(date: str) -> int:
         convert_date = DiaryUtil.str_to_datetime(date)
-        return DiaryUtil.time_delta_event(convert_date, datetime.now())
+        return DiaryUtil.delta_event_time(convert_date)
 
     def time_delta_emojify(self, next_event_date: str) -> str:
-        remaining_time = DiaryUtil.time_delta_event(
-            DiaryUtil.str_to_datetime(next_event_date), datetime.now()
+        remaining_time = DiaryUtil.delta_event_time(
+            DiaryUtil.str_to_datetime(next_event_date)
         )
         if remaining_time > 1:
             return f"⏳ {remaining_time} days"

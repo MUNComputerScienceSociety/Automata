@@ -14,7 +14,9 @@ class Uptime(AutomataPlugin):
     async def uptime(self, ctx):
         """Replies with the current uptime for this bot"""
 
-        await ctx.message.reply(f'This bot has been running for {self.time_since(self.startup_time)}.')
+        await ctx.message.reply(
+            f"I have been awake for {self.time_since(self.startup_time)}."
+        )
 
     def time_since(self, comparison_time):
         """
@@ -28,14 +30,16 @@ class Uptime(AutomataPlugin):
         minutes = divmod(hours[1], 60)
         seconds = minutes[1]
 
-        output = ''
+        output = ""
         if days[0] > 0:
-            output += str(days[0]) + (' day, ' if days[0] == 1 else ' days, ')
+            output += str(days[0]) + (" day, " if days[0] == 1 else " days, ")
         if hours[0] > 0:
-            output += str(hours[0]) + (' hour, ' if hours[0] == 1 else ' hours, ')
+            output += str(hours[0]) + (" hour, " if hours[0] == 1 else " hours, ")
         if minutes[0] > 0:
-            output += str(minutes[0]) + (' minute, ' if minutes[0] == 1 else ' minutes, ')
+            output += str(minutes[0]) + (
+                " minute, " if minutes[0] == 1 else " minutes, "
+            )
         if seconds > 0:
-            output += str(seconds) + (' second' if seconds == 1 else ' seconds')
+            output += str(seconds) + (" second" if seconds == 1 else " seconds")
 
         return output

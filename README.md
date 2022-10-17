@@ -1,10 +1,10 @@
 # **Automata**
 
 ![Deploy to Docker Hub](https://github.com/MUNComputerScienceSociety/Automata/workflows/Deploy%20to%20Docker%20Hub/badge.svg)
-[![Build Size](https://images.microbadger.com/badges/image/muncs/automata.svg)](https://microbadger.com/images/muncs/automata)
-<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+[![Code scanning - action](https://github.com/MUNComputerScienceSociety/Automata/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MUNComputerScienceSociety/Automata/actions/workflows/codeql-analysis.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Discord bot handling the management of the MUN Computer Science Society Discord server
+Discord bot handling the management of the [MUN Computer Science Society](https://muncompsci.ca/) Discord server
 
 For feature requests / help getting the bot running, don't fret to ask questions in the `#automata` channel in the guild!
 
@@ -17,12 +17,20 @@ For feature requests / help getting the bot running, don't fret to ask questions
 3. Fill out the required information in the `.env`
    - At the moment, the only required environment variable required is `AUTOMATA_TOKEN`, which is a Discord token, which you can see how to get [here](https://discordpy.readthedocs.io/en/latest/discord.html)
 
-### Using Docker
+> Note about running locally and avoiding spam:
+>
+> When this bot was smaller, it wasn't so bad to run all the plugins; but since we have 40+, and some of them do some data fetching / loading on startup, so the logs can get a bit loud.
+>
+> If you're working on a plugin, you can add its name to the `AUTOMATA_ENABLED_PLUGINS` env. var (like AUTOMATA_ENABLED_PLUGINS=PluginName), and it will be the _only_ plugin that will be loaded.
+>
+> This is a comma-delimited list as well, so you can enable multiple plugins at once.
+
+### Locally Using Docker
 
 1. Create the directory `mounted_plugins` within the project by running `mkdir ./mounted_plugins`
 2. Start the containers by running `docker-compose up -d`
 
-### Without Docker
+### Locally Without Docker
 
 1. Run MongoDB
 
@@ -51,7 +59,7 @@ For feature requests / help getting the bot running, don't fret to ask questions
 
 - Automata is built around the [discord.py](https://discordpy.readthedocs.io/en/latest/) framework, therefore the plugins make heavy use of its decorators to abstract most of the complexity behind the scenes.
 
-### Using Docker
+### Developing using Docker
 
 1. Create the folder `mounted_plugins` if it doesn't already exist
    - `plugins` is baked into the image when it is built, so editing files there won't have an effect
@@ -64,7 +72,7 @@ For feature requests / help getting the bot running, don't fret to ask questions
 
 When you make changes to your plugins, restart the Automata container using `docker-compose restart automata`
 
-### Without Docker
+### Developing without Docker
 
 1. Create a new plugin, following the directions above within 'Using Docker', but within the `plugins` folder instead
 2. Start the bot using the instructions from [Running locally](#running-locally)
@@ -73,13 +81,13 @@ When you make changes to your plugins, restart the Automata container using `doc
 
 ## **Developing the bot core and built-in plugins**
 
-### Using Docker
+### Developing core using Docker
 
 1. Edit the `docker-compose.yml`, replacing the `image: muncs/automata` line for the automata container with `build: .`
 2. Edit the bot core or the plugins as you wish
 3. Start the container, forcing a rebuild of the image using `docker-compose up -d --build`
 
-### Without Docker
+### Developing core without Docker
 
 1. Just edit the core files / plugins directly :)
 2. Start the bot using the instructions from [Running locally](#running-locally)

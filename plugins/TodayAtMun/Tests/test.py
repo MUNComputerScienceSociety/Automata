@@ -12,32 +12,26 @@ from plugins.TodayAtMun.__init__ import TodayAtMun
 class TestDateMethods(unittest.TestCase):
     """Testing TodayAtMun Plugin"""
 
-    parse = TodayAtMun.parse_diary()
+    # parse = TodayAtMun.parse_diary()
+    parse = {}
     diary = DiaryUtil(parse)
 
     def test1_today_is_next(self):
-        print("Start today_is_next tests")
-        print("Success 1 - Test a formatted date that is not the same")
         self.assertEqual(self.diary.today_is_next("May 31, 2020, Monday"), "")
-        print("Success 2 - Test a formatted date that is today")
         self.assertEqual(
             self.diary.today_is_next(self.diary.format_date(datetime.now())), "🔴"
         )
-        print("Success 3 - Test a date that is not formatted")
         self.assertNotEqual(datetime.now(), "🔴")
 
-    def test2_time_delta_event(self):
-        print("\nStart time_delta_event tests")
-        print("Success 1 - Test a date ahead of the current date")
-        self.assertEqual(self.diary.time_delta_event(datetime.now()), 0)
-        print("Success 2 - Test date with y, m, d")
+    def test2_time_time(self):
+        self.assertEqual(self.diary.delta_time(now := datetime.now(), now), 0)
         self.assertEqual(
-            self.diary.time_delta_event(datetime(2022, 10, 2), datetime(2022, 10, 1)), 1
+            self.diary.delta_time(datetime(2022, 10, 1), datetime(2022, 10, 2)), 1
         )
-        print("Success 3 - Test date with y, m, d, hr, min")
         self.assertEqual(
-            self.diary.time_delta_event(
-                datetime(2022, 10, 3, 23, 0), datetime(2022, 10, 2, 22, 59)
+            self.diary.delta_time(
+                datetime(2022, 10, 2, 22, 59),
+                datetime(2022, 10, 3, 23, 0)
             ),
             1,
         )
@@ -72,7 +66,7 @@ def test_today_is_next(date, expected):
 def test_time_delta_event(today_time, event_time, expected):
     diary = TodayAtMun.parse_diary()
     diary = DiaryUtil(diary)
-    assert diary.time_delta_event(today_time, event_time) == expected
+    assert diary.delta_time(event_time, today_time) == expected
 
 
 def test_package_of_events():
@@ -135,22 +129,22 @@ def test_daily_time_delta():
     assert diary_util.find_event(time) == diary_key_list[0]
     next_event_date = diary_util.find_event(time)
     assert (
-        DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(next_event_date), time)
+        DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date))
         == 10
     )
     time = time + timedelta(days=1)
     assert (
-        DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(next_event_date), time)
+        DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date))
         == 9
     )
     time = time + timedelta(days=1)
     assert (
-        DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(next_event_date), time)
+        DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date))
         == 8
     )
     time = datetime(2021, 10, 31)
     next_event_date = diary_util.find_event(time)
     assert (
-        DiaryUtil.time_delta_event(DiaryUtil.str_to_datetime(next_event_date), time)
+        DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date))
         == 1
     )

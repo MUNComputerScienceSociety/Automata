@@ -17,7 +17,10 @@ from prometheus_async.aio.web import start_http_server
 
 from Plugin import AutomataPlugin
 
-from Globals import DISABLED_PLUGINS
+from Globals import (
+    DISABLED_PLUGINS,
+    ENABLED_PLUGINS,
+)
 
 IGNORED_LOGGERS = [
     "discord.client",
@@ -51,13 +54,13 @@ if not AUTOMATA_TOKEN:
 intents = nextcord.Intents.default()
 intents.members = os.getenv("AUTOMATA_MEMBER_INTENTS_ENABLED", "True") == "True"
 
-bot = commands.Bot(
-    "!",
-    description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.",
-    intents=intents,
-)
 
-bot = commands.Bot(command_prefix="!", help_command=None)
+bot = commands.Bot(
+    command_prefix="!",
+    help_command=None,
+    intents=intents,
+    description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.",
+)
 
 
 @bot.event
@@ -141,6 +144,7 @@ async def exec_code(ctx: commands.Context, code: str):
 
     await ctx.send(embed=embed)
 
+
 @bot.command()
 async def plugins(ctx: commands.Context):
     """Lists all enabled plugins."""
@@ -186,7 +190,7 @@ class CustomHelp(commands.DefaultHelpCommand):  # ( ͡° ͜ʖ ͡°)
         embed_command.colour = nextcord.Colour.green()
         channel = self.get_destination()
         await channel.send(embed=embed_command)
-        
+
     async def send_group_help(self, group):
         """Shows how to use each group of commands"""
         embed_group = nextcord.Embed(
@@ -209,7 +213,7 @@ class CustomHelp(commands.DefaultHelpCommand):  # ( ͡° ͜ʖ ͡°)
         embed_cog.colour = nextcord.Colour.green()
         channel = self.get_destination()
         await channel.send(embed=embed_cog)
-        
+
     async def send_error_message(self, error):
         "shows if command does not exist"
         embed_error = nextcord.Embed(title="Error", description=error)
@@ -231,12 +235,23 @@ loader = PluginLoader(
 )
 loader.load_manifests()
 
+num_of_disabled = 0
+
 for plugin in loader.get_all_plugins():
     manifest = plugin["manifest"]
-    if manifest["main_class"] not in DISABLED_PLUGINS:
-        loader.load_plugin(manifest, bot)
+    if len(ENABLED_PLUGINS) > 0:
+        if manifest["main_class"] in ENABLED_PLUGINS:
+            loader.load_plugin(manifest, bot)
+        else:
+            num_of_disabled += 1
     else:
-        logger.info(f"{manifest['name']} disabled.")
+        if manifest["main_class"] not in DISABLED_PLUGINS:
+            loader.load_plugin(manifest, bot)
+        else:
+            logger.info(f"{manifest['name']} disabled.")
+            num_of_disabled += 1
+
+logger.info(f"{num_of_disabled} plugins disabled.")
 
 for plugin in loader.get_all_plugins():
     if plugin["plugin"]:
