@@ -1,4 +1,3 @@
-import asyncio
 from dotenv import load_dotenv
 
 from Utils import CustomHelp
@@ -66,14 +65,21 @@ class Automata(commands.Bot):
 
     async def setup_hook(self) -> None:
         await self.enable_plugins()
-        primary_guild = bot.get_guild(PRIMARY_GUILD)
-        if primary_guild: 
-            await bot.tree.sync(guild=primary_guild)
+        await self.sync_app_commands()
 
     async def enable_plugins(self) -> None:
         for plugin in loader.get_all_plugins():
             if plugin["plugin"]:
                 await plugin["plugin"].enable()
+    
+    async def sync_app_commands(self):
+        try:
+            synced_app_commands = await self.tree.sync()
+            logger.info(f"Synced commands{[command.name for command in synced_app_commands]}")
+        except discord.Forbidden:
+            logger.error("Client doesn't have the correct permisson for App Commands.")
+        except Exception as err:
+            logger.error(f"An exception has occurred, {err}.")
 
 
 bot = Automata(

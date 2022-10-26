@@ -4,7 +4,10 @@ from Plugin import AutomataPlugin
 
 
 class PingFlags(commands.FlagConverter):
-    number_of_times: int = commands.flag(default=0, description='The number of Pong replies!')
+    number_of_times: int = commands.flag(
+        default=0, name="pings", description="The number of pings to send"
+    )
+
 
 class Ping(AutomataPlugin):
     """Pong"""
@@ -17,4 +20,3 @@ class Ping(AutomataPlugin):
             await ctx.send("Pong!")
         else:
             await ctx.send(f"Pong! x{flags.number_of_times}")
-
