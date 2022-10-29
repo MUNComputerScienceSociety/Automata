@@ -18,6 +18,7 @@ from discord.ext import commands
 from prometheus_async.aio.web import start_http_server
 
 from Plugin import AutomataPlugin
+from typing import Optional, Literal
 
 from Globals import (
     DISABLED_PLUGINS,
@@ -65,21 +66,11 @@ class Automata(commands.Bot):
 
     async def setup_hook(self) -> None:
         await self.enable_plugins()
-        await self.sync_app_commands()
 
     async def enable_plugins(self) -> None:
         for plugin in loader.get_all_plugins():
             if plugin["plugin"]:
                 await plugin["plugin"].enable()
-    
-    async def sync_app_commands(self):
-        try:
-            synced_app_commands = await self.tree.sync()
-            logger.info(f"Synced commands{[command.name for command in synced_app_commands]}")
-        except discord.Forbidden:
-            logger.error("Client doesn't have the correct permisson for App Commands.")
-        except Exception as err:
-            logger.error(f"An exception has occurred, {err}.")
 
 
 bot = Automata(
@@ -218,5 +209,52 @@ for plugin in loader.get_all_plugins():
             num_of_disabled += 1
 
 logger.info(f"{num_of_disabled} plugins disabled.")
+
+
+@bot.command()
+@commands.guild_only()
+@commands.is_owner()
+async def sync(
+    ctx: commands.Context,
+    guilds: commands.Greedy[discord.Object],
+    spec: Optional[Literal["~", "*", "^"]] = None,
+) -> None:
+    """Sync application commands to guild(s).
+    `~` - sync current guild application commands.
+    `*` - Copy all global application commands to current guild and sync.
+    `^` - Clear all application commands from current guild and sync.
+    `` - Sync all guilds application commands.
+    """
+    if not guilds:
+        if spec == "~":
+            # sync current guild
+            synced = await ctx.bot.tree.sync(guild=ctx.guild)
+        elif spec == "*":
+            # copies all global app commands to current guild and syncs
+            ctx.bot.tree.copy_global_to(guild=ctx.guild)
+            synced = await ctx.bot.tree.sync(guild=ctx.guild)
+        elif spec == "^":
+            # clears all commands from the current guild target and syncs (removes guild commands)
+            ctx.bot.tree.clear_commands(guild=ctx.guild)
+            await ctx.bot.tree.sync(guild=ctx.guild)
+            synced = []
+        else:
+            # global sync
+            synced = await ctx.bot.tree.sync()
+        await ctx.send(
+            f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}"
+        )
+        return
+    # syncs guilds with id 1 and 2
+    ret = 0
+    for guild in guilds:
+        try:
+            await ctx.bot.tree.sync(guild=guild)
+        except discord.HTTPException:
+            pass
+        else:
+            ret += 1
+    await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
+
 
 bot.run(AUTOMATA_TOKEN)
