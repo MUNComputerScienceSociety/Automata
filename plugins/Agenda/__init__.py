@@ -18,7 +18,7 @@ class Agenda(AutomataPlugin):
         items = self.agenda_items.find({})
 
         text = "% MUN Computer Science Society\n% Meeting Agenda\n"
-        text += f"% {datetime.now().strftime('%B%e, %Y')}\n"
+        text += f"% {datetime.now().strftime('%B %e, %Y')}\n"
 
         while await items.fetch_next:
             item = items.next_object()
