@@ -30,7 +30,7 @@ class Newsline(AutomataPlugin):
         self.posted_posts = mongo_client.automata.newsline_posts
         self.posted_posts.drop()
         self.posting = False
-    
+
     async def cog_load(self):
         self.check_for_new_posts.start()
 

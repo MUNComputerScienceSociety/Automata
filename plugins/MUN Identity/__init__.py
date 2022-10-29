@@ -3,8 +3,7 @@ from typing import Dict, List, Optional, Union
 
 import httpx
 import discord
-from Globals import (DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE,
-                     mongo_client)
+from Globals import DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE, mongo_client
 from discord.ext import commands
 from Plugin import AutomataPlugin
 
@@ -205,9 +204,7 @@ class MUNIdentity(AutomataPlugin):
         await ctx.reply(embed=embed)
 
     @staticmethod
-    async def get_confirmation(
-        ctx: commands.Context, message: discord.Message
-    ) -> bool:
+    async def get_confirmation(ctx: commands.Context, message: discord.Message) -> bool:
         """Get confirmation from user executing the command by reactions."""
         await message.add_reaction("✅")
         await message.add_reaction("❌")

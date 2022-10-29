@@ -27,7 +27,7 @@ class TodayAtMun(AutomataPlugin):
         self.diary_util = DiaryUtil(self.parse)
         self.posted_events = mongo_client.automata.mun_diary
         self.days_till_next_event = -1
-    
+
     def cog_load(self):
         self.check_for_new_event.start()
 
@@ -175,7 +175,7 @@ class TodayAtMun(AutomataPlugin):
         await mongo_client.automata.drop_collection("mun_diary")
         await mongo_client.automata.mun_diary.insert_one({"date": "init"})
         self.check_for_new_event.restart()
-    
+
     @diary.command("refresh")
     @commands.has_permissions(view_audit_log=True)
     async def refresh_diary(self, ctx):

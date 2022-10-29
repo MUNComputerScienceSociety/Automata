@@ -20,6 +20,7 @@ async def send_code_block_maybe_as_file(ctx, text):
     else:
         await ctx.send(f"```{text}```")
 
+
 class CustomHelp(commands.DefaultHelpCommand):  # ( ͡° ͜ʖ ͡°)
     """Custom help command"""
 
@@ -59,9 +60,7 @@ class CustomHelp(commands.DefaultHelpCommand):  # ( ͡° ͜ʖ ͡°)
 
     async def send_cog_help(self, cog):
         """Shows how to use each category"""
-        embed_cog = discord.Embed(
-            title=cog.qualified_name, description=cog.description
-        )
+        embed_cog = discord.Embed(title=cog.qualified_name, description=cog.description)
         comms = cog.get_commands()
         for c in comms:
             embed_cog.add_field(name=c, value=c.short_doc, inline=False)
