@@ -2,7 +2,6 @@ import asyncio
 import re
 from urllib.parse import urlencode
 from datetime import datetime
-from Bot import logger, loader
 
 import httpx
 import discord
@@ -32,7 +31,7 @@ class Newsline(AutomataPlugin):
         self.posted_posts.drop()
         self.posting = False
     
-    def cog_load(self):
+    async def cog_load(self):
         self.check_for_new_posts.start()
 
     def post_embed(self, post, post_detail):
@@ -72,10 +71,6 @@ class Newsline(AutomataPlugin):
     async def make_request_to_posts(self, page):
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"{NEWSLINE_API_POSTS}?{urlencode({'page': page})}")
-            if resp.status_code != httpx.codes.OK:
-                logger.warning(f"Error fetching newsline posts: {resp.status_code}")
-                loader.unload_plugin(self.manifest["main_class"])
-                return []
         return resp.json()
 
     async def fetch_posts(self):

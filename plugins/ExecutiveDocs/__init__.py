@@ -72,7 +72,7 @@ class ExecutiveDocs(AutomataPlugin):
         self.posted_documents = mongo_client.automata.executivedocs_posted_documents
 
     async def cog_load(self):
-        await self.check_for_new_docs.start()
+        self.check_for_new_docs.start()
 
     def cog_unload(self):
         self.check_for_new_docs.cancel()

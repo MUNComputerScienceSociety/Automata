@@ -223,7 +223,8 @@ async def sync(
     `~` - sync current guild application commands.
     `*` - Copy all global application commands to current guild and sync.
     `^` - Clear all application commands from current guild and sync.
-    `` - Sync all guilds application commands.
+    `` - Sync all guilds application commands globally.
+    guilds - Sync application commands to guild(s).
     """
     if not guilds:
         if spec == "~":
