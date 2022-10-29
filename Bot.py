@@ -213,7 +213,7 @@ logger.info(f"{num_of_disabled} plugins disabled.")
 
 @bot.command()
 @commands.guild_only()
-@commands.is_owner()
+@commands.has_permissions(view_audit_log=True)
 async def sync(
     ctx: commands.Context,
     guilds: commands.Greedy[discord.Object],
