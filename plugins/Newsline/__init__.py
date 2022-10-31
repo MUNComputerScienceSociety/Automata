@@ -33,7 +33,7 @@ class Newsline(AutomataPlugin):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.check_for_new_posts.start()
+        await self.check_for_new_posts.start()
 
     def post_embed(self, post, post_detail):
         desc = post_detail["text"]
