@@ -76,7 +76,7 @@ class ExecutiveDocs(AutomataPlugin):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.check_for_new_docs.start()
+        await self.check_for_new_docs.start()
 
     def cog_unload(self):
         self.check_for_new_docs.cancel()

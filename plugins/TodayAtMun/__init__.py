@@ -30,7 +30,7 @@ class TodayAtMun(AutomataPlugin):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.check_for_new_event.start()
+        await self.check_for_new_event.start()
 
     def cog_unload(self):
         self.check_for_new_event.cancel()
@@ -164,7 +164,7 @@ class TodayAtMun(AutomataPlugin):
             await self.update_event_msg(next_event_date)
         await asyncio.sleep(5.0)
 
-    @tasks.loop(hours=1.0)
+    @tasks.loop(minutes=30.0)
     async def check_for_new_event(self):
         await self.post_new_events()
 
