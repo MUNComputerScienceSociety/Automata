@@ -1,6 +1,6 @@
 from os import name
-from nextcord.ext import commands
-import nextcord
+from discord.ext import commands
+import discord
 import httpx
 from Plugin import AutomataPlugin
 from Globals import WEATHER_API_KEY
@@ -24,10 +24,10 @@ class Weather(AutomataPlugin):
 
         timezone = pytz.timezone("Canada/Newfoundland")
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title="St. John's Weather",
             description=weather_data["current"]["condition"]["text"],
-            colour=nextcord.Colour.blue(),
+            colour=discord.Colour.blue(),
             timestamp=datetime.now(timezone),
         )
 

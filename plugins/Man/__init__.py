@@ -2,7 +2,7 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 
-from nextcord.ext import commands
+from discord.ext import commands
 
 from Plugin import AutomataPlugin
 

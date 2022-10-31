@@ -1,5 +1,5 @@
-from nextcord.ext import commands
-import nextcord
+from discord.ext import commands
+import discord
 
 MAX = 9
 
@@ -17,7 +17,7 @@ class Poll(AutomataPlugin):
 
         options = []
         lis = [
-            nextcord.utils.escape_mentions(x.strip())
+            discord.utils.escape_mentions(x.strip())
             for x in arg.split(",")
             if len(x.strip()) > 0
         ]
@@ -30,7 +30,7 @@ class Poll(AutomataPlugin):
                 f"Max limit exceeded, please enter less than {MAX + 1} options"
             )
         else:
-            embed = nextcord.Embed(colour=nextcord.Colour.blue())
+            embed = discord.Embed(colour=discord.Colour.blue())
             output = ""
             for num, option in enumerate(options):
                 output += f"{num+1}) {option}\n"

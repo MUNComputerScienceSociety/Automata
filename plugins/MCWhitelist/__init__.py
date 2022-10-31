@@ -1,14 +1,9 @@
-import nextcord
-from nextcord.ext import commands
-
+import discord
+from discord.ext import commands
+from Globals import PRIMARY_GUILD, VERIFIED_ROLE, mongo_client
 from Plugin import AutomataPlugin
-from Globals import (
-    mongo_client,
-    PRIMARY_GUILD,
-    VERIFIED_ROLE,
-)
-from .mojang_api import MojangAPI
-from .whitelist_http_api import WhitelistHttpApi
+from plugins.MCWhitelist.mojang_api import MOJANG_API_BASE, MojangAPI
+from plugins.MCWhitelist.whitelist_http_api import WhitelistHttpApi
 
 
 class MCWhitelist(AutomataPlugin):
@@ -42,7 +37,7 @@ class MCWhitelist(AutomataPlugin):
         await self.whitelisted_accounts.delete_many({"discord_id": ctx.author.id})
 
     async def account_embed(self, whitelisted_account):
-        embed = nextcord.Embed()
+        embed = discord.Embed()
 
         profile = await self.mojang_api.profile_from_uuid(
             whitelisted_account["minecraft_uuid"]
@@ -54,7 +49,7 @@ class MCWhitelist(AutomataPlugin):
                 embed.set_image(url=skin_url)
 
         username = whitelisted_account["minecraft_username"]
-        embed.colour = nextcord.Colour.dark_green()
+        embed.colour = discord.Colour.dark_green()
         embed.add_field(name="Minecraft Username", value=username)
         return embed
 
@@ -136,7 +131,7 @@ class MCWhitelist(AutomataPlugin):
 
     @whitelist.command(name="disallow")
     @commands.has_permissions(view_audit_log=True)
-    async def whitelist_disallow(self, ctx: commands.Context, user: nextcord.Member):
+    async def whitelist_disallow(self, ctx: commands.Context, user: discord.Member):
         """Disallow users from adding themselves to the MUNCS Craft whitelist."""
         if await self.is_disallowed(user):
             await ctx.send("User already disallowed.")
@@ -153,7 +148,7 @@ class MCWhitelist(AutomataPlugin):
 
     @whitelist.command(name="allow")
     @commands.has_permissions(view_audit_log=True)
-    async def whitelist_allow(self, ctx: commands.Context, user: nextcord.Member):
+    async def whitelist_allow(self, ctx: commands.Context, user: discord.Member):
         """Allows users to add themselves to the MUNCS Craft whitelist, if previously disallowed."""
         if not await self.is_disallowed(user):
             await ctx.send("User already allowed.")

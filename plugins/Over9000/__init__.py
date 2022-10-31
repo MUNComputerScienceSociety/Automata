@@ -2,7 +2,7 @@
 from os import path
 from random import choice
 
-from nextcord.ext import commands
+from discord.ext import commands
 
 from Plugin import AutomataPlugin
 

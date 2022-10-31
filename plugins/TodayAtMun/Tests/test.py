@@ -30,8 +30,7 @@ class TestDateMethods(unittest.TestCase):
         )
         self.assertEqual(
             self.diary.delta_time(
-                datetime(2022, 10, 2, 22, 59),
-                datetime(2022, 10, 3, 23, 0)
+                datetime(2022, 10, 2, 22, 59), datetime(2022, 10, 3, 23, 0)
             ),
             1,
         )
@@ -128,23 +127,11 @@ def test_daily_time_delta():
 
     assert diary_util.find_event(time) == diary_key_list[0]
     next_event_date = diary_util.find_event(time)
-    assert (
-        DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date))
-        == 10
-    )
+    assert DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date)) == 10
     time = time + timedelta(days=1)
-    assert (
-        DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date))
-        == 9
-    )
+    assert DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date)) == 9
     time = time + timedelta(days=1)
-    assert (
-        DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date))
-        == 8
-    )
+    assert DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date)) == 8
     time = datetime(2021, 10, 31)
     next_event_date = diary_util.find_event(time)
-    assert (
-        DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date))
-        == 1
-    )
+    assert DiaryUtil.delta_time(time, DiaryUtil.str_to_datetime(next_event_date)) == 1

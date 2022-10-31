@@ -1,11 +1,11 @@
 import asyncio
 from random import choice
 
-import nextcord
+import discord
 import httpx
 import mechanicalsoup
 from bs4 import BeautifulSoup
-from nextcord.ext import commands, tasks
+from discord.ext import commands, tasks
 from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD, mongo_client
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
@@ -26,22 +26,24 @@ class TodayAtMun(AutomataPlugin):
         self.parse = TodayAtMun.parse_diary()
         self.diary_util = DiaryUtil(self.parse)
         self.posted_events = mongo_client.automata.mun_diary
-        self.check_for_new_event.start()
         self.days_till_next_event = -1
+
+    def cog_load(self):
+        self.check_for_new_event.start()
 
     @staticmethod
     def today_embed_template():
         """Provides initial embed attributes."""
-        embed = nextcord.Embed()
+        embed = discord.Embed()
         mun_colours = [MUN_COLOUR_RED, MUN_COLOUR_WHITE, MUN_COLOUR_GREY]
-        embed.colour = nextcord.Colour(choice(mun_colours))
+        embed.colour = discord.Colour(choice(mun_colours))
         embed.set_footer(
             text="TodayAtMun ● !help TodayAtMun",
             icon_url=MUN_CSS_LOGO,
         )
         return embed
 
-    def today_embed_next_template(self, next_event_date: str) -> nextcord.Embed:
+    def today_embed_next_template(self, next_event_date: str) -> discord.Embed:
         embed = self.today_embed_template()
         embed.set_author(
             name=f"⏳ ~{self.diary_util.delta_event_time(self.diary_util.str_to_datetime(next_event_date))} day(s)"
@@ -173,7 +175,7 @@ class TodayAtMun(AutomataPlugin):
         await mongo_client.automata.drop_collection("mun_diary")
         await mongo_client.automata.mun_diary.insert_one({"date": "init"})
         self.check_for_new_event.restart()
-    
+
     @diary.command("refresh")
     @commands.has_permissions(view_audit_log=True)
     async def refresh_diary(self, ctx):

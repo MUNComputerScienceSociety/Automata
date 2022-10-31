@@ -1,10 +1,10 @@
 import urllib.parse
 import asyncio
-from nextcord import http
-from nextcord.ext import commands
-import nextcord
+from discord import http
+from discord.ext import commands
+import discord
 import httpx
-from nextcord.threads import Thread
+from discord.threads import Thread
 from Globals import mongo_client
 from Plugin import AutomataPlugin
 from pymongo import collection

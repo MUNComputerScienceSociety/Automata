@@ -1,5 +1,5 @@
-from nextcord.ext import commands
-import nextcord
+from discord.ext import commands
+import discord
 import httpx
 from Plugin import AutomataPlugin
 
@@ -22,7 +22,7 @@ class FortuneCookie(AutomataPlugin):
         text = response.json()["fortune"]
         if len(text) > 1024:
             text = "I am too long"
-        embed = nextcord.Embed(colour=nextcord.Colour.blue())
+        embed = discord.Embed(colour=discord.Colour.blue())
         embed.add_field(name="Your Fortune Cookie 🥠", value=text)
         message = await ctx.send(embed=embed)
         await message.add_reaction("🥠")

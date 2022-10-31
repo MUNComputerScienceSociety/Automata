@@ -1,9 +1,8 @@
 import asyncio
 from datetime import datetime
-
 import httpx
-import nextcord
-from nextcord.ext import commands, tasks
+import discord
+from discord.ext import commands, tasks
 
 from Plugin import AutomataPlugin
 from Globals import (
@@ -18,8 +17,8 @@ CS_LOGO_COLOR_SQUARE_TRANSPARENT = (
     "https://www.cs.mun.ca/~csclub/assets/logos/color-square-trans.png"
 )
 DOC_TYPE_TO_COLOUR = {
-    "Minutes": nextcord.Colour.lighter_gray(),
-    "Agendas": nextcord.Colour.dark_gray(),
+    "Minutes": discord.Colour.lighter_gray(),
+    "Agendas": discord.Colour.dark_gray(),
 }
 
 
@@ -27,11 +26,11 @@ class ExecutiveDocs(AutomataPlugin):
     """Posts new executive documents"""
 
     def doc_embed(self, doc):
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title=f"Meeting {doc['type']} | {doc['time'].strftime('%A, %B %e, %Y')}",
             description=doc["url"],
             url=doc["url"],
-            colour=DOC_TYPE_TO_COLOUR.get(doc["type"], nextcord.Colour.dark_blue()),
+            colour=DOC_TYPE_TO_COLOUR.get(doc["type"], discord.Colour.dark_blue()),
             timestamp=doc["time"],
         )
         embed.set_footer(
@@ -72,7 +71,7 @@ class ExecutiveDocs(AutomataPlugin):
 
         self.posted_documents = mongo_client.automata.executivedocs_posted_documents
 
-        loop = asyncio.get_event_loop()
+    async def cog_load(self):
         self.check_for_new_docs.start()
 
     def cog_unload(self):

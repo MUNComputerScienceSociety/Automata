@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 import uuid
 
-from nextcord.ext import commands
+from discord.ext import commands
 
 from Plugin import AutomataPlugin
 from Globals import mongo_client
