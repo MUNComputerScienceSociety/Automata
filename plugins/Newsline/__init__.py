@@ -31,7 +31,7 @@ class Newsline(AutomataPlugin):
         self.posted_posts.drop()
         self.posting = False
 
-    async def cog_load(self):
+    def cog_load(self):
         self.check_for_new_posts.start()
 
     def post_embed(self, post, post_detail):
