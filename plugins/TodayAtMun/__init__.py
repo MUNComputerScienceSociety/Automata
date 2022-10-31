@@ -30,7 +30,7 @@ class TodayAtMun(AutomataPlugin):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        await self.check_for_new_event.start()
+        self.check_for_new_event.start()
 
     def cog_unload(self):
         self.check_for_new_event.cancel()
