@@ -40,9 +40,12 @@ class ExecutiveDocs(AutomataPlugin):
 
     async def post_new_doc(self, doc):
         embed = self.doc_embed(doc)
-        await self.bot.get_guild(PRIMARY_GUILD).get_channel(
-            EXECUTIVE_DOCS_CHANNEL
-        ).send(embed=embed)
+        guild = self.bot.get_guild(PRIMARY_GUILD)
+        channel = guild.get_channel(EXECUTIVE_DOCS_CHANNEL)
+        if channel is None:
+            self.cog_unload()
+            return
+        await channel.send(embed=embed)
         await self.posted_documents.insert_one(doc)
 
     async def fetch_docs_json(self):
@@ -71,7 +74,8 @@ class ExecutiveDocs(AutomataPlugin):
 
         self.posted_documents = mongo_client.automata.executivedocs_posted_documents
 
-    def cog_load(self):
+    @commands.Cog.listener()
+    async def on_ready(self):
         self.check_for_new_docs.start()
 
     def cog_unload(self):

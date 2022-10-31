@@ -28,8 +28,12 @@ class TodayAtMun(AutomataPlugin):
         self.posted_events = mongo_client.automata.mun_diary
         self.days_till_next_event = -1
 
-    def cog_load(self):
-        self.check_for_new_event.start()
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.check_for_new_event.start()
+
+    def cog_unload(self):
+        self.check_for_new_event.cancel()
 
     @staticmethod
     def today_embed_template():
