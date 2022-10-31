@@ -90,20 +90,20 @@ class Generator(AutomataPlugin):
         await self.gen3x3_sessions.insert_one(
             {"id": id, "thread": thread.id, "alignments": alignments}
         )
-        await thread.trigger_typing()
+        await thread.typing()
         await asyncio.sleep(5)
         await thread.send(
             "Please use the gen3x3set command followed by one of the following and a link to an image to set the alignments: \nlg, ng, cg, ln, tn, cn, le, ne, ce"
         )
-        await thread.trigger_typing()
+        await thread.typing()
         await asyncio.sleep(1)
         await thread.send('For example "!gen3x3set lg https://i.imgur.com/V73crmb.jpg"')
-        await thread.trigger_typing()
+        await thread.typing()
         await asyncio.sleep(3)
         await thread.send(
             "Once all alignments have been set use the gen3x3publish command to publish the image beck to the main channel."
         )
-        await thread.trigger_typing()
+        await thread.typing()
         await asyncio.sleep(1)
         await thread.send(
             "You can overwrite any of the alignments at any point before it's published"

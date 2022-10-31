@@ -15,9 +15,9 @@ class Cards(AutomataPlugin):
 
     @commands.group()
     async def cards(self, ctx: commands.Context):
-        await ctx.trigger_typing()
-        if ctx.invoked_subcommand is None:
-            await ctx.reply(content="Invalid command, check !help cards")
+        async with ctx.typing():
+            if ctx.invoked_subcommand is None:
+                await ctx.reply(content="Invalid command, check !help cards")
 
     @cards.command(name="random", aliases=["r"])
     async def cards_random(self, ctx: commands.Context):
