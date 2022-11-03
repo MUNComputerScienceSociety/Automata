@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
-from Globals import mongo_client
 from datetime import datetime
 import asyncio
 
@@ -12,10 +11,8 @@ url_parts = [
 
 
 class RMPScraper:
-    def __init__(self, cache_lifetime):
-        # Get a reference to the cache
-        self.rmp_cache = mongo_client.automata.rmp_scraper_cache
-        # Set up the cache data lifetimes
+    def __init__(self, cache_lifetime, cache):
+        self.rmp_cache = cache
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.ensure_collection_expiry(cache_lifetime))
 

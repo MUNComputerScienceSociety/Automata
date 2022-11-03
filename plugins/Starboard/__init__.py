@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client, STARBOARD_CHANNEL_ID, STARBOARD_THRESHOLD
+from Globals import STARBOARD_CHANNEL_ID, STARBOARD_THRESHOLD
 
 
 class Starboard(AutomataPlugin):
@@ -15,7 +15,8 @@ class Starboard(AutomataPlugin):
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
 
-        self.starboard = mongo_client.automata.starboard_starboard
+    async def cog_load(self):
+        self.starboard = self.bot.database.automata.starboard_starboard
 
     async def get_entry(
         self,

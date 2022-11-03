@@ -5,7 +5,6 @@ from datetime import datetime
 
 import httpx
 
-from Globals import mongo_client
 
 MOJANG_API_BASE = "https://api.mojang.com"
 MOJANG_SESSIONSERVER_BASE = "https://sessionserver.mojang.com"
@@ -17,8 +16,8 @@ class MojangAPI:
     username_base = f"{MOJANG_API_BASE}/users/profiles/minecraft"
     profile_base = f"{MOJANG_SESSIONSERVER_BASE}/session/minecraft/profile"
 
-    def __init__(self):
-        self.profile_cache = mongo_client.automata.mojangapi_profile_cache
+    def __init__(self, profile_cache):
+        self.profile_cache = profile_cache
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.ensure_collection_expiry())

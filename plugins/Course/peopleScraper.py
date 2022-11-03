@@ -2,7 +2,6 @@ import asyncio
 import httpx
 from bs4 import BeautifulSoup
 import json
-from Globals import mongo_client
 from datetime import datetime
 
 # The URL for MUNs listing of CS faculty
@@ -10,10 +9,8 @@ url = "https://www.mun.ca/appinclude/bedrock/public/api/v1/ua/people.php?type=ad
 
 
 class PeopleScraper:
-    def __init__(self, cache_lifetime):
-        # Get a reference to the cache
-        self.people_cache = mongo_client.automata.people_scraper_cache
-
+    def __init__(self, cache_lifetime, cache):
+        self.people_cache = cache
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self.setup_cache(cache_lifetime))
 

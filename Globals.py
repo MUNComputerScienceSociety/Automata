@@ -41,7 +41,5 @@ AOC_LEADERBOARD_CHANNEL = int(
     os.getenv("AUTOMATA_ANNOUNCEMENT_CHANNEL", 909857762064871444)
 )
 
-mongo_client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_ADDRESS)
-
 if os.getenv("SENTRY_DSN", None):
     sentry_sdk.init(os.environ["SENTRY_DSN"])

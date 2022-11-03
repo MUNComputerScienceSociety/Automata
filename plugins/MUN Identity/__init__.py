@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Union
 
 import httpx
 import discord
-from Globals import DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE, mongo_client
+from Globals import DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE
 from discord.ext import commands
 from Plugin import AutomataPlugin
 
@@ -13,8 +13,9 @@ class MUNIdentity(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-
-        self.identities = mongo_client.automata.munidentity_identities
+    
+    async def cog_load(self):
+        self.identities = self.bot.database.automata.munidentity_identities
 
     async def get_identity(
         self, *, member: Union[discord.User, int] = None, mun_username: str = None

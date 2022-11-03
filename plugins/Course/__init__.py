@@ -15,11 +15,13 @@ class Course(AutomataPlugin):
 
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
-        # Initialize all of the web scrapers
-        self.calendar_scraper = CalendarScraper(604800)  # 1 week cache lifetime
-        self.people_scraper = PeopleScraper(604800)  # 1 week cache lifetime
-        self.rmp_scraper = RMPScraper(604800)  # 1 week cache lifetime
-        self.banner_scraper = BannerScraper(604800)  # 1 week cache lifetime
+
+    async def cog_load(self):
+        self.banner_cache = self.bot.database.automata.banner_scraper_cache
+        self.calendar_scraper = CalendarScraper(604800, self.banner_cache)  # 1 week cache lifetime
+        self.people_scraper = PeopleScraper(604800, self.banner_cache)  # 1 week cache lifetime
+        self.rmp_scraper = RMPScraper(604800, self.banner_cache)  # 1 week cache lifetime
+        self.banner_scraper = BannerScraper(604800, self.banner_cache)  # 1 week cache lifetime
 
     @commands.command()
     async def course(self, ctx: commands.Context, course_ID):
