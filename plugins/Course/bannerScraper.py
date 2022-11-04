@@ -23,8 +23,6 @@ class BannerScraper:
     def __init__(self, cache_lifetime, cache):
         # Get a reference to the cache
         self.banner_cache = cache
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.setup_cache(cache_lifetime))
 
     # Sets up the cache; deletes whats in it and ensures they expire within the given lifetime
     async def setup_cache(self, lifetime):

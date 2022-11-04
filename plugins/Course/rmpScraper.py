@@ -13,8 +13,6 @@ url_parts = [
 class RMPScraper:
     def __init__(self, cache_lifetime, cache):
         self.rmp_cache = cache
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.ensure_collection_expiry(cache_lifetime))
 
     # Set up the cache data lifetimes
     async def ensure_collection_expiry(self, lifetime):

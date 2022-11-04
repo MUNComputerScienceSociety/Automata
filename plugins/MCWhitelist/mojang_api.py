@@ -19,9 +19,6 @@ class MojangAPI:
     def __init__(self, profile_cache):
         self.profile_cache = profile_cache
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.ensure_collection_expiry())
-
     async def ensure_collection_expiry(self):
         await self.profile_cache.create_index(
             "datetime", expireAfterSeconds=900  # 15 minutes

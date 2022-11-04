@@ -27,10 +27,7 @@ class Generator(AutomataPlugin):
         self.gen3x3_session_counter: collection.Collection = (
             self.bot.database.automata.gen3x3_session_counter
         )
-        loop = asyncio.get_event_loop()
-        document_count = loop.run_until_complete(
-            self.gen3x3_session_counter.count_documents({})
-        )
+        document_count = await self.gen3x3_session_counter.count_documents({})
         if document_count == 0:
             self.gen3x3_session_counter.insert_one({"counter": 0})
 
