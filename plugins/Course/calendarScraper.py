@@ -2,19 +2,14 @@ import asyncio
 from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
-from Globals import mongo_client
 
 # The URL for MUNs listing of CS courses
 calendar_url = "https://www.mun.ca/regoff/calendar/sectionNo=SCI-1023"
 
 
 class CalendarScraper:
-    def __init__(self, cache_lifetime):
-        # Get a reference to the cache
-        self.calendar_cache = mongo_client.automata.calendar_scraper_cache
-
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.setup_cache(cache_lifetime))
+    def __init__(self, cache_lifetime, cache):
+        self.calendar_cache = cache
 
     # Sets up the cache; deletes whats in it and ensures they expire within the given lifetime
     async def setup_cache(self, lifetime):

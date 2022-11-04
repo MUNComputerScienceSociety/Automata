@@ -2,7 +2,6 @@ import httpx
 from bs4 import BeautifulSoup
 import asyncio
 from datetime import datetime
-from Globals import mongo_client
 
 # The stuff between these lines was taken from https://github.com/jackharrhy/muntrunk/blob/master/muntrunk/scrape.py
 # Full credit to Jack for this stuff
@@ -21,12 +20,9 @@ headers = {
 
 
 class BannerScraper:
-    def __init__(self, cache_lifetime):
+    def __init__(self, cache_lifetime, cache):
         # Get a reference to the cache
-        self.banner_cache = mongo_client.automata.banner_scraper_cache
-
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.setup_cache(cache_lifetime))
+        self.banner_cache = cache
 
     # Sets up the cache; deletes whats in it and ensures they expire within the given lifetime
     async def setup_cache(self, lifetime):

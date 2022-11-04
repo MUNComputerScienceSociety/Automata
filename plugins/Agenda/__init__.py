@@ -5,7 +5,6 @@ import uuid
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-from Globals import mongo_client
 from Utils import send_code_block_maybe_as_file
 
 logger = logging.getLogger("Agenda")
@@ -34,8 +33,9 @@ class Agenda(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-
-        self.agenda_items = mongo_client.automata.agenda_items
+    
+    async def cog_load(self):
+        self.agenda_items = self.bot.database.automata.agenda_items
 
     @commands.group()
     async def agenda(self, ctx):
