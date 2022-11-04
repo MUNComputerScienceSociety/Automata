@@ -72,7 +72,7 @@ class ExecutiveDocs(AutomataPlugin):
         super().__init__(manifest, bot)
     
     async def cog_load(self):
-        self.posted_documents = self.bot.database.automata.executive_docs_posted_documents
+        self.posted_documents = self.bot.database.automata.executivedocs_posted_documents
         self.check_for_new_docs.start()
 
     def cog_unload(self):
