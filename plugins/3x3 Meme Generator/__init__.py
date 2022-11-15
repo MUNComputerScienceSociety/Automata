@@ -5,7 +5,6 @@ from discord.ext import commands
 import discord
 import httpx
 from discord.threads import Thread
-from Globals import mongo_client
 from Plugin import AutomataPlugin
 from pymongo import collection
 
@@ -20,16 +19,15 @@ class Generator(AutomataPlugin):
 
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
+    
+    async def cog_load(self):
         self.gen3x3_sessions: collection.Collection = (
-            mongo_client.automata.gen3x3_sessions
+            self.bot.database.automata.gen3x3_sessions
         )
         self.gen3x3_session_counter: collection.Collection = (
-            mongo_client.automata.gen3x3_session_counter
+            self.bot.database.automata.gen3x3_session_counter
         )
-        loop = asyncio.get_event_loop()
-        document_count = loop.run_until_complete(
-            self.gen3x3_session_counter.count_documents({})
-        )
+        document_count = await self.gen3x3_session_counter.count_documents({})
         if document_count == 0:
             self.gen3x3_session_counter.insert_one({"counter": 0})
 

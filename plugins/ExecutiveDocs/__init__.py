@@ -6,7 +6,6 @@ from discord.ext import commands, tasks
 
 from Plugin import AutomataPlugin
 from Globals import (
-    mongo_client,
     PRIMARY_GUILD,
     EXECUTIVE_DOCS_CHANNEL,
 )
@@ -71,12 +70,10 @@ class ExecutiveDocs(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-
-        self.posted_documents = mongo_client.automata.executivedocs_posted_documents
-
-    @commands.Cog.listener()
-    async def on_ready(self):
-        await self.check_for_new_docs.start()
+    
+    async def cog_load(self):
+        self.posted_documents = self.bot.database.automata.executivedocs_posted_documents
+        self.check_for_new_docs.start()
 
     def cog_unload(self):
         self.check_for_new_docs.cancel()

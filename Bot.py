@@ -1,4 +1,6 @@
+import asyncio
 from dotenv import load_dotenv
+import motor.motor_asyncio
 
 from Utils import CustomHelp
 
@@ -23,7 +25,7 @@ from typing import Optional, Literal
 from Globals import (
     DISABLED_PLUGINS,
     ENABLED_PLUGINS,
-    PRIMARY_GUILD,
+    MONGO_ADDRESS,
 )
 
 IGNORED_LOGGERS = [
@@ -65,7 +67,8 @@ class Automata(commands.Bot):
         super().__init__(*args, intents=intents, **kwargs)
 
     async def setup_hook(self) -> None:
-        await self.enable_plugins()
+        self.database = motor.motor_asyncio.AsyncIOMotorClient(MONGO_ADDRESS)
+        self.loop.create_task(self.enable_plugins())
 
     async def enable_plugins(self) -> None:
         for plugin in loader.get_all_plugins():
@@ -256,6 +259,5 @@ async def sync(
         else:
             ret += 1
     await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
-
 
 bot.run(AUTOMATA_TOKEN)

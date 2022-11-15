@@ -6,7 +6,7 @@ import httpx
 import mechanicalsoup
 from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
-from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD, mongo_client
+from Globals import DIARY_DAILY_CHANNEL, GENERAL_CHANNEL, PRIMARY_GUILD
 from Plugin import AutomataPlugin
 from plugins.TodayAtMun.DiaryUtil import DiaryUtil
 
@@ -25,12 +25,11 @@ class TodayAtMun(AutomataPlugin):
         super().__init__(manifest, bot)
         self.parse = TodayAtMun.parse_diary()
         self.diary_util = DiaryUtil(self.parse)
-        self.posted_events = mongo_client.automata.mun_diary
         self.days_till_next_event = -1
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        await self.check_for_new_event.start()
+    async def cog_load(self):
+        self.posted_events = self.bot.database.automata.mun_diary
+        self.check_for_new_event.start()
 
     def cog_unload(self):
         self.check_for_new_event.cancel()
@@ -176,8 +175,8 @@ class TodayAtMun(AutomataPlugin):
     @commands.has_permissions(view_audit_log=True)
     async def reset_recurrent_events(self, ctx):
         """Executive Use Only: Resets automated event posting."""
-        await mongo_client.automata.drop_collection("mun_diary")
-        await mongo_client.automata.mun_diary.insert_one({"date": "init"})
+        await self.bot.database.automata.drop_collection("mun_diary")
+        await self.bot.database.automata.mun_diary.insert_one({"date": "init"})
         self.check_for_new_event.restart()
 
     @diary.command("refresh")

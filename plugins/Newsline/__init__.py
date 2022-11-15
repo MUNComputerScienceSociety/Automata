@@ -9,7 +9,6 @@ from discord.ext import commands, tasks
 
 from Plugin import AutomataPlugin
 from Globals import (
-    mongo_client,
     PRIMARY_GUILD,
     NEWSLINE_CHANNEL,
 )
@@ -26,14 +25,12 @@ class Newsline(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-
-        self.posted_posts = mongo_client.automata.newsline_posts
-        self.posted_posts.drop()
         self.posting = False
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        await self.check_for_new_posts.start()
+    async def cog_load(self):
+        self.posted_posts = self.bot.database.automata.newsline_posts
+        self.posted_posts.drop()
+        self.check_for_new_posts.start()
 
     def post_embed(self, post, post_detail):
         desc = post_detail["text"]

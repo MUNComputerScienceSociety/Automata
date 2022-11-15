@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from Globals import PRIMARY_GUILD, VERIFIED_ROLE, mongo_client
+from Globals import PRIMARY_GUILD, VERIFIED_ROLE
 from Plugin import AutomataPlugin
 from plugins.MCWhitelist.mojang_api import MOJANG_API_BASE, MojangAPI
 from plugins.MCWhitelist.whitelist_http_api import WhitelistHttpApi
@@ -11,13 +11,15 @@ class MCWhitelist(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-
-        self.whitelisted_accounts = (
-            mongo_client.automata.mcwhitelist_whitelisted_accounts
-        )
-        self.disallowed_members = mongo_client.automata.mcwhitelist_disallowed_members
-        self.mojang_api = MojangAPI()
         self.whitelist_http_api = WhitelistHttpApi()
+    
+    async def cog_load(self):
+        self.whitelisted_accounts = (
+            self.bot.database.automata.mcwhitelist_whitelisted_accounts
+        )
+        self.disallowed_members = self.bot.database.automata.mcwhitelist_disallowed_members
+        self.mojang_api = MojangAPI(self.bot.database.automata.mojangapi_profile_cache)
+        await self.mojang_api.ensure_collection_expiry()
 
     async def get_whitelisted_account(self, member):
         query = {"discord_id": member.id}
