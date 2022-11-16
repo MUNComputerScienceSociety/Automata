@@ -44,3 +44,5 @@ class Chart(AutomataPlugin):
         picture = discord.File(buffer, "plot.png")
 
         await ctx.send(file=picture)
+        buffer.close()
+
