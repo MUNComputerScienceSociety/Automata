@@ -45,3 +45,4 @@ class Chart(AutomataPlugin):
 
         await ctx.send(file=picture)
         buffer.close()
+
