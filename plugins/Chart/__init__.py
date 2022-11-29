@@ -6,6 +6,9 @@ from typing import List
 import requests
 import datetime
 
+# ==== UTIL FUNCTIONS =====
+# TODO: Write unit tests
+
 def parseArguments(args: str) -> List[str]:
     """ Takes the arguments from barplot function 
         And converts it to a list of string numbers. """
@@ -19,6 +22,22 @@ def parseArguments(args: str) -> List[str]:
     # Temp to ensure that all parameters are numbers
     temp = list(map(float, temp))
     return list(map(str, temp))
+
+def getErrorEmbed(title="Error Title", message="Error Message") -> discord.Embed:
+    """
+    Generate an embed for error messages
+    """
+    emb = discord.Embed(
+        title=message,
+        timestamp=datetime.datetime.now(),
+        colour = discord.Colour(0xEF440E)
+    )
+    emb.set_author(
+        name=title,
+        icon_url="https://i.imgur.com/UjdPxZw.png" # Potentially is not the safest. TODO: Find alternative solution
+    )
+
+    return emb
 
 class Chart(AutomataPlugin):
     """ A discord plugin for some chart related commands """
@@ -49,21 +68,10 @@ class Chart(AutomataPlugin):
 
             else:
                 # Todo: Error
-                pass
+                await ctx.send(embed=getErrorEmbed(title="API Error", message="An external API error occured."))
         
         except Exception:
             # Todo: Couldn't parse arguments
-            emb = discord.Embed(
-                title="Please enter numeric parameters.",
-                timestamp = datetime.datetime.now(),
-                colour = discord.Colour(0xEF440E)
-            )
-
-            emb.set_author(
-                name="Invalid Usage",
-                icon_url="https://i.imgur.com/UjdPxZw.png"
-            )
-
-            await ctx.send(embed=emb)
+            await ctx.send(embed=getErrorEmbed(title="Invalid Usage", message="Please enter numeric parameters."))
         
 
