@@ -1,9 +1,9 @@
 from discord.ext import commands
 from Plugin import AutomataPlugin
 import discord
-import matplotlib.pyplot as plt
 import io 
 from typing import List
+import requests
 
 def parseArguments(args: str) -> List[float]:
     """ Takes the arguments from barplot function 
@@ -22,27 +22,29 @@ class Chart(AutomataPlugin):
 
     @commands.command()
     async def barplot(self, ctx: commands.Context, *, args: str):
-        """ Plots a bar chart """
+        """ 
+        Plots a bar chart 
+        Fetch the barplot from an external API instead of using matplotlib internally
+        """
+        ENDPOINT = "https://funapi.onrender.com/api/barplot/"
         
-        y: List[float] = parseArguments(args)
-        x: List[int] = [i+1 for i in range(len(y))]
+        # Try parsing the data
+        try:
+            y: List[float] = parseArguments(args)
+            y_str: List[str] = list(map(str, y))
 
-        # Plot
-        plt.bar(x, y, label="Bars visualized")
-        plt.legend(loc="upper right")
+            # Fetch request
+            resp = requests.get(f'{ENDPOINT}?data={",".join(y_str)}')
+
+            # Create io buffer and image file
+            buffer = io.BytesIO(resp.content)
+            image = discord.File(buffer, "plot.png")
+
+            await ctx.send(file=image)
+            buffer.close()
         
-        # Get figure and save and load it in bytes
-        fig = plt.gcf()
-        buffer = io.BytesIO()
-        fig.savefig(buffer, format="png")
-        buffer.seek(0)
+        except Exception:
+            # Todo: Couldn't parse arguments
+            pass
         
-        # Close and clear plt data
-        fig.clear()
-        plt.close()
-
-        picture = discord.File(buffer, "plot.png")
-
-        await ctx.send(file=picture)
-        buffer.close()
 
