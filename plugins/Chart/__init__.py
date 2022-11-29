@@ -74,4 +74,3 @@ class Chart(AutomataPlugin):
             # Todo: Couldn't parse arguments
             await ctx.send(embed=getErrorEmbed(title="Invalid Usage", message="Please enter numeric parameters."))
         
-
