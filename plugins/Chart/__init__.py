@@ -36,12 +36,18 @@ class Chart(AutomataPlugin):
             # Fetch request
             resp = requests.get(f'{ENDPOINT}?data={",".join(y_str)}')
 
-            # Create io buffer and image file
-            buffer = io.BytesIO(resp.content)
-            image = discord.File(buffer, "plot.png")
+            # Check if the the response is an actual image
+            if resp.status_code == 200 and resp.headers["Content-Type"] == "image/png":
+                # Create io buffer and image file
+                buffer = io.BytesIO(resp.content)
+                image = discord.File(buffer, "plot.png")
 
-            await ctx.send(file=image)
-            buffer.close()
+                await ctx.send(file=image)
+                buffer.close()
+
+            else:
+                # Todo: Error
+                pass
         
         except Exception:
             # Todo: Couldn't parse arguments
