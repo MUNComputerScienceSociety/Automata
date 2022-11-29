@@ -4,10 +4,11 @@ import discord
 import io 
 from typing import List
 import requests
+import datetime
 
-def parseArguments(args: str) -> List[float]:
+def parseArguments(args: str) -> List[str]:
     """ Takes the arguments from barplot function 
-        And converts it to a list of usable numbers. """
+        And converts it to a list of string numbers. """
     
     if "," in args:
         temp = args.strip().split(",")
@@ -15,7 +16,9 @@ def parseArguments(args: str) -> List[float]:
     else:
         temp =  args.strip().split()
     
-    return list(map(float, temp))
+    # Temp to ensure that all parameters are numbers
+    temp = list(map(float, temp))
+    return list(map(str, temp))
 
 class Chart(AutomataPlugin):
     """ A discord plugin for some chart related commands """
@@ -31,10 +34,9 @@ class Chart(AutomataPlugin):
         # Try parsing the data
         try:
             y: List[float] = parseArguments(args)
-            y_str: List[str] = list(map(str, y))
 
             # Fetch request
-            resp = requests.get(f'{ENDPOINT}?data={",".join(y_str)}')
+            resp = requests.get(f'{ENDPOINT}?data={",".join(y)}')
 
             # Check if the the response is an actual image
             if resp.status_code == 200 and resp.headers["Content-Type"] == "image/png":
@@ -51,6 +53,17 @@ class Chart(AutomataPlugin):
         
         except Exception:
             # Todo: Couldn't parse arguments
-            pass
+            emb = discord.Embed(
+                title="Please enter numeric parameters.",
+                timestamp = datetime.datetime.now(),
+                colour = discord.Colour(0xEF440E)
+            )
+
+            emb.set_author(
+                name="Invalid Usage",
+                icon_url="https://i.imgur.com/UjdPxZw.png"
+            )
+
+            await ctx.send(embed=emb)
         
 
