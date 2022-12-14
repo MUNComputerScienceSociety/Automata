@@ -86,7 +86,7 @@ class Starboard(AutomataPlugin):
         urls = []
 
         for a in message.attachments:
-            if "image" in a.content_type and embed.image != discord.Embed.Empty:
+            if "image" in a.content_type and embed.image != None:
                 embed.set_image(url=a.url)
             else:
                 urls.append(a.url)
