@@ -19,7 +19,7 @@ httpcore==0.15.0
 httpx==0.23.0
 idna==3.3
 Jigsaw==3.2.1
-joblib==1.1.1
+joblib==1.2.0
 kiwisolver==1.4.4
 lxml==4.9.0
 matplotlib==3.6.2
