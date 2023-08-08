@@ -1,6 +1,6 @@
 # **Automata**
 
-![Deploy to Docker Hub](https://github.com/MUNComputerScienceSociety/Automata/workflows/Deploy%20to%20Docker%20Hub/badge.svg)
+![Deploy to GHCR](https://github.com/MUNComputerScienceSociety/Automata/workflows/Deploy%20to%20GHCR/badge.svg)
 [![Code scanning - action](https://github.com/MUNComputerScienceSociety/Automata/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MUNComputerScienceSociety/Automata/actions/workflows/codeql-analysis.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
