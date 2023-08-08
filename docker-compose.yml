@@ -2,7 +2,7 @@ version: '3'
 
 services:
   automata:
-    image: muncomputersciencesociety/automata
+    image: ghcr.io/muncomputersciencesociety/automata
     restart: always
     volumes:
       - ./mounted_plugins:/app/mounted_plugins
