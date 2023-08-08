@@ -10,15 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v2
+    - name: Push to GitHub Packages
+      uses: docker/build-push-action@v1
       with:
-        registry: ghcr.io
-        username: muncomputersciencesociety
+        username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build image and push to registry
-      uses: docker/build-push-action@v4
-      with:
-        push: true
-        tags: ghcr.io/muncomputersciencesociety/automata:latest
-
+        registry: ghcr.io
+        repository: muncomputersciencesociety/automata
+        tags: latest
