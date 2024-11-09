@@ -2,12 +2,12 @@ import discord
 import httpx
 from discord.ext import commands
 
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 API_BASE = "http://yerkee.com/api"
 
 
-class FortuneCookie(commands.Cog):
+class FortuneCookie(Plugin):
     """A fortune cookie"""
 
     @staticmethod

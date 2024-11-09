@@ -3,10 +3,10 @@ import re
 import httpx
 from discord.ext import commands
 
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 
-class InstantAnswer(commands.Cog):
+class InstantAnswer(Plugin):
     """Wrapper for Instant Answer API from DuckDuckGo"""
 
     @commands.command()

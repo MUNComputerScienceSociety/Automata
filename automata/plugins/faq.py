@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 # Colors
 COLOR_SCIENCE = 0x98FB98
@@ -13,7 +13,7 @@ SCIENCE = ("BSC", "B.SC", "SCIENCES", "SCIENCE")
 ARTS = ("BA", "B.A", "ART", "ARTS")
 
 
-class FAQ(commands.Cog):
+class FAQ(Plugin):
     """Commands to answer some Frequently Asked Questions"""
 
     async def create_embed_science(self) -> discord.Embed:

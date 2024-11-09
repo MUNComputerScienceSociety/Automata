@@ -6,9 +6,10 @@ from discord.ext import commands
 
 from automata.config import config
 from automata.mongo import mongo
+from automata.utils import Plugin
 
 
-class Starboard(commands.Cog):
+class Starboard(Plugin):
     """React with ⭐'s on a message to add a message to the starboard."""
 
     async def cog_load(self):

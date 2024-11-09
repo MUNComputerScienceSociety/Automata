@@ -4,16 +4,16 @@ import requests
 from bs4 import BeautifulSoup
 from discord.ext import commands
 
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 
-class Man(commands.Cog):
+class Man(Plugin):
     """Linux man command via man7.org"""
 
     cached = {}
 
     def __init__(self, bot: commands.Bot):
-        super().__init__()
+        super().__init__(bot)
         pages = []
         for i in range(9):
             r = requests.get(

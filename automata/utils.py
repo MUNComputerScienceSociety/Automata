@@ -7,6 +7,13 @@ from discord.ext import commands
 type CommandContext = commands.Context[commands.Bot]
 
 
+class Plugin(commands.Cog):
+    bot: commands.Bot
+
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
+
 async def send_code_block_maybe_as_file(ctx: CommandContext, text: str):
     """
     Sends a code block to the current context.

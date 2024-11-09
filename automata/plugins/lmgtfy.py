@@ -2,10 +2,10 @@ import urllib.parse
 
 from discord.ext import commands
 
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 
-class LMGTFY(commands.Cog):
+class LMGTFY(Plugin):
     """Create a LMGTFY link, for people who should have google'd first"""
 
     @commands.command()

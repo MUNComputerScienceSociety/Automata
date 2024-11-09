@@ -1,6 +1,7 @@
 from discord.ext import commands
 
 from automata.config import config
+from automata.utils import Plugin
 
 from .agenda import Agenda
 from .binary import Binary
@@ -14,7 +15,7 @@ from .man import Man
 from .number_facts import NumberFacts
 from .starboard import Starboard
 
-all_plugins: list[type[commands.Cog]] = [
+all_plugins: list[type[Plugin]] = [
     Agenda,
     Binary,
     Brainf,

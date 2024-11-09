@@ -4,10 +4,11 @@ from typing import Any
 
 import discord
 import httpx
-from discord.ext import commands, tasks
+from discord.ext import tasks
 
 from automata.config import config
 from automata.mongo import mongo
+from automata.utils import Plugin
 
 EXECUTIVE_DOCS_BASE_URI = "https://www.cs.mun.ca/~csclub/executive-documents"
 EXECUTIVE_DOCS_JSON_URI = f"{EXECUTIVE_DOCS_BASE_URI}/docs.json"
@@ -22,11 +23,8 @@ DOC_TYPE_TO_COLOUR = {
 type Doc = Any
 
 
-class ExecutiveDocs(commands.Cog):
+class ExecutiveDocs(Plugin):
     """Posts new executive documents"""
-
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
 
     def doc_embed(self, doc: Doc) -> discord.Embed:
         embed = discord.Embed(

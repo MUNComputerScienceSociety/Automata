@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 pointer, data, output = None, None, None
 
@@ -41,7 +41,7 @@ def execute_loop(source):
         pass
 
 
-class Brainf(commands.Cog):
+class Brainf(Plugin):
     """Brainf*ck"""
 
     @commands.command()

@@ -5,12 +5,12 @@ from datetime import datetime
 from discord.ext import commands
 
 from automata.mongo import mongo
-from automata.utils import CommandContext, send_code_block_maybe_as_file
+from automata.utils import CommandContext, Plugin, send_code_block_maybe_as_file
 
 logger = logging.getLogger("Agenda")
 
 
-class Agenda(commands.Cog):
+class Agenda(Plugin):
     """Handles tracking agenda items, and exporting them as markdown"""
 
     async def send_agenda_text(self, ctx: CommandContext, variant: str | None):

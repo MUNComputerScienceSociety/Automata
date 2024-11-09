@@ -7,14 +7,11 @@ from discord.ext import commands
 
 from automata.config import config
 from automata.mongo import mongo
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 
-class MUNIdentity(commands.Cog):
+class MUNIdentity(Plugin):
     """Provides identity validation and management services."""
-
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
 
     async def cog_load(self):
         self.identities = mongo.automata.munidentity_identities

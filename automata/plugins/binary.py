@@ -1,9 +1,9 @@
 from discord.ext import commands
 
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 
-class Binary(commands.Cog):
+class Binary(Plugin):
     """Binary"""
 
     @commands.command()

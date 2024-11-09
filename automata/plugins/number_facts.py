@@ -2,12 +2,12 @@ import discord
 import httpx
 from discord.ext import commands
 
-from automata.utils import CommandContext
+from automata.utils import CommandContext, Plugin
 
 API_BASE = "http://numbersapi.com/"
 
 
-class NumberFacts(commands.Cog):
+class NumberFacts(Plugin):
     """Numbers have a secret facts, check them out!"""
 
     @staticmethod
