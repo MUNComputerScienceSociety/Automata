@@ -12,7 +12,10 @@ IGNORED_LOGGERS = [
     "discord.gateway",
     "discord.http",
     "discord.state",
-    "urllib3.connectionpool",
+    "httpcore.connection",
+    "httpcore.http11",
+    "httpx",
+    "urllib3",
     "websockets.protocol",
 ]
 

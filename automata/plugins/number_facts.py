@@ -2,20 +2,20 @@ import discord
 import httpx
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
+from automata.utils import CommandContext
 
 API_BASE = "http://numbersapi.com/"
 
 
-class NumberFacts(AutomataPlugin):
+class NumberFacts(commands.Cog):
     """Numbers have a secret facts, check them out!"""
 
     @staticmethod
-    async def fetch(api_path):
+    async def fetch(api_path: str) -> httpx.Response:
         async with httpx.AsyncClient() as client:
             return await client.get(f"{API_BASE}{api_path}")
 
-    async def message_embed(self, fact, number):
+    async def message_embed(self, fact: str, number: str) -> discord.Embed:
         embed = discord.Embed(colour=discord.Colour.random())
         embed.add_field(name=f"A fact about number {number}", value=fact)
         embed.set_author(name="NFact")
@@ -23,7 +23,7 @@ class NumberFacts(AutomataPlugin):
         return embed
 
     @commands.command(aliases=["nfact"])
-    async def numberfact(self, ctx: commands.Context, number: str = "random"):
+    async def numberfact(self, ctx: CommandContext, number: str = "random"):
         """Replies with a random fact of random or specified number
         EX.
         !nfact | a random number
@@ -40,7 +40,7 @@ class NumberFacts(AutomataPlugin):
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def yearfact(self, ctx: commands.Context, year: str = "random"):
+    async def yearfact(self, ctx: CommandContext, year: str = "random"):
         """
         Replies with a fact about a random or specific year
         """
@@ -55,7 +55,7 @@ class NumberFacts(AutomataPlugin):
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def datefact(self, ctx: commands.Context, date: str = "", month: str = ""):
+    async def datefact(self, ctx: CommandContext, date: str = "", month: str = ""):
         """
         Replies with a fact about a random or specific date
         !datefact DD MM
@@ -74,7 +74,7 @@ class NumberFacts(AutomataPlugin):
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def mathfact(self, ctx: commands.Context, number: str = "random"):
+    async def mathfact(self, ctx: CommandContext, number: str = "random"):
         """
         Numbers Trivia
         """
