@@ -1,5 +1,7 @@
 import logging
 
+import sentry_sdk
+
 from automata.bot import bot
 from automata.config import config
 
@@ -10,6 +12,7 @@ IGNORED_LOGGERS = [
     "discord.gateway",
     "discord.http",
     "discord.state",
+    "urllib3.connectionpool",
     "websockets.protocol",
 ]
 
@@ -22,5 +25,8 @@ logging.basicConfig(
 
 for logger in IGNORED_LOGGERS:
     logging.getLogger(logger).setLevel(logging.WARNING)
+
+if config.sentry_dsn:
+    sentry_sdk.init(config.sentry_dsn)
 
 bot.run(config.token)

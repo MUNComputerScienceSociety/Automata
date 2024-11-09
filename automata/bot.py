@@ -1,5 +1,5 @@
 import logging
-from typing import cast
+from typing import Any, cast
 
 import discord
 from discord.ext import commands
@@ -16,6 +16,8 @@ bot = commands.Bot(
     intents=intents,
 )
 
+type CommandContext = commands.Context[commands.Bot]
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,6 +32,17 @@ async def on_message(message: discord.Message):
     logger.info(f"[{name}] {message.author.name}: {message.content}")
 
     await bot.process_commands(message)
+
+
+if config.sentry_dsn:
+
+    @bot.event
+    async def on_error(event: str, *args: Any, **kwargs: Any):
+        raise
+
+    @bot.event
+    async def on_command_error(ctx: CommandContext, exception: commands.CommandError):
+        raise exception
 
 
 __all__ = ["bot"]
