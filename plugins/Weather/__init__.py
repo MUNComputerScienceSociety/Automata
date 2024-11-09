@@ -48,7 +48,8 @@ class Weather(AutomataPlugin):
             name="Cloud ☁️", value=str(weather_data["current"]["cloud"]) + "%"
         )
         embed.add_field(
-            name="Wind Speed 💨", value=str(weather_data["current"]["wind_kph"]) + " KPH"
+            name="Wind Speed 💨",
+            value=str(weather_data["current"]["wind_kph"]) + " KPH",
         )
         embed.add_field(
             name="Wind Direction 🧭", value=str(weather_data["current"]["wind_dir"])

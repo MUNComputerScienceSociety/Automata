@@ -99,7 +99,6 @@ def test_package_of_events():
 
 
 def test_find_event(parsed_diary):
-
     future_date = datetime.now() + timedelta(days=400)
     formatted_future_date = parsed_diary.format_date(future_date)
     diary_data = {f"{formatted_future_date}": "2 years away"}

@@ -22,6 +22,8 @@ class AOC(AutomataPlugin):
     async def aoccountdown(self, ctx: commands.Context):
         countdown_embed = self.aoc_embed()
         countdown_embed.title = "Advent Of Count 2021 starts in <t:1638329400:R>"
-        await self.bot.get_guild(PRIMARY_GUILD).get_channel(
-            AOC_LEADERBOARD_CHANNEL
-        ).send(embed=countdown_embed)
+        await (
+            self.bot.get_guild(PRIMARY_GUILD)
+            .get_channel(AOC_LEADERBOARD_CHANNEL)
+            .send(embed=countdown_embed)
+        )

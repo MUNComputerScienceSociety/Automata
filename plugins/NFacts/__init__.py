@@ -17,7 +17,6 @@ class NumberFacts(AutomataPlugin):
             return await client.get(f"{API_BASE}{api_path}")
 
     async def message_embed(self, fact, number):
-
         embed = discord.Embed(colour=discord.Colour.random())
         embed.add_field(name=f"A fact about number {number}", value=fact)
         embed.set_author(name="NFact")

@@ -33,7 +33,7 @@ class Agenda(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-    
+
     async def cog_load(self):
         self.agenda_items = self.bot.database.automata.agenda_items
 

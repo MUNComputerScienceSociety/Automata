@@ -12,12 +12,14 @@ class MCWhitelist(AutomataPlugin):
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
         self.whitelist_http_api = WhitelistHttpApi()
-    
+
     async def cog_load(self):
         self.whitelisted_accounts = (
             self.bot.database.automata.mcwhitelist_whitelisted_accounts
         )
-        self.disallowed_members = self.bot.database.automata.mcwhitelist_disallowed_members
+        self.disallowed_members = (
+            self.bot.database.automata.mcwhitelist_disallowed_members
+        )
         self.mojang_api = MojangAPI(self.bot.database.automata.mojangapi_profile_cache)
         await self.mojang_api.ensure_collection_expiry()
 

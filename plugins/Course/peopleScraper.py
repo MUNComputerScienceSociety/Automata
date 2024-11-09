@@ -36,7 +36,6 @@ class PeopleScraper:
         return faculty_staff
 
     async def get_prof_info_from_name(self, prof_name):
-
         # Get the info of all of the staff in the faculty
         faculty_staff = await self.get_faculty_staff()
 

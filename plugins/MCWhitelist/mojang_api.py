@@ -21,7 +21,8 @@ class MojangAPI:
 
     async def ensure_collection_expiry(self):
         await self.profile_cache.create_index(
-            "datetime", expireAfterSeconds=900  # 15 minutes
+            "datetime",
+            expireAfterSeconds=900,  # 15 minutes
         )
 
     async def info_from_username(self, username):

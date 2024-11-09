@@ -12,7 +12,6 @@ class Deadly(AutomataPlugin):
 
     @commands.command()
     async def deadly(self, ctx: commands.Context, number_of_times: int = 0):
-
         if number_of_times == 0:
             await ctx.send("yes by!")
         else:

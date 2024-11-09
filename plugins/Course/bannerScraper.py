@@ -112,7 +112,6 @@ class BannerScraper:
         return output
 
     async def get_profs_from_course(self, course_ID):
-
         # Get the listing
         listing = await self.get_listings_from_ID(course_ID)
 

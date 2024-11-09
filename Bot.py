@@ -260,4 +260,5 @@ async def sync(
             ret += 1
     await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
 
+
 bot.run(AUTOMATA_TOKEN)

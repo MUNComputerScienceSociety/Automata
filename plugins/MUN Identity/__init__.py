@@ -13,7 +13,7 @@ class MUNIdentity(AutomataPlugin):
 
     def __init__(self, manifest, bot: commands.Bot):
         super().__init__(manifest, bot)
-    
+
     async def cog_load(self):
         self.identities = self.bot.database.automata.munidentity_identities
 
@@ -68,9 +68,13 @@ class MUNIdentity(AutomataPlugin):
         """Verify your identity."""
         current_identity = await self.get_identity(member=ctx.author)
         if current_identity is not None:
-            await self.bot.get_guild(PRIMARY_GUILD).get_member(ctx.author.id).add_roles(
-                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
-                reason=f"Identity verified. MUN username: {current_identity['mun_username']}",
+            await (
+                self.bot.get_guild(PRIMARY_GUILD)
+                .get_member(ctx.author.id)
+                .add_roles(
+                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    reason=f"Identity verified. MUN username: {current_identity['mun_username']}",
+                )
             )
             await ctx.send(
                 "Your identity is already verified. If for some reason you need to change your verified username, contact an executive."
@@ -89,9 +93,13 @@ class MUNIdentity(AutomataPlugin):
             await self.identities.insert_one(
                 {"discord_id": ctx.author.id, "mun_username": username}
             )
-            await self.bot.get_guild(PRIMARY_GUILD).get_member(ctx.author.id).add_roles(
-                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
-                reason=f"Identity verified. MUN username: {username}",
+            await (
+                self.bot.get_guild(PRIMARY_GUILD)
+                .get_member(ctx.author.id)
+                .add_roles(
+                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    reason=f"Identity verified. MUN username: {username}",
+                )
             )
             is_verified_message = await ctx.send("Identity verified!")
             if type(is_verified_message.channel) is discord.DMChannel:
@@ -126,9 +134,13 @@ class MUNIdentity(AutomataPlugin):
         identity = await self.get_identity(member=user)
         if identity is not None:
             await self.identities.delete_one({"discord_id": user.id})
-            await self.bot.get_guild(PRIMARY_GUILD).get_member(user.id).remove_roles(
-                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
-                reason=f"Identity manually removed by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {identity['mun_username']}",
+            await (
+                self.bot.get_guild(PRIMARY_GUILD)
+                .get_member(user.id)
+                .remove_roles(
+                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    reason=f"Identity manually removed by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {identity['mun_username']}",
+                )
             )
             embed = discord.Embed()
             embed.colour = discord.Colour.green()
@@ -168,9 +180,13 @@ class MUNIdentity(AutomataPlugin):
         await self.identities.insert_one(
             {"discord_id": user.id, "mun_username": mun_username}
         )
-        await self.bot.get_guild(PRIMARY_GUILD).get_member(user.id).add_roles(
-            self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
-            reason=f"Identity manually associated by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {mun_username}",
+        await (
+            self.bot.get_guild(PRIMARY_GUILD)
+            .get_member(user.id)
+            .add_roles(
+                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                reason=f"Identity manually associated by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {mun_username}",
+            )
         )
         await ctx.send("Identity associated.")
 
@@ -193,9 +209,13 @@ class MUNIdentity(AutomataPlugin):
             await ctx.reply("Disassociation cancelled.")
             return
         await self.identities.delete_one({"discord_id": ctx.author.id})
-        await self.bot.get_guild(PRIMARY_GUILD).get_member(ctx.author.id).remove_roles(
-            self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
-            reason=f"Identity manually disassociated by {ctx.author.name}#{ctx.author.discriminator}.",
+        await (
+            self.bot.get_guild(PRIMARY_GUILD)
+            .get_member(ctx.author.id)
+            .remove_roles(
+                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                reason=f"Identity manually disassociated by {ctx.author.name}#{ctx.author.discriminator}.",
+            )
         )
         embed = discord.Embed()
         embed.colour = discord.Colour.green()

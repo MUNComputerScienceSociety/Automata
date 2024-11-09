@@ -69,7 +69,6 @@ class Man(AutomataPlugin):
                     self.cached[search] = [f"No manual entry for {search}"]
                     await ctx.send(f"No manual entry for {search}")
                 elif len(res) == 1:
-
                     self.cached[search] = [f"{res[0]}/{search}.{res[0]}"]
 
                     await ctx.send(

@@ -54,8 +54,10 @@ class Newsline(AutomataPlugin):
 
     async def post_new_post(self, post, post_details):
         embed = self.post_embed(post, post_details)
-        await self.bot.get_guild(PRIMARY_GUILD).get_channel(NEWSLINE_CHANNEL).send(
-            embed=embed
+        await (
+            self.bot.get_guild(PRIMARY_GUILD)
+            .get_channel(NEWSLINE_CHANNEL)
+            .send(embed=embed)
         )
         await self.posted_posts.insert_one({"id": post["id"]})
 

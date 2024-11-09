@@ -18,13 +18,21 @@ class Course(AutomataPlugin):
 
     async def cog_load(self):
         self.banner_cache = self.bot.database.automata.banner_scraper_cache
-        self.calendar_scraper = CalendarScraper(604800, self.banner_cache)  # 1 week cache lifetime
+        self.calendar_scraper = CalendarScraper(
+            604800, self.banner_cache
+        )  # 1 week cache lifetime
         await self.calendar_scraper.setup_cache(604800)
-        self.people_scraper = PeopleScraper(604800, self.banner_cache)  # 1 week cache lifetime
+        self.people_scraper = PeopleScraper(
+            604800, self.banner_cache
+        )  # 1 week cache lifetime
         await self.people_scraper.setup_cache(604800)
-        self.rmp_scraper = RMPScraper(604800, self.banner_cache)  # 1 week cache lifetime
+        self.rmp_scraper = RMPScraper(
+            604800, self.banner_cache
+        )  # 1 week cache lifetime
         await self.rmp_scraper.ensure_collection_expiry(604800)
-        self.banner_scraper = BannerScraper(604800, self.banner_cache)  # 1 week cache lifetime
+        self.banner_scraper = BannerScraper(
+            604800, self.banner_cache
+        )  # 1 week cache lifetime
         await self.banner_scraper.setup_cache(604800)
 
     @commands.command()

@@ -19,3 +19,8 @@ dependencies = [
     "requests>=2.32.3",
     "sentry-sdk>=1.29.2",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.7.3",
+]

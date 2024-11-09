@@ -1,4 +1,4 @@
-﻿from json import load
+from json import load
 from os import path
 from random import choice
 

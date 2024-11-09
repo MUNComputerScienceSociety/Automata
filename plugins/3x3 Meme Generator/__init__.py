@@ -19,7 +19,7 @@ class Generator(AutomataPlugin):
 
     def __init__(self, manifest, bot):
         super().__init__(manifest, bot)
-    
+
     async def cog_load(self):
         self.gen3x3_sessions: collection.Collection = (
             self.bot.database.automata.gen3x3_sessions

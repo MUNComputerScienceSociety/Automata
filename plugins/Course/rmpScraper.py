@@ -20,7 +20,6 @@ class RMPScraper:
 
     # Get the completed URL for the RMP search
     def get_rmp_url(self, separated_prof_name):
-
         # Append every word from the name together with "%20" in between them
         name_with_spaces = "%20".join(separated_prof_name)
 

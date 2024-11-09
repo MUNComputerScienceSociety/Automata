@@ -146,8 +146,10 @@ class TodayAtMun(AutomataPlugin):
             value=f"[**Click to view**]({message_link})",
             inline=False,
         )
-        await self.bot.get_guild(PRIMARY_GUILD).get_channel(GENERAL_CHANNEL).send(
-            embed=embed
+        await (
+            self.bot.get_guild(PRIMARY_GUILD)
+            .get_channel(GENERAL_CHANNEL)
+            .send(embed=embed)
         )
 
     async def post_new_events(self):
