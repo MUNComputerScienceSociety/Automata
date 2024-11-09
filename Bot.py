@@ -12,7 +12,6 @@ import motor.motor_asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
 from jigsaw.PluginLoader import PluginLoader
-from prometheus_async.aio.web import start_http_server
 
 load_dotenv()
 
@@ -88,12 +87,6 @@ async def on_message(message):
         name = message.channel.name
     logger.info(f"[{name}] {message.author.name}: {message.content}")
     await bot.process_commands(message)
-
-
-@bot.event
-async def on_ready():
-    # When the bot is ready, start the prometheus client
-    await start_http_server(port=9000)
 
 
 if os.getenv("SENTRY_DSN", None):
