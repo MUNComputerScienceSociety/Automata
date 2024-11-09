@@ -6,6 +6,7 @@ from discord.ext import commands
 
 import automata.plugins as plugins
 from automata.config import config
+from automata.utils import CommandContext, CustomHelp
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -22,9 +23,8 @@ bot = Automata(
     command_prefix="!",
     description="A custom, multi-purpose moderation bot for the MUN Computer Science Society Discord server.",
     intents=intents,
+    help_command=CustomHelp(),
 )
-
-type CommandContext = commands.Context[Automata]
 
 logger = logging.getLogger(__name__)
 

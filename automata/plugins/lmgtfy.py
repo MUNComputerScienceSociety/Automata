@@ -1,15 +1,15 @@
-import urllib
+import urllib.parse
 
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
+from automata.utils import CommandContext
 
 
-class LMGTFY(AutomataPlugin):
+class LMGTFY(commands.Cog):
     """Create a LMGTFY link, for people who should have google'd first"""
 
     @commands.command()
-    async def lmgtfy(self, ctx: commands.Context, *, search_terms: str):
+    async def lmgtfy(self, ctx: CommandContext, *, search_terms: str):
         """Creates a LMGTFY link with the given search terms"""
 
         search_terms = urllib.parse.quote(search_terms)
