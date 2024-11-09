@@ -129,4 +129,13 @@ class FAQ(AutomataPlugin):
 
         await ctx.send(embed=embed_admission)
 
-        # ( ͡° ͜ʖ ͡°)
+    @commands.command()
+    async def DID(self, ctx: commands.Context):
+        """Replies with informative information on DID."""
+        await ctx.send(
+            """DID and OSDD are mental health issues on the DSM5 list
+Pluralkit is an accessibility bot so you know which alter you are talking to
+https://did-research.org/comorbid/dd/osdd_udd/did_osdd
+http://traumadissociation.com/osdd
+Please read these articles before assuming someone is just roleplaying in a server"""
+        )
