@@ -1,8 +1,5 @@
-import urllib.parse
-
-from discord.ext import commands
-import discord
 import httpx
+from discord.ext import commands
 
 from Plugin import AutomataPlugin
 

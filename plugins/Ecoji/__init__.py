@@ -1,5 +1,6 @@
 import httpx
 from discord.ext import commands
+
 from Plugin import AutomataPlugin
 
 URANDOM_ECOJI_URI = "https://jackharrhy.dev/urandom/ecoji/"

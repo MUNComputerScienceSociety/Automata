@@ -1,8 +1,8 @@
+from discord import Colour, Embed
 from discord.ext import commands
-from discord import Embed, Colour
 
-from Plugin import AutomataPlugin
 from Globals import AOC_LEADERBOARD_CHANNEL, PRIMARY_GUILD
+from Plugin import AutomataPlugin
 
 AOC_COLOUR = 0x01B204
 

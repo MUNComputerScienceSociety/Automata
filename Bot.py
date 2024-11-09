@@ -1,32 +1,28 @@
-import asyncio
-from dotenv import load_dotenv
-import motor.motor_asyncio
-
-from Utils import CustomHelp
-
-load_dotenv()
-
-import os
-import logging
-import traceback
 import contextlib
+import logging
+import os
 import sys
-from pathlib import Path
+import traceback
 from io import StringIO
+from pathlib import Path
+from typing import Literal, Optional
 
-from jigsaw.PluginLoader import PluginLoader
 import discord
+import motor.motor_asyncio
 from discord.ext import commands
+from dotenv import load_dotenv
+from jigsaw.PluginLoader import PluginLoader
 from prometheus_async.aio.web import start_http_server
 
-from Plugin import AutomataPlugin
-from typing import Optional, Literal
+load_dotenv()
 
 from Globals import (
     DISABLED_PLUGINS,
     ENABLED_PLUGINS,
     MONGO_ADDRESS,
 )
+from Plugin import AutomataPlugin
+from Utils import CustomHelp
 
 IGNORED_LOGGERS = [
     "discord.client",

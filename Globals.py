@@ -1,6 +1,5 @@
 import os
 
-import motor.motor_asyncio
 import sentry_sdk
 
 ENABLED_PLUGINS = [x for x in os.getenv("AUTOMATA_ENABLED_PLUGINS", "").split(",") if x]

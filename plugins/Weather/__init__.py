@@ -1,11 +1,12 @@
-from os import name
-from discord.ext import commands
+from datetime import datetime
+
 import discord
 import httpx
-from Plugin import AutomataPlugin
-from Globals import WEATHER_API_KEY
 import pytz
-from datetime import datetime
+from discord.ext import commands
+
+from Globals import WEATHER_API_KEY
+from Plugin import AutomataPlugin
 
 KEY = WEATHER_API_KEY
 CALL_URI = f"http://api.weatherapi.com/v1/current.json?key={KEY}&q=A1B 3P7&aqi=no"

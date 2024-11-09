@@ -1,8 +1,8 @@
+import random
+
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-
-import random
 
 MAXIMUM_FLIPS = 5
 MINIMUM_FLIPS = 1

@@ -25,23 +25,23 @@ class FAQ(AutomataPlugin):
             color=COLOR_SCIENCE,
         )
         embed_science.add_field(
-            name=f"**Fall Semester**",
-            value=f"> Mathematics 1090 or 1000\n> Computer Science 1001\n> elective\n> English 1090\n> elective\n",
+            name="**Fall Semester**",
+            value="> Mathematics 1090 or 1000\n> Computer Science 1001\n> elective\n> English 1090\n> elective\n",
             inline=False,
         )
         embed_science.add_field(
-            name=f"**Winter Semester**",
-            value=f"> Mathematics 1000 or 1001\n> Computer Science 1002\n> Computer Science 1003 or elective\n> CRW Course\n> elective\n",
+            name="**Winter Semester**",
+            value="> Mathematics 1000 or 1001\n> Computer Science 1002\n> Computer Science 1003 or elective\n> CRW Course\n> elective\n",
             inline=False,
         )
         embed_science.add_field(
-            name=f"What is an elective?",
-            value=f"_Electives can be in any subject, including science courses._",
+            name="What is an elective?",
+            value="_Electives can be in any subject, including science courses._",
             inline=False,
         )
         embed_science.add_field(
-            name=f"What is a CRW course?",
-            value=f"_CRW courses are Critical Reading and Writing courses_",
+            name="What is a CRW course?",
+            value="_CRW courses are Critical Reading and Writing courses_",
             inline=False,
         )
         embed_science.set_footer(
@@ -59,18 +59,18 @@ class FAQ(AutomataPlugin):
             color=COLOR_ARTS,
         )
         embed_arts.add_field(
-            name=f"**Fall Semester**",
-            value=f"> English 1090\n> Mathematics 1090 or 1000\n> Computer Science 1001\n> Language Study (LS) course\n> elective (Breathe of Knowledge encouraged) or [minor program](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-4701) course\n",
+            name="**Fall Semester**",
+            value="> English 1090\n> Mathematics 1090 or 1000\n> Computer Science 1001\n> Language Study (LS) course\n> elective (Breathe of Knowledge encouraged) or [minor program](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-4701) course\n",
             inline=False,
         )
         embed_arts.add_field(
-            name=f"**Winter Semester**",
-            value=f"> CRW course\n> Mathematics 1000 or 1001\n> Computer Science 1002\n> Computer Science 1003 or elective\n> LS course\n",
+            name="**Winter Semester**",
+            value="> CRW course\n> Mathematics 1000 or 1001\n> Computer Science 1002\n> Computer Science 1003 or elective\n> LS course\n",
             inline=False,
         )
         embed_arts.add_field(
-            name=f"What is a Breadth of Knowledge and Language Study elective?",
-            value=f'_"More information about [Breadth of Knowledge](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8192) and [Language Study](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8196)_',
+            name="What is a Breadth of Knowledge and Language Study elective?",
+            value='_"More information about [Breadth of Knowledge](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8192) and [Language Study](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8196)_',
             inline=False,
         )
         embed_arts.set_footer(
@@ -112,18 +112,18 @@ class FAQ(AutomataPlugin):
             color=COLOR_ADMIN,
         )
         embed_admission.add_field(
-            name=f"**How do I get to study CS at MUN?**",
-            value=f"After admission to the university you need to complete the required courses\n> 1. COMP 1001 and COMP 1002\n> 2. 6 credit hours in a [CRW](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8194) course, including 3 credit hours in English\n> 3. MATH 1000 and 1001 (or 1090 and 1000)\n> 3. 6 credit hours in other courses\nYou must also have a mean grade of at least 65% in Computer Science 1001 and 1002.",
+            name="**How do I get to study CS at MUN?**",
+            value="After admission to the university you need to complete the required courses\n> 1. COMP 1001 and COMP 1002\n> 2. 6 credit hours in a [CRW](https://www.mun.ca/regoff/calendar/sectionNo=ARTS-0109#ARTS-8194) course, including 3 credit hours in English\n> 3. MATH 1000 and 1001 (or 1090 and 1000)\n> 3. 6 credit hours in other courses\nYou must also have a mean grade of at least 65% in Computer Science 1001 and 1002.",
             inline=False,
         )
         embed_admission.add_field(
-            name=f"**How do I apply to the major?**",
-            value=f"Students who wish to major in computer science must submit a completed [online application form](https://www.mun.ca/computerscience/undergraduates/programs/applying-for-admission/) on the [Department of Computer Science](https://www.mun.ca/computerscience/) website. The application form is available from Feb. 1 to June 1 for students applying for fall admission, and from Aug. 1 to Oct. 1 for students applying for winter admission",
+            name="**How do I apply to the major?**",
+            value="Students who wish to major in computer science must submit a completed [online application form](https://www.mun.ca/computerscience/undergraduates/programs/applying-for-admission/) on the [Department of Computer Science](https://www.mun.ca/computerscience/) website. The application form is available from Feb. 1 to June 1 for students applying for fall admission, and from Aug. 1 to Oct. 1 for students applying for winter admission",
             inline=False,
         )
         embed_admission.add_field(
-            name=f"**What is the minimum required average for acceptance?**",
-            value=f"Students who fulfill the eligibility requirements compete for a limited number of available spaces. Selection is based on academic performance, normally cumulative average and performance in recent courses.  For 2022 applications, students must also have a mean grade of at least 65% in Computer Science 1001 and 1002. Starting Fall 2021 students need an average of 65% in COMP 1001 and COMP 1002 to get in the major",
+            name="**What is the minimum required average for acceptance?**",
+            value="Students who fulfill the eligibility requirements compete for a limited number of available spaces. Selection is based on academic performance, normally cumulative average and performance in recent courses.  For 2022 applications, students must also have a mean grade of at least 65% in Computer Science 1001 and 1002. Starting Fall 2021 students need an average of 65% in COMP 1001 and COMP 1002 to get in the major",
             inline=False,
         )
 

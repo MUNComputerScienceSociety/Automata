@@ -1,12 +1,11 @@
 from datetime import datetime
-from logging import StreamHandler
 from typing import Dict, Optional, Union
 
 import discord
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
 from Globals import STARBOARD_CHANNEL_ID, STARBOARD_THRESHOLD
+from Plugin import AutomataPlugin
 
 
 class Starboard(AutomataPlugin):

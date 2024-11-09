@@ -1,10 +1,11 @@
 import asyncio
 from typing import Dict, List, Optional, Union
 
-import httpx
 import discord
-from Globals import DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE
+import httpx
 from discord.ext import commands
+
+from Globals import DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE
 from Plugin import AutomataPlugin
 
 
@@ -201,7 +202,7 @@ class MUNIdentity(AutomataPlugin):
         embed.colour = discord.Colour.red()
         embed.add_field(
             name="Identity Disassociation",
-            value=f"Are you sure you want to disassociate your identity from your account?",
+            value="Are you sure you want to disassociate your identity from your account?",
         )
         message = await ctx.reply(embed=embed)
         confirmed = await self.get_confirmation(ctx, message)
@@ -221,7 +222,7 @@ class MUNIdentity(AutomataPlugin):
         embed.colour = discord.Colour.green()
         embed.add_field(
             name="Disassociation",
-            value=f"Your identity has been disassociated from your account.",
+            value="Your identity has been disassociated from your account.",
         )
         await ctx.reply(embed=embed)
 

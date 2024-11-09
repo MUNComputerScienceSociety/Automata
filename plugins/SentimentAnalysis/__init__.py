@@ -1,6 +1,6 @@
-from nltk.sentiment import SentimentIntensityAnalyzer
 import nltk
 from discord.ext import commands
+from nltk.sentiment import SentimentIntensityAnalyzer
 
 from Plugin import AutomataPlugin
 

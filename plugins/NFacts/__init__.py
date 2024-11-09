@@ -1,8 +1,7 @@
-from os import name
+import discord
+import httpx
 from discord.ext import commands
 
-import httpx
-import discord
 from Plugin import AutomataPlugin
 
 API_BASE = "http://numbersapi.com/"

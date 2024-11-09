@@ -1,7 +1,7 @@
 from time import sleep
+
 import requests
 from bs4 import BeautifulSoup
-
 from discord.ext import commands
 
 from Plugin import AutomataPlugin

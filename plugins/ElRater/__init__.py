@@ -1,8 +1,8 @@
+import random
+
 from discord.ext import commands
 
 from Plugin import AutomataPlugin
-
-import random
 
 
 class Dice(AutomataPlugin):

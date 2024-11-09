@@ -1,9 +1,10 @@
-from discord.ext import commands
 import discord
+from discord.ext import commands
+
+from Plugin import AutomataPlugin
 
 MAX = 9
 
-from Plugin import AutomataPlugin
 
 reactions = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]
 

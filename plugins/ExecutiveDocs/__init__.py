@@ -1,14 +1,15 @@
 import asyncio
 from datetime import datetime
-import httpx
+
 import discord
+import httpx
 from discord.ext import commands, tasks
 
-from Plugin import AutomataPlugin
 from Globals import (
-    PRIMARY_GUILD,
     EXECUTIVE_DOCS_CHANNEL,
+    PRIMARY_GUILD,
 )
+from Plugin import AutomataPlugin
 
 EXECUTIVE_DOCS_BASE_URI = "https://www.cs.mun.ca/~csclub/executive-documents"
 EXECUTIVE_DOCS_JSON_URI = f"{EXECUTIVE_DOCS_BASE_URI}/docs.json"

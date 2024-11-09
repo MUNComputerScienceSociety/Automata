@@ -35,4 +35,4 @@ class Over9000(AutomataPlugin):
 
         else:
             #  An invalid DBZ character was specified.
-            await ctx.send(f"ᕙ(⇀‸↼‶)ᕗ\n...")
+            await ctx.send("ᕙ(⇀‸↼‶)ᕗ\n...")

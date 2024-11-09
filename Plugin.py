@@ -1,6 +1,5 @@
+from discord.ext.commands import Bot, Cog
 from jigsaw import JigsawPlugin
-
-from discord.ext.commands import Cog, Bot
 
 
 class AutomataPlugin(JigsawPlugin, Cog):

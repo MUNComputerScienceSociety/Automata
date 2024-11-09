@@ -1,6 +1,8 @@
-from discord.ext import commands
-from Plugin import AutomataPlugin
 import random
+
+from discord.ext import commands
+
+from Plugin import AutomataPlugin
 
 GIF_ONE = "https://leahhynes.github.io/EmotionalDamage/1.gif"
 GIF_TWO = "https://leahhynes.github.io/EmotionalDamage/2.gif"

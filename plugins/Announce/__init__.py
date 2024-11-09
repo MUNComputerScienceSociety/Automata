@@ -1,10 +1,8 @@
-from os import name
-from discord.ext import commands
-from discord.ext.commands import context
-from Globals import ANNOUNCEMENT_CHANNEL
-
-from Plugin import AutomataPlugin
 import discord
+from discord.ext import commands
+
+from Globals import ANNOUNCEMENT_CHANNEL
+from Plugin import AutomataPlugin
 
 PING_EMOTE = "<:ping:842732198444269568>"
 NOPING_EMOTE = "<:noping:842732251132854322>"
