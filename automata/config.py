@@ -30,6 +30,11 @@ class Config(BaseSettings):
     def mongo_address(self) -> str:
         return f"mongodb://{self.mongo_host}/automata"
 
+    def should_enable_plugin(self, plugin: type) -> bool:
+        if self.enabled_plugins:
+            return plugin.__name__ in self.enabled_plugins
+        return plugin.__name__ not in self.disabled_plugins
+
 
 config = Config()  # type: ignore - Pydantic and Pyright don't play nice, but Discord.py doesn't work with Mypy
 

@@ -1,11 +1,6 @@
-import contextlib
 import logging
 import os
-import sys
-import traceback
-from io import StringIO
 from pathlib import Path
-from typing import Literal, Optional
 
 import discord
 import motor.motor_asyncio
@@ -78,82 +73,6 @@ bot = Automata(
 )
 
 
-@bot.event
-async def on_message(message):
-    # Log messages
-    if isinstance(message.channel, discord.DMChannel):
-        name = message.author.name
-    else:
-        name = message.channel.name
-    logger.info(f"[{name}] {message.author.name}: {message.content}")
-    await bot.process_commands(message)
-
-
-if os.getenv("SENTRY_DSN", None):
-
-    @bot.event
-    async def on_error(event, *args, **kwargs):
-        raise
-
-    @bot.event
-    async def on_command_error(ctx, exception):
-        raise exception
-
-
-@contextlib.contextmanager
-def stdioreader():
-    old = (sys.stdout, sys.stderr)
-    stdout = StringIO()
-    stderr = StringIO()
-    sys.stdout = stdout
-    sys.stderr = stderr
-    yield stdout, stderr
-    sys.stdout = old[0]
-    sys.stderr = old[1]
-
-
-@bot.command(name="eval")
-@commands.is_owner()
-async def eval_code(ctx: commands.Context, code: str):
-    """Evaluates code for debugging purposes."""
-    try:
-        result = f"```\n{eval(code)}\n```"
-        colour = discord.Colour.green()
-    except:
-        result = f"```py\n{traceback.format_exc(1)}```"
-        colour = discord.Colour.red()
-
-    result.replace("\\", "\\\\")
-
-    embed = discord.Embed()
-    embed.add_field(name=code, value=result)
-    embed.colour = colour
-
-    await ctx.send(embed=embed)
-
-
-@bot.command(name="exec")
-@commands.is_owner()
-async def exec_code(ctx: commands.Context, code: str):
-    """Executes code for debugging purposes."""
-    with stdioreader() as (out, err):
-        try:
-            exec(code)
-            result = f"```\n{out.getvalue()}\n```"
-            colour = discord.Colour.green()
-        except:
-            result = f"```py\n{traceback.format_exc(1)}```"
-            colour = discord.Colour.red()
-
-    result.replace("\\", "\\\\")
-
-    embed = discord.Embed()
-    embed.add_field(name=code, value=result)
-    embed.colour = colour
-
-    await ctx.send(embed=embed)
-
-
 @bot.command()
 async def plugins(ctx: commands.Context):
     """Lists all enabled plugins."""
@@ -201,53 +120,6 @@ for plugin in loader.get_all_plugins():
             num_of_disabled += 1
 
 logger.info(f"{num_of_disabled} plugins disabled.")
-
-
-@bot.command()
-@commands.guild_only()
-@commands.has_permissions(view_audit_log=True)
-async def sync(
-    ctx: commands.Context,
-    guilds: commands.Greedy[discord.Object],
-    spec: Optional[Literal["~", "*", "^"]] = None,
-) -> None:
-    """Sync application commands to guild(s).
-    `~` - sync current guild application commands.
-    `*` - Copy all global application commands to current guild and sync.
-    `^` - Clear all application commands from current guild and sync.
-    `` - Sync all guilds application commands globally.
-    guilds - Sync application commands to guild(s).
-    """
-    if not guilds:
-        if spec == "~":
-            # sync current guild
-            synced = await ctx.bot.tree.sync(guild=ctx.guild)
-        elif spec == "*":
-            # copies all global app commands to current guild and syncs
-            ctx.bot.tree.copy_global_to(guild=ctx.guild)
-            synced = await ctx.bot.tree.sync(guild=ctx.guild)
-        elif spec == "^":
-            # clears all commands from the current guild target and syncs (removes guild commands)
-            ctx.bot.tree.clear_commands(guild=ctx.guild)
-            await ctx.bot.tree.sync(guild=ctx.guild)
-            synced = []
-        else:
-            # global sync
-            synced = await ctx.bot.tree.sync()
-        await ctx.send(
-            f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}"
-        )
-        return
-    # syncs guilds with id 1 and 2
-    ret = 0
-    for guild in guilds:
-        try:
-            await ctx.bot.tree.sync(guild=guild)
-        except discord.HTTPException:
-            pass
-        else:
-            ret += 1
-    await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
 
 
 bot.run(AUTOMATA_TOKEN)
