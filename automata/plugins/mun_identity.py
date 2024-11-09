@@ -91,7 +91,9 @@ class MUNIdentity(Plugin):
                 self.bot.get_guild(config.primary_guild)
                 .get_member(ctx.author.id)
                 .add_roles(
-                    self.bot.get_guild(primary_guild).get_role(config.verified_role),
+                    self.bot.get_guild(config.primary_guild).get_role(
+                        config.verified_role
+                    ),
                     reason=f"Identity verified. MUN username: {username}",
                 )
             )

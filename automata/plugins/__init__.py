@@ -12,6 +12,7 @@ from .fortune_cookie import FortuneCookie
 from .instant_answer import InstantAnswer
 from .lmgtfy import LMGTFY
 from .man import Man
+from .mun_identity import MUNIdentity
 from .number_facts import NumberFacts
 from .starboard import Starboard
 
@@ -25,6 +26,7 @@ all_plugins: list[type[Plugin]] = [
     InstantAnswer,
     LMGTFY,
     Man,
+    MUNIdentity,
     NumberFacts,
     Starboard,
 ]
