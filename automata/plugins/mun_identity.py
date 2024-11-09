@@ -5,18 +5,19 @@ import discord
 import httpx
 from discord.ext import commands
 
-from Globals import DISCORD_AUTH_URI, PRIMARY_GUILD, VERIFIED_ROLE
-from Plugin import AutomataPlugin
+from automata.config import config
+from automata.mongo import mongo
+from automata.utils import CommandContext
 
 
-class MUNIdentity(AutomataPlugin):
+class MUNIdentity(commands.Cog):
     """Provides identity validation and management services."""
 
-    def __init__(self, manifest, bot: commands.Bot):
-        super().__init__(manifest, bot)
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     async def cog_load(self):
-        self.identities = self.bot.database.automata.munidentity_identities
+        self.identities = mongo.automata.munidentity_identities
 
     async def get_identity(
         self, *, member: Union[discord.User, int] = None, mun_username: str = None
@@ -42,15 +43,8 @@ class MUNIdentity(AutomataPlugin):
         identity = await self.identities.find_one(query)
         return identity
 
-    @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member):
-        # await member.send(
-        #     f"Welcome to the MUN Computer Science Society Discord server, {member.mention}.\nIf you have a MUN account, please visit https://discord.muncompsci.ca/auth to verify yourself.\nOtherwise, contact an executive to gain further access."
-        # )
-        pass
-
     @commands.group()
-    async def identity(self, ctx: commands.Context):
+    async def identity(self, ctx: CommandContext):
         """Manage identity validation."""
         if not ctx.invoked_subcommand:
             identity = await self.get_identity(member=ctx.author)
@@ -65,15 +59,17 @@ class MUNIdentity(AutomataPlugin):
                 )
 
     @identity.command(name="verify")
-    async def identity_verify(self, ctx: commands.Context, code: str):
+    async def identity_verify(self, ctx: CommandContext, code: str):
         """Verify your identity."""
         current_identity = await self.get_identity(member=ctx.author)
         if current_identity is not None:
             await (
-                self.bot.get_guild(PRIMARY_GUILD)
+                self.bot.get_guild(config.primary_guild)
                 .get_member(ctx.author.id)
                 .add_roles(
-                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    self.bot.get_guild(config.primary_guild).get_role(
+                        config.verified_role
+                    ),
                     reason=f"Identity verified. MUN username: {current_identity['mun_username']}",
                 )
             )
@@ -82,7 +78,7 @@ class MUNIdentity(AutomataPlugin):
             )
             return
         async with httpx.AsyncClient() as client:
-            resp = await client.get(f"{DISCORD_AUTH_URI}/identity/{code}")
+            resp = await client.get(f"{config.discord_auth_uri}/identity/{code}")
         if resp.status_code == httpx.codes.OK:
             username = resp.text
             current_identity = await self.get_identity(mun_username=username)
@@ -95,10 +91,10 @@ class MUNIdentity(AutomataPlugin):
                 {"discord_id": ctx.author.id, "mun_username": username}
             )
             await (
-                self.bot.get_guild(PRIMARY_GUILD)
+                self.bot.get_guild(config.primary_guild)
                 .get_member(ctx.author.id)
                 .add_roles(
-                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    self.bot.get_guild(primary_guild).get_role(config.verified_role),
                     reason=f"Identity verified. MUN username: {username}",
                 )
             )
@@ -114,7 +110,7 @@ class MUNIdentity(AutomataPlugin):
 
     @identity.command(name="check")
     @commands.has_permissions(view_audit_log=True)
-    async def identity_check(self, ctx: commands.Context, user: discord.Member):
+    async def identity_check(self, ctx: CommandContext, user: discord.Member):
         """Check the identity verification status of a user."""
         identity = await self.identities.find_one({"discord_id": user.id})
         if identity is not None:
@@ -130,16 +126,18 @@ class MUNIdentity(AutomataPlugin):
 
     @identity.command(name="remove")
     @commands.has_permissions(manage_messages=True)
-    async def identity_remove(self, ctx: commands.Context, user: discord.Member):
+    async def identity_remove(self, ctx: CommandContext, user: discord.Member):
         """Remove the identity from a user."""
         identity = await self.get_identity(member=user)
         if identity is not None:
             await self.identities.delete_one({"discord_id": user.id})
             await (
-                self.bot.get_guild(PRIMARY_GUILD)
+                self.bot.get_guild(config.primary_guild)
                 .get_member(user.id)
                 .remove_roles(
-                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    self.bot.get_guild(config.primary_guild).get_role(
+                        config.verified_role
+                    ),
                     reason=f"Identity manually removed by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {identity['mun_username']}",
                 )
             )
@@ -161,7 +159,7 @@ class MUNIdentity(AutomataPlugin):
     @identity.command(name="associate")
     @commands.has_permissions(manage_messages=True)
     async def identity_associate(
-        self, ctx: commands.Context, user: discord.Member, mun_username: str
+        self, ctx: CommandContext, user: discord.Member, mun_username: str
     ):
         """Manually associate a Discord account to a MUN username."""
         identity = await self.get_identity(member=user)
@@ -182,17 +180,17 @@ class MUNIdentity(AutomataPlugin):
             {"discord_id": user.id, "mun_username": mun_username}
         )
         await (
-            self.bot.get_guild(PRIMARY_GUILD)
+            self.bot.get_guild(config.primary_guild)
             .get_member(user.id)
             .add_roles(
-                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                self.bot.get_guild(config.primary_guild).get_role(config.verified_role),
                 reason=f"Identity manually associated by {ctx.author.name}#{ctx.author.discriminator}. MUN username: {mun_username}",
             )
         )
         await ctx.send("Identity associated.")
 
     @identity.command(name="disassociate")
-    async def identity_disassociate(self, ctx: commands.Context):
+    async def identity_disassociate(self, ctx: CommandContext):
         """Disassociate your own identity from your discord account."""
         current_identity = await self.get_identity(member=ctx.author)
         if current_identity is None:
@@ -211,10 +209,10 @@ class MUNIdentity(AutomataPlugin):
             return
         await self.identities.delete_one({"discord_id": ctx.author.id})
         await (
-            self.bot.get_guild(PRIMARY_GUILD)
+            self.bot.get_guild(config.primary_guild)
             .get_member(ctx.author.id)
             .remove_roles(
-                self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                self.bot.get_guild(config.primary_guild).get_role(config.verified_role),
                 reason=f"Identity manually disassociated by {ctx.author.name}#{ctx.author.discriminator}.",
             )
         )
@@ -227,7 +225,7 @@ class MUNIdentity(AutomataPlugin):
         await ctx.reply(embed=embed)
 
     @staticmethod
-    async def get_confirmation(ctx: commands.Context, message: discord.Message) -> bool:
+    async def get_confirmation(ctx: CommandContext, message: discord.Message) -> bool:
         """Get confirmation from user executing the command by reactions."""
         await message.add_reaction("✅")
         await message.add_reaction("❌")
@@ -249,25 +247,27 @@ class MUNIdentity(AutomataPlugin):
 
     @identity.command(name="restore_roles")
     @commands.has_permissions(view_audit_log=True)
-    async def identity_restore_roles(self, ctx: commands.Context):
+    async def identity_restore_roles(self, ctx: CommandContext):
         """Restores VERIFIED_ROLE to users with a registered identity who were not granted it."""
         members_restored: List[discord.Member] = []
         identities = self.identities.find({})
         async with ctx.typing():
             while await identities.fetch_next:
                 identity = identities.next_object()
-                member: discord.Member = self.bot.get_guild(PRIMARY_GUILD).get_member(
-                    identity["discord_id"]
-                )
+                member: discord.Member = self.bot.get_guild(
+                    config.primary_guild
+                ).get_member(identity["discord_id"])
                 if member is None:
                     await asyncio.sleep(1)
                     continue
-                has_role = any(role.id == VERIFIED_ROLE for role in member.roles)
+                has_role = any(role.id == config.verified_role for role in member.roles)
                 if has_role:
                     await asyncio.sleep(1)
                     continue
                 await member.add_roles(
-                    self.bot.get_guild(PRIMARY_GUILD).get_role(VERIFIED_ROLE),
+                    self.bot.get_guild(config.primary_guild).get_role(
+                        config.verified_role
+                    ),
                     reason=f"Identity restored by {ctx.author.name}#{ctx.author.discriminator}.",
                 )
                 members_restored.append(member)

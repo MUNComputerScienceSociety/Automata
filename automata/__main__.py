@@ -15,6 +15,10 @@ IGNORED_LOGGERS = [
     "httpcore.connection",
     "httpcore.http11",
     "httpx",
+    "pymongo.command",
+    "pymongo.connection",
+    "pymongo.serverSelection",
+    "pymongo.topology",
     "urllib3",
     "websockets.protocol",
 ]

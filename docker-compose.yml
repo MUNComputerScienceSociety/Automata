@@ -1,11 +1,9 @@
-version: '3'
+version: "3"
 
 services:
   automata:
     image: ghcr.io/muncomputersciencesociety/automata
     restart: always
-    volumes:
-      - ./mounted_plugins:/app/mounted_plugins
     depends_on:
       - mongo
     env_file:

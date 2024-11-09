@@ -3,14 +3,14 @@ import re
 import httpx
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
+from automata.utils import CommandContext
 
 
-class InstantAnswer(AutomataPlugin):
+class InstantAnswer(commands.Cog):
     """Wrapper for Instant Answer API from DuckDuckGo"""
 
     @commands.command()
-    async def ia(self, ctx, *, argument):
+    async def ia(self, ctx: CommandContext, *, argument: str):
         """Replies with Instant Answer from DuckDuckGo"""
 
         output_template = (

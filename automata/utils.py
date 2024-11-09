@@ -1,9 +1,27 @@
+import io
 from typing import Any, Mapping, Optional
 
 import discord
 from discord.ext import commands
 
 type CommandContext = commands.Context[commands.Bot]
+
+
+async def send_code_block_maybe_as_file(ctx: CommandContext, text: str):
+    """
+    Sends a code block to the current context.
+
+    If it's too long to fit in a single message, it will
+    instead be sent as a file.
+    """
+    if len(text) > 2000:
+        file = io.StringIO()
+        file.writelines(text)
+        file.seek(0)
+
+        await ctx.send(file=discord.File(file, filename="agenda.md"))
+    else:
+        await ctx.send(f"```{text}```")
 
 
 class CustomHelp(commands.DefaultHelpCommand):

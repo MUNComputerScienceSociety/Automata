@@ -4,16 +4,16 @@ import requests
 from bs4 import BeautifulSoup
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
+from automata.utils import CommandContext
 
 
-class Man(AutomataPlugin):
+class Man(commands.Cog):
     """Linux man command via man7.org"""
 
     cached = {}
 
-    def __init__(self, manifest, bot: commands.Bot):
-        super().__init__(manifest, bot)
+    def __init__(self, bot: commands.Bot):
+        super().__init__()
         pages = []
         for i in range(9):
             r = requests.get(
@@ -38,6 +38,7 @@ class Man(AutomataPlugin):
                         else:
                             self.cached[y.string.split("(")[0]] = [y["href"][5:-5]]
 
+    @staticmethod
     def urlfy(s: str = ""):
         if s[0] in "012345678":
             return "https://man7.org/linux/man-pages/man" + s + ".html"
@@ -45,7 +46,7 @@ class Man(AutomataPlugin):
             return s
 
     @commands.command()
-    async def man(self, ctx: commands.Context, search: str = ""):
+    async def man(self, ctx: CommandContext, search: str = ""):
         """Searches man7.org for the requested man page"""
         try:
             if search == "":

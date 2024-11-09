@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
+from automata.utils import CommandContext
 
 # Colors
 COLOR_SCIENCE = 0x98FB98
@@ -13,10 +13,10 @@ SCIENCE = ("BSC", "B.SC", "SCIENCES", "SCIENCE")
 ARTS = ("BA", "B.A", "ART", "ARTS")
 
 
-class FAQ(AutomataPlugin):
+class FAQ(commands.Cog):
     """Commands to answer some Frequently Asked Questions"""
 
-    async def create_embed_science(self):
+    async def create_embed_science(self) -> discord.Embed:
         """Returns the embed."""
         embed_science = discord.Embed(
             title="B.Sc Sample First Year",
@@ -50,7 +50,7 @@ class FAQ(AutomataPlugin):
 
         return embed_science
 
-    async def create_embed_arts(self):
+    async def create_embed_arts(self) -> discord.Embed:
         """Returns the embed."""
         embed_arts = discord.Embed(
             title="B.A Sample First Year",
@@ -80,7 +80,7 @@ class FAQ(AutomataPlugin):
         return embed_arts
 
     @commands.command()
-    async def sample(self, ctx: commands.Context, degree: str = "blank"):
+    async def sample(self, ctx: CommandContext, degree: str = "blank"):
         """Replies with a sample of the courses you need for your first year.
 
         Takes type of degree as argument.
@@ -103,7 +103,7 @@ class FAQ(AutomataPlugin):
             )
 
     @commands.command()
-    async def admission(self, ctx: commands.Context):
+    async def admission(self, ctx: CommandContext):
         """Replies with some FAQ about studying CS at MUN."""
         embed_admission = discord.Embed(
             title="Frequently Asked Questions",
@@ -130,7 +130,7 @@ class FAQ(AutomataPlugin):
         await ctx.send(embed=embed_admission)
 
     @commands.command()
-    async def DID(self, ctx: commands.Context):
+    async def DID(self, ctx: CommandContext):
         """Replies with informative information on DID."""
         await ctx.send(
             """DID and OSDD are mental health issues on the DSM5 list

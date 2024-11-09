@@ -4,16 +4,16 @@ from datetime import datetime
 
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
-from Utils import send_code_block_maybe_as_file
+from automata.mongo import mongo
+from automata.utils import CommandContext, send_code_block_maybe_as_file
 
 logger = logging.getLogger("Agenda")
 
 
-class Agenda(AutomataPlugin):
+class Agenda(commands.Cog):
     """Handles tracking agenda items, and exporting them as markdown"""
 
-    async def send_agenda_text(self, ctx, variant):
+    async def send_agenda_text(self, ctx: CommandContext, variant: str | None):
         items = self.agenda_items.find({})
 
         text = "% MUN Computer Science Society\n% Meeting Agenda\n"
@@ -31,20 +31,17 @@ class Agenda(AutomataPlugin):
 
         await send_code_block_maybe_as_file(ctx, text)
 
-    def __init__(self, manifest, bot: commands.Bot):
-        super().__init__(manifest, bot)
-
     async def cog_load(self):
-        self.agenda_items = self.bot.database.automata.agenda_items
+        self.agenda_items = mongo.automata.agenda_items
 
     @commands.group()
-    async def agenda(self, ctx):
+    async def agenda(self, ctx: CommandContext):
         """Agenda management commands"""
         pass
 
     @agenda.command()
     @commands.has_permissions(manage_messages=True)
-    async def add(self, ctx, title: str, description: str):
+    async def add(self, ctx: CommandContext, title: str, description: str):
         """Adds an agenda item"""
 
         id = str(uuid.uuid4())[:8]
@@ -61,13 +58,13 @@ class Agenda(AutomataPlugin):
         await ctx.send(f"Added item: {title} (`{id}`), with description: {description}")
 
     @agenda.command()
-    async def view(self, ctx, variant: str = None):
+    async def view(self, ctx: CommandContext, variant: str | None = None):
         """Views all agenda items"""
         await self.send_agenda_text(ctx, variant)
 
     @agenda.command()
     @commands.has_permissions(manage_messages=True)
-    async def clear(self, ctx):
+    async def clear(self, ctx: CommandContext):
         """Clears all agenda items"""
         await self.send_agenda_text(ctx, "clean")
 
@@ -77,7 +74,7 @@ class Agenda(AutomataPlugin):
 
     @agenda.command()
     @commands.has_permissions(manage_messages=True)
-    async def remove(self, ctx, id: str):
+    async def remove(self, ctx: CommandContext, id: str):
         """Removes an agenda item by id"""
 
         await self.agenda_items.delete_one({"id": id})

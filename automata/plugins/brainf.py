@@ -1,11 +1,11 @@
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
+from automata.utils import CommandContext
 
 pointer, data, output = None, None, None
 
 
-def find_end(source):
+def find_end(source: str) -> int:
     loops = 1
     for i in range(len(source)):
         loops += (source[i] == "[") - (source[i] == "]")
@@ -41,11 +41,11 @@ def execute_loop(source):
         pass
 
 
-class Brainf(AutomataPlugin):
+class Brainf(commands.Cog):
     """Brainf*ck"""
 
     @commands.command()
-    async def bf(self, ctx: commands.Context, message: str):
+    async def bf(self, ctx: CommandContext, message: str):
         """Responds with the output of running the message in brainf*ck"""
 
         await ctx.send(execute(message))

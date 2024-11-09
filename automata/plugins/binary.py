@@ -1,13 +1,13 @@
 from discord.ext import commands
 
-from Plugin import AutomataPlugin
+from automata.utils import CommandContext
 
 
-class Binary(AutomataPlugin):
+class Binary(commands.Cog):
     """Binary"""
 
     @commands.command()
-    async def binary(self, ctx: commands.Context, message: str):
+    async def binary(self, ctx: CommandContext, message: str):
         binaryString = ""
 
         for char in message:

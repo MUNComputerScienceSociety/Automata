@@ -1,21 +1,18 @@
 from datetime import datetime
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import discord
 from discord.ext import commands
 
-from Globals import STARBOARD_CHANNEL_ID, STARBOARD_THRESHOLD
-from Plugin import AutomataPlugin
+from automata.config import config
+from automata.mongo import mongo
 
 
-class Starboard(AutomataPlugin):
+class Starboard(commands.Cog):
     """React with ⭐'s on a message to add a message to the starboard."""
 
-    def __init__(self, manifest, bot: commands.Bot):
-        super().__init__(manifest, bot)
-
     async def cog_load(self):
-        self.starboard = self.bot.database.automata.starboard_starboard
+        self.starboard = mongo.automata.starboard_starboard
 
     async def get_entry(
         self,
@@ -35,7 +32,7 @@ class Starboard(AutomataPlugin):
 
         message_id = self._get_id(message)
         channel_id = self._get_id(channel)
-        query = {}
+        query: Any = {}
         query["message_id"] = message_id
         query["channel_id"] = channel_id
         entry = await self.starboard.find_one(query)
@@ -117,8 +114,8 @@ class Starboard(AutomataPlugin):
             return
 
         if (
-            reaction.count != STARBOARD_THRESHOLD
-            or reaction.message.channel.id == STARBOARD_CHANNEL_ID
+            reaction.count != config.starboard_threshold
+            or reaction.message.channel.id == config.starboard_channel_id
         ):
             return
 
@@ -129,7 +126,7 @@ class Starboard(AutomataPlugin):
         if (await self.get_entry(message=message, channel=channel)) is not None:
             return
 
-        starboard_channel = message.guild.get_channel(STARBOARD_CHANNEL_ID)
+        starboard_channel = message.guild.get_channel(config.starboard_channel_id)
         embed = self._format_starboard_embed(message=message)
         await starboard_channel.send(embed=embed)
         await self.add_entry(message=message, channel=channel, user=user)

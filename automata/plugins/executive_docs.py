@@ -1,15 +1,13 @@
 import asyncio
 from datetime import datetime
+from typing import Any
 
 import discord
 import httpx
 from discord.ext import commands, tasks
 
-from Globals import (
-    EXECUTIVE_DOCS_CHANNEL,
-    PRIMARY_GUILD,
-)
-from Plugin import AutomataPlugin
+from automata.config import config
+from automata.mongo import mongo
 
 EXECUTIVE_DOCS_BASE_URI = "https://www.cs.mun.ca/~csclub/executive-documents"
 EXECUTIVE_DOCS_JSON_URI = f"{EXECUTIVE_DOCS_BASE_URI}/docs.json"
@@ -21,11 +19,16 @@ DOC_TYPE_TO_COLOUR = {
     "Agendas": discord.Colour.dark_gray(),
 }
 
+type Doc = Any
 
-class ExecutiveDocs(AutomataPlugin):
+
+class ExecutiveDocs(commands.Cog):
     """Posts new executive documents"""
 
-    def doc_embed(self, doc):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
+    def doc_embed(self, doc: Doc) -> discord.Embed:
         embed = discord.Embed(
             title=f"Meeting {doc['type']} | {doc['time'].strftime('%A, %B %e, %Y')}",
             description=doc["url"],
@@ -38,17 +41,23 @@ class ExecutiveDocs(AutomataPlugin):
         )
         return embed
 
-    async def post_new_doc(self, doc):
+    async def post_new_doc(self, doc: Doc):
         embed = self.doc_embed(doc)
-        guild = self.bot.get_guild(PRIMARY_GUILD)
-        channel = guild.get_channel(EXECUTIVE_DOCS_CHANNEL)
-        if channel is None:
-            self.cog_unload()
+
+        guild = self.bot.get_guild(config.primary_guild)
+        if guild is None:
+            await self.cog_unload()
             return
+
+        channel = guild.get_channel(config.executive_docs_channel)
+        if channel is None:
+            await self.cog_unload()
+            return
+
         await channel.send(embed=embed)
         await self.posted_documents.insert_one(doc)
 
-    async def fetch_docs_json(self):
+    async def fetch_docs_json(self) -> list[Doc]:
         async with httpx.AsyncClient() as client:
             resp = await client.get(EXECUTIVE_DOCS_JSON_URI)
         return resp.json()
@@ -69,16 +78,11 @@ class ExecutiveDocs(AutomataPlugin):
                 await self.post_new_doc(doc)
                 await asyncio.sleep(5.0)
 
-    def __init__(self, manifest, bot: commands.Bot):
-        super().__init__(manifest, bot)
-
     async def cog_load(self):
-        self.posted_documents = (
-            self.bot.database.automata.executivedocs_posted_documents
-        )
+        self.posted_documents = mongo.automata.executivedocs_posted_documents
         self.check_for_new_docs.start()
 
-    def cog_unload(self):
+    async def cog_unload(self):
         self.check_for_new_docs.cancel()
 
     @tasks.loop(seconds=60.0 * 10.0)

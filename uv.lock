@@ -111,7 +111,6 @@ dependencies = [
     { name = "beautifulsoup4" },
     { name = "discord-py" },
     { name = "httpx" },
-    { name = "jigsaw" },
     { name = "motor" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
@@ -130,7 +129,6 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.12.3" },
     { name = "discord-py", specifier = ">=2.4.0" },
     { name = "httpx", specifier = ">=0.27.2" },
-    { name = "jigsaw", specifier = ">=3.2.1" },
     { name = "motor", specifier = ">=3.6.0" },
     { name = "pydantic", specifier = ">=2.9.2" },
     { name = "pydantic-settings", specifier = ">=2.6.1" },
@@ -307,15 +305,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9", size = 190490 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/76/c6/c88e154df9c4e1a2a66ccf0005a88dfb2650c1dffb6f5ce603dfbd452ce3/idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3", size = 70442 },
-]
-
-[[package]]
-name = "jigsaw"
-version = "3.2.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/de/54/cfaed24b809469394ae368267daa3f330a4dba17a7340be494639e79c787/Jigsaw-3.2.1.tar.gz", hash = "sha256:5209f8f6143f4f1cd33287e1ec0a21a107142e3f7de85d8f4ce6028456d122bc", size = 4843 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/89/57/9e41ebeb111cb53a5769ad8ee29e0c79d6e5bffd256084b326856f91f390/Jigsaw-3.2.1-py3-none-any.whl", hash = "sha256:11131be04122dbc106a7d87380e9a1ac96693492f9994012ad4b0b4c21741d00", size = 5029 },
 ]
 
 [[package]]
