@@ -3,6 +3,7 @@ version: "3"
 services:
   automata:
     image: ghcr.io/muncomputersciencesociety/automata
+    # build: .
     restart: always
     depends_on:
       - mongo

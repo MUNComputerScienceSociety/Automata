@@ -69,7 +69,7 @@ Once done, you can run your plugin locally by following the instructions under [
 
 ### Using Docker
 
-1. Edit the `docker-compose.yml`, replacing the `image: ghcr.io/muncomputersciencesociety/automata` line for the automata container with `build: .`
+1. Edit the `docker-compose.yml`, and comment out the `image` line in the `automata` container and uncomment the `build` line
 2. Edit the bot core or the plugins as you wish
 3. Start the container, forcing a rebuild of the image using `docker-compose up -d --build`
 
