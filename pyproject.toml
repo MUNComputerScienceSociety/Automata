@@ -12,7 +12,6 @@ dependencies = [
     "pydantic-settings>=2.6.1",
     "pydantic>=2.10.1",
     "python-dotenv>=1.0.1",
-    "requests>=2.32.3",
     "sentry-sdk>=2.19.0",
 ]
 

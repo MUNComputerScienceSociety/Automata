@@ -1,6 +1,6 @@
 from time import sleep
 
-import requests
+import httpx
 from bs4 import BeautifulSoup
 from discord.ext import commands
 
@@ -16,9 +16,7 @@ class Man(Plugin):
         super().__init__(bot)
         pages = []
         for i in range(9):
-            r = requests.get(
-                url=f"https://man7.org/linux/man-pages/dir_section_{i}.html"
-            )
+            r = httpx.get(url=f"https://man7.org/linux/man-pages/dir_section_{i}.html")
             sleep(0.1)
             pages.append(BeautifulSoup(r.text, "html.parser"))
         for i, x in enumerate(pages):
@@ -60,7 +58,7 @@ class Man(Plugin):
             else:
                 res = []
                 for i in range(1, 9):
-                    r = requests.get(
+                    r = httpx.get(
                         url=f"https://man7.org/linux/man-pages/man{i}/{search}.{i}.html"
                     )
                     sleep(0.1)
