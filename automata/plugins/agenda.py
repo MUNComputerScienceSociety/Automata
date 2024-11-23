@@ -70,7 +70,7 @@ class Agenda(Plugin):
 
         self.agenda_items.delete_many({})
 
-        await ctx.send(f"Cleared all agenda items, output of previous items: {text}")
+        await ctx.send("Cleared all agenda items")
 
     @agenda.command()
     @commands.has_permissions(manage_messages=True)

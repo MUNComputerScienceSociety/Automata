@@ -15,7 +15,7 @@ class Config(BaseSettings):
     announcement_channel: int = 752914074504790068
     aoc_leaderboard_channel: int = 909857762064871444
     whitelist_http_api_bearer_token: str | None = None
-    mongo_host: str = "mongo"
+    mongo_host: str = "localhost"
     discord_auth_uri: str = "https://discord.muncompsci.ca"
     weather_api_key: str | None = None
     starboard_channel_id: int = 900883422187253870

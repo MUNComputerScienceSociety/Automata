@@ -1,5 +1,3 @@
-from discord.ext import commands
-
 from automata.config import config
 from automata.utils import Plugin
 

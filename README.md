@@ -2,7 +2,7 @@
 
 ![Deploy to GHCR](https://github.com/MUNComputerScienceSociety/Automata/workflows/Deploy%20to%20GHCR/badge.svg)
 [![Code scanning - action](https://github.com/MUNComputerScienceSociety/Automata/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MUNComputerScienceSociety/Automata/actions/workflows/codeql-analysis.yml)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 Discord bot handling the management of the [MUN Computer Science Society](https://muncompsci.ca/) Discord server
 
@@ -10,91 +10,76 @@ For feature requests / help getting the bot running, don't fret to ask questions
 
 ---
 
-## **Running locally**
+## Running locally
 
 1. Clone the project by running `https://github.com/MUNComputerScienceSociety/Automata.git`, and change into the directory by running `cd ./Automata`
 2. Copy `.env.dist` to `.env`
 3. Fill out the required information in the `.env`
-   - At the moment, the only required environment variable required is `AUTOMATA_TOKEN`, which is a Discord token, which you can see how to get [here](https://discordpy.readthedocs.io/en/latest/discord.html)
 
+   - At the moment, the required environment variables are:
+
+     - `AUTOMATA_TOKEN`: A Discord token, which you can see how to get [here](https://discordpy.readthedocs.io/en/latest/discord.html)
+     - `AUTOMATA_PRIMARY_GUILD`: The ID of the Discord server you will be testing in. You can find this by following the instructions [here](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID).
+     - `AUTOMATA_EXECUTIVE_DOCS_CHANNEL`: The ID of the channel to post executive docs notifications to. This can be any channel in your primary guild, with the warning that it'll be a bit noisy on first start. You can find this by following the instructions [here](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID).
+
+> [!NOTE]
 > Note about running locally and avoiding spam:
 >
-> When this bot was smaller, it wasn't so bad to run all the plugins; but since we have 40+, and some of them do some data fetching / loading on startup, so the logs can get a bit loud.
+> When this bot was smaller, it wasn't so bad to run all the plugins; but since we have 10+, and some of them do some data fetching / loading on startup, the logs can get a bit loud.
 >
-> If you're working on a plugin, you can add its name to the `AUTOMATA_ENABLED_PLUGINS` env. var (like AUTOMATA_ENABLED_PLUGINS=PluginName), and it will be the _only_ plugin that will be loaded.
+> If you're working on a plugin, you can add its name to the `AUTOMATA_ENABLED_PLUGINS` env. var (like `AUTOMATA_ENABLED_PLUGINS=["PluginName"]`), and it will be the _only_ plugin that will be loaded.
 >
-> This is a comma-delimited list as well, so you can enable multiple plugins at once.
+> This env. var is a JSON-encoded list, so you can enable multiple plugins at once.
 
-### Locally Using Docker
+Once done, follow the instructions under either of the headings below, depending on how you wish to run the bot.
 
-1. Create the directory `mounted_plugins` within the project by running `mkdir ./mounted_plugins`
-2. Start the containers by running `docker-compose up -d`
+### With Docker
 
-### Locally Without Docker
+Start the containers by running `docker-compose up -d`
 
-1. Run MongoDB
+### Without Docker
 
-   > You can use Docker for running MongoDB (recommended), just add the following to the `docker-compose.yml` file to expose it to your local machine
-   >
-   > ```yml
-   >   ...
-   >   mongo:
-   >     ...
-   >     ports:
-   >       - "127.0.0.1:27017:27017"
-   >   ...
-   > ```
-   >
-   > And start it _only_ by running `docker-compose up -d mongo`
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Python 3.12 or above.
+2. Run MongoDB
 
-2. Install the requirements found in the `requirements.txt` file using `pip install -r requirements.txt`
+   - You can use Docker for running MongoDB (recommended), by starting only the `mongo` container with `docker-compose up -d mongo`
+   - Alternatively, you can install Mongo via whatever means is recommended for your OS
 
-   - Using a virtual environment is highly recommended, [this section of the Flask documentation explains this well](https://flask.palletsprojects.com/en/1.1.x/installation/#virtual-environments).
-
-3. Run the bot using `python Bot.py`
+3. Install the dependencies with `uv sync`
+4. Run the bot using `uv run python -m automata`
 
 ---
 
-## **Developing your own plugins**
+## Developing your own plugins
 
-- Automata is built around the [discord.py](https://discordpy.readthedocs.io/en/latest/) framework, therefore the plugins make heavy use of its decorators to abstract most of the complexity behind the scenes.
+Features are provided to the bot via plugins - if you wish to add your own functionality, you should build your own plugin. To do so:
 
-### Developing using Docker
+1. Create a new file in `automata/plugins` for your plugin
+2. Add to your file the code for your plugin
+   - This plugin will be a [discord.py cog](https://discordpy.readthedocs.io/en/stable/ext/commands/cogs.html) - you can refer to their docs for examples of the things you can do and how to do them
+   - You can use `lmgtfy.py` as a simple example
+3. In `automata/plugins/__init__.py`, import your plugin and add it to the `all_plugins` list
+   - Once again, you can copy this from the `lmgtfy.py` example
 
-1. Create the folder `mounted_plugins` if it doesn't already exist
-   - `plugins` is baked into the image when it is built, so editing files there won't have an effect
-2. Create a new plugin within the `mounted_plugins` folder
-   1. Create a new [Jigsaw plugin manifest](https://jigsaw.readthedocs.io/en/latest/plugin.json.html)
-      - You can use `plugins/Ping/plugin.json` as an example
-   2. Create a new plugin
-      - You can use `plugins/Ping/__init__.py` as an example
-3. Start the bot using the instructions from [Running locally](#running-locally)
-
-When you make changes to your plugins, restart the Automata container using `docker-compose restart automata`
-
-### Developing without Docker
-
-1. Create a new plugin, following the directions above within 'Using Docker', but within the `plugins` folder instead
-2. Start the bot using the instructions from [Running locally](#running-locally)
+Once done, you can run your plugin locally by following the instructions under [Running your changes locally](#running-your-changes-locally).
 
 ---
 
-## **Developing the bot core and built-in plugins**
+## Running your changes locally
 
-### Developing core using Docker
+### Using Docker
 
-1. Edit the `docker-compose.yml`, replacing the `image: muncs/automata` line for the automata container with `build: .`
+1. Edit the `docker-compose.yml`, replacing the `image: ghcr.io/muncomputersciencesociety/automata` line for the automata container with `build: .`
 2. Edit the bot core or the plugins as you wish
 3. Start the container, forcing a rebuild of the image using `docker-compose up -d --build`
 
-### Developing core without Docker
+### Without Docker
 
-1. Just edit the core files / plugins directly :)
-2. Start the bot using the instructions from [Running locally](#running-locally)
+If you do not want to run the bot in Docker, you can just start the bot using the instructions from [Running locally](#running-locally) - no special steps required.
 
 ---
 
-## **Pushing changes to GitHub**
+## Pushing changes to GitHub
 
 1. Fork this repository, clone your fork, and commit your changes to a branch on your fork
 2. Create a PR to merge your branch into the `master` branch here, and make sure to tag an executive / mention the PR in Discord so we see it
@@ -103,11 +88,11 @@ When you make changes to your plugins, restart the Automata container using `doc
 
 ---
 
-## **Container responsibilities**
+## Container responsibilities
 
 Automata is comprised of a number of containers, each with distinct responsibilities. Their responsibilities are as follows:
 
-| Container | Responsibilities |
-| --- | --- |
-| automata | The Discord bot itself |
-| mongo | A MongoDB server used to provide persistent data storage to the `automata` container |
+| Container | Responsibilities                                                                     |
+| --------- | ------------------------------------------------------------------------------------ |
+| automata  | The Discord bot itself                                                               |
+| mongo     | A MongoDB server used to provide persistent data storage to the `automata` container |

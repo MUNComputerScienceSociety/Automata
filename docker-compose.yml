@@ -8,6 +8,8 @@ services:
       - mongo
     env_file:
       - .env
+    environment:
+      - AUTOMATA_MONGO_HOST=mongo
 
   mongo:
     image: mvertes/alpine-mongo
